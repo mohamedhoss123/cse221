@@ -1,0 +1,100 @@
+import type { Booking, Complaint, Payment } from '../types/booking.types'
+
+export const mockBookings: Booking[] = [
+  {
+    id: 'BKG-001',
+    roomId: '2',
+    customerId: '2',
+    checkIn: '2026-05-01',
+    checkOut: '2026-05-05',
+    guests: 2,
+    status: 'confirmed',
+    totalAmount: 1120,
+    paymentStatus: 'paid',
+    createdAt: '2026-04-10T10:30:00Z',
+  },
+  {
+    id: 'BKG-002',
+    roomId: '1',
+    customerId: '2',
+    checkIn: '2026-04-20',
+    checkOut: '2026-04-22',
+    guests: 2,
+    status: 'pending',
+    totalAmount: 300,
+    paymentStatus: 'pending',
+    createdAt: '2026-04-12T14:20:00Z',
+  },
+  {
+    id: 'BKG-003',
+    roomId: '3',
+    customerId: '2',
+    checkIn: '2026-03-15',
+    checkOut: '2026-03-18',
+    guests: 3,
+    status: 'completed',
+    totalAmount: 1350,
+    paymentStatus: 'paid',
+    createdAt: '2026-03-10T09:15:00Z',
+  },
+  {
+    id: 'BKG-004',
+    roomId: '5',
+    customerId: '2',
+    checkIn: '2026-02-10',
+    checkOut: '2026-02-15',
+    guests: 2,
+    status: 'cancelled',
+    totalAmount: 1600,
+    paymentStatus: 'refunded',
+    createdAt: '2026-02-05T16:45:00Z',
+  },
+]
+
+export const mockComplaints: Complaint[] = [
+  {
+    id: 'CMP-001',
+    customerId: '2',
+    bookingId: 'BKG-003',
+    subject: 'Room cleanliness',
+    message: 'The room was not cleaned properly upon arrival. Found dust in corners.',
+    status: 'resolved',
+    response: 'We apologize for the inconvenience. Our housekeeping team has been notified and additional training has been provided. We hope to serve you better in the future.',
+    createdAt: '2026-03-16T10:00:00Z',
+  },
+  {
+    id: 'CMP-002',
+    customerId: '2',
+    subject: 'WiFi connectivity issues',
+    message: 'WiFi connection was very slow during my stay in room 302.',
+    status: 'in_progress',
+    createdAt: '2026-04-11T14:30:00Z',
+  },
+]
+
+export const mockPayments: Payment[] = [
+  {
+    id: 'PAY-001',
+    bookingId: 'BKG-001',
+    customerId: '2',
+    amount: 1120,
+    status: 'paid',
+    createdAt: '2026-04-10T10:35:00Z',
+  },
+  {
+    id: 'PAY-002',
+    bookingId: 'BKG-003',
+    customerId: '2',
+    amount: 1350,
+    status: 'paid',
+    createdAt: '2026-03-10T09:20:00Z',
+  },
+  {
+    id: 'PAY-003',
+    bookingId: 'BKG-004',
+    customerId: '2',
+    amount: 1600,
+    status: 'refunded',
+    createdAt: '2026-02-06T10:00:00Z',
+  },
+]
