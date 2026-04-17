@@ -26,21 +26,26 @@ export default function AdminSidebar({ className }: AdminSidebarProps) {
   return (
     <aside
       className={cn(
-        'w-64 border-r border-[var(--line)] bg-[var(--header-bg)] p-4',
+        'w-64 border-r-2 border-[var(--expressive-secondary)] bg-[var(--expressive-surface)] p-6 shadow-[4px_0_0_0_var(--expressive-secondary)] flex flex-col',
         className
       )}
     >
-      <nav className="space-y-2">
+      <div className="mb-8">
+        <h2 className="text-2xl font-light text-[var(--expressive-primary)]">
+          Admin<span className="font-semibold block">Portal</span>
+        </h2>
+      </div>
+      <nav className="space-y-3 flex-1">
         {navItems.map((item) => {
           const Icon = item.icon
           return (
             <Link
               key={item.to}
               to={item.to}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
+              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-[var(--expressive-text)] transition-all hover:bg-[var(--expressive-background)] hover:translate-x-1 border-2 border-transparent"
               activeProps={{
                 className:
-                  'bg-[var(--link-bg-hover)] text-[var(--sea-ink)]',
+                  'bg-[var(--expressive-primary)] text-[var(--expressive-surface)] border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:bg-[var(--expressive-primary)] hover:text-[var(--expressive-surface)] hover:translate-x-0',
               }}
             >
               <Icon className="h-5 w-5" />
@@ -49,6 +54,18 @@ export default function AdminSidebar({ className }: AdminSidebarProps) {
           )
         })}
       </nav>
+      
+      <div className="mt-auto pt-6 border-t-2 border-[var(--expressive-secondary)]">
+        <div className="flex items-center gap-3 px-2">
+          <div className="w-10 h-10 rounded-full bg-[var(--expressive-accent)]/20 border-2 border-[var(--expressive-secondary)] shadow-[2px_2px_0_0_var(--expressive-secondary)] flex items-center justify-center">
+            <span className="font-bold text-[var(--expressive-primary)]">AD</span>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-[var(--expressive-primary)]">Admin User</p>
+            <p className="text-xs text-[var(--expressive-text)]">System Administrator</p>
+          </div>
+        </div>
+      </div>
     </aside>
   )
 }

@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { useAuth } from '#/hooks/useAuth'
 import { getBookings, cancelBooking } from '#/services/bookings.service'
 import { toast } from 'sonner'
 import {
@@ -30,14 +29,18 @@ import {
 } from '#/components/ui/dialog'
 
 export const Route = createFileRoute('/customer/bookings')({
+  loader: async () => {
+    const authUser = localStorage.getItem('auth_user')
+    const user = authUser ? JSON.parse(authUser) : { id: 'mock-user-1' }
+    const initialBookings = await getBookings(user.id)
+    return { initialBookings }
+  },
   component: MyBookingsPage,
 })
 
 function MyBookingsPage() {
-  const { user } = useAuth()
-  const [bookings, setBookings] = useState(() =>
-    user ? getBookings(user.id) : []
-  )
+  const { initialBookings } = Route.useLoaderData()
+  const [bookings, setBookings] = useState(initialBookings)
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
   const [bookingToCancel, setBookingToCancel] = useState<string | null>(null)
 
@@ -76,22 +79,22 @@ function MyBookingsPage() {
       confirmed: {
         icon: CheckCircle2,
         label: 'Confirmed',
-        className: 'bg-green-100 text-green-700 border-green-200',
+        className: 'bg-green-100 text-[var(--expressive-text)] border-green-200',
       },
       pending: {
         icon: Hourglass,
         label: 'Pending',
-        className: 'bg-amber-100 text-amber-700 border-amber-200',
+        className: 'bg-amber-100 text-[var(--expressive-text)] border-amber-200',
       },
       completed: {
         icon: CheckCircle2,
         label: 'Completed',
-        className: 'bg-blue-100 text-blue-700 border-blue-200',
+        className: 'bg-blue-100 text-[var(--expressive-text)] border-blue-200',
       },
       cancelled: {
         icon: XCircle,
         label: 'Cancelled',
-        className: 'bg-red-100 text-red-700 border-red-200',
+        className: 'bg-red-100 text-[var(--expressive-primary)] border-red-200',
       },
     }
 
@@ -107,27 +110,27 @@ function MyBookingsPage() {
   }
 
   const BookingCard = ({ booking, showActions = true }: { booking: any, showActions?: boolean }) => (
-    <div className="bg-white rounded-2xl p-6 border border-slate-200 hover:shadow-lg transition-shadow duration-300">
+    <div className="bg-[var(--expressive-surface)] rounded-2xl p-6 border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:shadow-lg transition-shadow duration-300">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
-            <h3 className="text-lg font-semibold text-slate-900">{booking.roomName}</h3>
+            <h3 className="text-lg font-semibold text-[var(--expressive-primary)]">{booking.roomName}</h3>
             {getStatusBadge(booking.status)}
           </div>
-          <p className="text-sm text-slate-600">Booking #{booking.id.slice(0, 8)}</p>
+          <p className="text-sm text-[var(--expressive-text)]">Booking #{booking.id.slice(0, 8)}</p>
         </div>
       </div>
 
       {/* Details */}
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
-            <Calendar className="w-5 h-5 text-slate-600" />
+          <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
+            <Calendar className="w-5 h-5 text-[var(--expressive-text)]" />
           </div>
           <div>
-            <p className="text-xs text-slate-500 mb-0.5">Check-in</p>
-            <p className="text-sm font-medium text-slate-900">
+            <p className="text-xs text-[var(--expressive-text)] mb-0.5">Check-in</p>
+            <p className="text-sm font-medium text-[var(--expressive-primary)]">
               {new Date(booking.checkIn).toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric',
@@ -138,12 +141,12 @@ function MyBookingsPage() {
         </div>
 
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
-            <Clock className="w-5 h-5 text-slate-600" />
+          <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
+            <Clock className="w-5 h-5 text-[var(--expressive-text)]" />
           </div>
           <div>
-            <p className="text-xs text-slate-500 mb-0.5">Check-out</p>
-            <p className="text-sm font-medium text-slate-900">
+            <p className="text-xs text-[var(--expressive-text)] mb-0.5">Check-out</p>
+            <p className="text-sm font-medium text-[var(--expressive-primary)]">
               {new Date(booking.checkOut).toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric',
@@ -154,40 +157,41 @@ function MyBookingsPage() {
         </div>
 
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
-            <Users className="w-5 h-5 text-slate-600" />
+          <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
+            <Users className="w-5 h-5 text-[var(--expressive-text)]" />
           </div>
           <div>
-            <p className="text-xs text-slate-500 mb-0.5">Guests</p>
-            <p className="text-sm font-medium text-slate-900">{booking.guests}</p>
+            <p className="text-xs text-[var(--expressive-text)] mb-0.5">Guests</p>
+            <p className="text-sm font-medium text-[var(--expressive-primary)]">{booking.guests}</p>
           </div>
         </div>
 
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
-            <CreditCard className="w-5 h-5 text-slate-600" />
+          <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
+            <CreditCard className="w-5 h-5 text-[var(--expressive-text)]" />
           </div>
           <div>
-            <p className="text-xs text-slate-500 mb-0.5">Total</p>
-            <p className="text-sm font-semibold text-amber-600">${booking.totalPrice}</p>
+            <p className="text-xs text-[var(--expressive-text)] mb-0.5">Total</p>
+            <p className="text-sm font-semibold text-[var(--expressive-primary)]">${booking.totalPrice}</p>
           </div>
         </div>
       </div>
 
       {/* Actions */}
       {showActions && (booking.status === 'pending' || booking.status === 'confirmed') && (
-        <div className="flex gap-3 pt-4 border-t border-slate-200">
+        <div className="flex gap-3 pt-4 border-t border-[var(--expressive-secondary)] mt-4">
           <Button
             variant="outline"
             size="sm"
-            className="flex-1 border-slate-300 text-slate-700 hover:bg-slate-50"
+            className="flex-1 bg-[var(--expressive-surface)] text-[var(--expressive-text)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
+            onClick={() => window.location.href = `/customer/bookings/${booking.id}`}
           >
             View Details
           </Button>
           <Button
             variant="outline"
             size="sm"
-            className="flex-1 border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700"
+            className="flex-1 bg-[var(--expressive-surface)] border-2 border-[var(--expressive-primary)] text-[var(--expressive-primary)] shadow-[4px_4px_0_0_var(--expressive-primary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-primary)] transition-all font-semibold hover:bg-[var(--expressive-background)]"
             onClick={() => handleCancelClick(booking.id)}
           >
             <X className="w-4 h-4 mr-1" />
@@ -202,10 +206,10 @@ function MyBookingsPage() {
     <div className="p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-light text-slate-900 mb-2">
-          My <span className="font-semibold text-amber-600">Bookings</span>
+        <h1 className="text-3xl font-light text-[var(--expressive-primary)] mb-2">
+          My <span className="font-semibold text-[var(--expressive-primary)]">Bookings</span>
         </h1>
-        <p className="text-slate-600">
+        <p className="text-[var(--expressive-text)]">
           Manage and track all your reservations
         </p>
       </div>
@@ -218,8 +222,8 @@ function MyBookingsPage() {
               <CheckCircle2 className="w-6 h-6 text-white" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-green-700">{upcomingBookings.length}</p>
-              <p className="text-sm text-green-600">Upcoming</p>
+              <p className="text-2xl font-bold text-[var(--expressive-text)]">{upcomingBookings.length}</p>
+              <p className="text-sm text-[var(--expressive-text)]">Upcoming</p>
             </div>
           </div>
         </div>
@@ -230,20 +234,20 @@ function MyBookingsPage() {
               <Calendar className="w-6 h-6 text-white" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-blue-700">{completedBookings.length}</p>
-              <p className="text-sm text-blue-600">Completed</p>
+              <p className="text-2xl font-bold text-[var(--expressive-text)]">{completedBookings.length}</p>
+              <p className="text-sm text-[var(--expressive-text)]">Completed</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-6 border border-slate-200">
+        <div className="bg-gradient-to-br from-[var(--expressive-background)] to-white rounded-2xl p-6 border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)]">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-slate-500 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-[var(--expressive-background)] flex items-center justify-center">
               <XCircle className="w-6 h-6 text-white" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-slate-700">{cancelledBookings.length}</p>
-              <p className="text-sm text-slate-600">Cancelled</p>
+              <p className="text-2xl font-bold text-[var(--expressive-text)]">{cancelledBookings.length}</p>
+              <p className="text-sm text-[var(--expressive-text)]">Cancelled</p>
             </div>
           </div>
         </div>
@@ -251,30 +255,30 @@ function MyBookingsPage() {
 
       {/* Tabs */}
       <Tabs defaultValue="upcoming" className="space-y-6">
-        <TabsList className="bg-white border border-slate-200 p-1">
-          <TabsTrigger value="upcoming" className="data-[state=active]:bg-amber-500 data-[state=active]:text-white">
+        <TabsList className="bg-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] p-1">
+          <TabsTrigger value="upcoming" className="data-[state=active]:bg-[var(--expressive-primary)] data-[state=active]:text-white">
             Upcoming ({upcomingBookings.length})
           </TabsTrigger>
-          <TabsTrigger value="completed" className="data-[state=active]:bg-amber-500 data-[state=active]:text-white">
+          <TabsTrigger value="completed" className="data-[state=active]:bg-[var(--expressive-primary)] data-[state=active]:text-white">
             Completed ({completedBookings.length})
           </TabsTrigger>
-          <TabsTrigger value="cancelled" className="data-[state=active]:bg-amber-500 data-[state=active]:text-white">
+          <TabsTrigger value="cancelled" className="data-[state=active]:bg-[var(--expressive-primary)] data-[state=active]:text-white">
             Cancelled ({cancelledBookings.length})
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="upcoming" className="space-y-4">
           {upcomingBookings.length === 0 ? (
-            <div className="bg-white rounded-2xl p-12 text-center border border-slate-200">
+            <div className="bg-[var(--expressive-surface)] rounded-2xl p-12 text-center border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)]">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
-                <Calendar className="w-8 h-8 text-slate-400" />
+                <Calendar className="w-8 h-8 text-[var(--expressive-text)]" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">No upcoming bookings</h3>
-              <p className="text-slate-600 mb-6">
+              <h3 className="text-xl font-semibold text-[var(--expressive-primary)] mb-2">No upcoming bookings</h3>
+              <p className="text-[var(--expressive-text)] mb-6">
                 Start exploring rooms and book your next stay
               </p>
               <Button
-                className="bg-gradient-to-r from-amber-600 to-amber-700"
+                className="bg-[var(--expressive-primary)] text-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
                 onClick={() => window.location.href = '/customer/rooms'}
               >
                 Browse Rooms
@@ -291,12 +295,12 @@ function MyBookingsPage() {
 
         <TabsContent value="completed" className="space-y-4">
           {completedBookings.length === 0 ? (
-            <div className="bg-white rounded-2xl p-12 text-center border border-slate-200">
+            <div className="bg-[var(--expressive-surface)] rounded-2xl p-12 text-center border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)]">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
-                <CheckCircle2 className="w-8 h-8 text-slate-400" />
+                <CheckCircle2 className="w-8 h-8 text-[var(--expressive-text)]" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">No completed bookings</h3>
-              <p className="text-slate-600">
+              <h3 className="text-xl font-semibold text-[var(--expressive-primary)] mb-2">No completed bookings</h3>
+              <p className="text-[var(--expressive-text)]">
                 Your completed bookings will appear here
               </p>
             </div>
@@ -311,12 +315,12 @@ function MyBookingsPage() {
 
         <TabsContent value="cancelled" className="space-y-4">
           {cancelledBookings.length === 0 ? (
-            <div className="bg-white rounded-2xl p-12 text-center border border-slate-200">
+            <div className="bg-[var(--expressive-surface)] rounded-2xl p-12 text-center border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)]">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
-                <XCircle className="w-8 h-8 text-slate-400" />
+                <XCircle className="w-8 h-8 text-[var(--expressive-text)]" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">No cancelled bookings</h3>
-              <p className="text-slate-600">
+              <h3 className="text-xl font-semibold text-[var(--expressive-primary)] mb-2">No cancelled bookings</h3>
+              <p className="text-[var(--expressive-text)]">
                 Cancelled bookings will appear here
               </p>
             </div>
@@ -332,7 +336,7 @@ function MyBookingsPage() {
 
       {/* Cancel Confirmation Dialog */}
       <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md bg-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-2xl">
           <DialogHeader>
             <DialogTitle>Cancel Booking?</DialogTitle>
             <DialogDescription>
@@ -344,13 +348,13 @@ function MyBookingsPage() {
             <Button
               variant="outline"
               onClick={() => setCancelDialogOpen(false)}
-              className="border-slate-300"
+              className="bg-[var(--expressive-surface)] text-[var(--expressive-text)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
             >
               Keep Booking
             </Button>
             <Button
               onClick={handleCancelConfirm}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-[var(--expressive-primary)] text-[var(--expressive-surface)] border-2 border-red-500 shadow-[4px_4px_0_0_#ef4444] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_#ef4444] transition-all font-semibold"
             >
               Cancel Booking
             </Button>

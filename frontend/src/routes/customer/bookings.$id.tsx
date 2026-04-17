@@ -25,8 +25,8 @@ function BookingDetailsPage() {
 
   if (!booking || !room) {
     return (
-      <div className="page-wrap px-4 py-16 text-center">
-        <h1 className="display-title mb-4 text-3xl font-bold text-[var(--sea-ink)]">
+      <div className="p-8 py-16 text-center">
+        <h1 className="font-light mb-4 text-3xl font-bold text-[var(--expressive-primary)]">
           Booking Not Found
         </h1>
         <Button asChild>
@@ -39,7 +39,7 @@ function BookingDetailsPage() {
   const getStatusColor = (status: typeof booking.status) => {
     switch (status) {
       case 'confirmed':
-        return 'bg-[var(--palm)] text-white'
+        return 'bg-green-500 text-white'
       case 'pending':
         return 'bg-yellow-500 text-white'
       case 'cancelled':
@@ -52,7 +52,7 @@ function BookingDetailsPage() {
   }
 
   return (
-    <div className="page-wrap px-4 py-8">
+    <div className="p-8">
       <div className="mb-6">
         <Button variant="ghost" asChild>
           <Link to="/customer/bookings" className="flex items-center gap-2">
@@ -65,10 +65,10 @@ function BookingDetailsPage() {
       <div className="mb-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="display-title text-3xl font-bold text-[var(--sea-ink)]">
+            <h1 className="font-light text-3xl font-bold text-[var(--expressive-primary)]">
               Booking Details
             </h1>
-            <p className="text-[var(--sea-ink-soft)]">Booking ID: {booking.id}</p>
+            <p className="text-[var(--expressive-text)]">Booking ID: {booking.id}</p>
           </div>
           <Badge className={getStatusColor(booking.status)} variant="secondary">
             {booking.status}
@@ -79,16 +79,16 @@ function BookingDetailsPage() {
       <div className="gap-6 lg:grid lg:grid-cols-3">
         {/* Main Details */}
         <div className="space-y-6 lg:col-span-2">
-          <Card className="island-shell">
+          <Card className="bg-[var(--expressive-surface)] rounded-2xl border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)]">
             <CardHeader>
               <CardTitle>Room Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <h3 className="text-lg font-semibold text-[var(--sea-ink)]">
+                <h3 className="text-lg font-semibold text-[var(--expressive-primary)]">
                   {room.name}
                 </h3>
-                <p className="text-sm text-[var(--sea-ink-soft)] capitalize">
+                <p className="text-sm text-[var(--expressive-text)] capitalize">
                   {room.type}
                 </p>
               </div>
@@ -97,19 +97,19 @@ function BookingDetailsPage() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <p className="text-sm text-[var(--sea-ink-soft)]">Check-in</p>
+                  <p className="text-sm text-[var(--expressive-text)]">Check-in</p>
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-[var(--sea-ink)]" />
-                    <p className="font-medium text-[var(--sea-ink)]">
+                    <Calendar className="h-4 w-4 text-[var(--expressive-primary)]" />
+                    <p className="font-medium text-[var(--expressive-primary)]">
                       {format(new Date(booking.checkIn), 'MMM d, yyyy')}
                     </p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--sea-ink-soft)]">Check-out</p>
+                  <p className="text-sm text-[var(--expressive-text)]">Check-out</p>
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-[var(--sea-ink)]" />
-                    <p className="font-medium text-[var(--sea-ink)]">
+                    <Calendar className="h-4 w-4 text-[var(--expressive-primary)]" />
+                    <p className="font-medium text-[var(--expressive-primary)]">
                       {format(new Date(booking.checkOut), 'MMM d, yyyy')}
                     </p>
                   </div>
@@ -119,13 +119,13 @@ function BookingDetailsPage() {
               <Separator />
 
               <div className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-[var(--sea-ink-soft)]" />
-                <span className="text-[var(--sea-ink-soft)]">{booking.guests} guests</span>
+                <Users className="h-5 w-5 text-[var(--expressive-text)]" />
+                <span className="text-[var(--expressive-text)]">{booking.guests} guests</span>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="island-shell">
+          <Card className="bg-[var(--expressive-surface)] rounded-2xl border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)]">
             <CardHeader>
               <CardTitle>Amenities</CardTitle>
             </CardHeader>
@@ -133,8 +133,8 @@ function BookingDetailsPage() {
               <div className="grid gap-2 sm:grid-cols-2">
                 {room.amenities.map((amenity) => (
                   <div key={amenity} className="flex items-center gap-2">
-                    <div className="h-1.5 w-1.5 rounded-full bg-[var(--lagoon-deep)]" />
-                    <span className="text-sm text-[var(--sea-ink)]">{amenity}</span>
+                    <div className="h-1.5 w-1.5 rounded-full bg-[var(--expressive-primary)]" />
+                    <span className="text-sm text-[var(--expressive-primary)]">{amenity}</span>
                   </div>
                 ))}
               </div>
@@ -144,16 +144,16 @@ function BookingDetailsPage() {
 
         {/* Payment Summary */}
         <div className="lg:col-span-1">
-          <Card className="island-shell sticky top-24">
+          <Card className="bg-[var(--expressive-surface)] rounded-2xl border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] sticky top-24">
             <CardHeader>
               <CardTitle>Payment Summary</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-sm text-[var(--sea-ink-soft)]">Total Amount</p>
+                <p className="text-sm text-[var(--expressive-text)]">Total Amount</p>
                 <div className="flex items-center gap-1">
-                  <DollarSign className="h-5 w-5 text-[var(--lagoon-deep)]" />
-                  <p className="text-2xl font-bold text-[var(--lagoon-deep)]">
+                  <DollarSign className="h-5 w-5 text-[var(--expressive-primary)]" />
+                  <p className="text-2xl font-bold text-[var(--expressive-primary)]">
                     {booking.totalAmount}
                   </p>
                 </div>
@@ -162,7 +162,7 @@ function BookingDetailsPage() {
               <Separator />
 
               <div>
-                <p className="text-sm text-[var(--sea-ink-soft)]">Payment Status</p>
+                <p className="text-sm text-[var(--expressive-text)]">Payment Status</p>
                 <Badge variant="secondary">
                   {booking.paymentStatus}
                 </Badge>
@@ -171,8 +171,8 @@ function BookingDetailsPage() {
               <Separator />
 
               <div>
-                <p className="text-sm text-[var(--sea-ink-soft)]">Booking Date</p>
-                <p className="font-medium text-[var(--sea-ink)]">
+                <p className="text-sm text-[var(--expressive-text)]">Booking Date</p>
+                <p className="font-medium text-[var(--expressive-primary)]">
                   {format(new Date(booking.createdAt), 'MMM d, yyyy')}
                 </p>
               </div>

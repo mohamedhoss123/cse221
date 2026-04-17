@@ -25,21 +25,21 @@ function NewBookingPage() {
   }
 
   return (
-    <div className="page-wrap px-4 py-8">
+    <div className="p-8">
       <div className="mb-6">
         <button
           onClick={() => navigate({ to: '/customer/rooms' })}
-          className="text-sm text-[var(--lagoon-deep)] hover:underline"
+          className="text-sm text-[var(--expressive-primary)] hover:underline"
         >
           ← Back to Rooms
         </button>
       </div>
 
       <div className="mb-6">
-        <h1 className="display-title text-3xl font-bold text-[var(--sea-ink)]">
+        <h1 className="font-light text-3xl font-bold text-[var(--expressive-primary)]">
           Book Your Stay
         </h1>
-        <p className="text-[var(--sea-ink-soft)]">
+        <p className="text-[#000]">
           Complete the form below to reserve your room
         </p>
       </div>

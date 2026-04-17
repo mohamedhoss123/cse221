@@ -1,12 +1,14 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import type { User, LoginCredentials, RegisterData, AuthState } from '../types/auth.types'
+import { createContext, useContext, useState, useEffect } from 'react'
+import type { ReactNode } from 'react'
+import type { LoginCredentials, RegisterData, AuthState } from '../types/auth.types'
 import * as authService from '../services/auth.service'
 
 interface AuthContextType extends AuthState {
-  login: (credentials: LoginCredentials) => Promise<void>
+  login: (credentials: LoginCredentials) => Promise<{ user: User, token: string }>
   logout: () => void
-  register: (data: RegisterData) => Promise<void>
+  register: (data: RegisterData) => Promise<{ user: User, token: string }>
   isAdmin: boolean
+  isVisitor: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -24,11 +26,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const storedUser = localStorage.getItem('auth_user')
 
     if (storedToken && storedUser) {
-      setState({
-        token: storedToken,
-        user: JSON.parse(storedUser),
-        isAuthenticated: true,
-      })
+      try {
+        const user = JSON.parse(storedUser)
+        setState({
+          token: storedToken,
+          user,
+          isAuthenticated: true,
+        })
+      } catch (error) {
+        console.error('Failed to parse stored user:', error)
+        localStorage.removeItem('auth_token')
+        localStorage.removeItem('auth_user')
+      }
     }
   }, [])
 
@@ -41,6 +50,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
     localStorage.setItem('auth_token', response.token)
     localStorage.setItem('auth_user', JSON.stringify(response.user))
+    
+    return {
+      user: response.user,
+      token: response.token,
+    }
   }
 
   const register = async (data: RegisterData) => {
@@ -52,6 +66,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
     localStorage.setItem('auth_token', response.token)
     localStorage.setItem('auth_user', JSON.stringify(response.user))
+    
+    return {
+      user: response.user,
+      token: response.token,
+    }
   }
 
   const logout = () => {
@@ -71,6 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logout,
     register,
     isAdmin: state.user?.role === 'admin',
+    isVisitor: state.user?.role === 'visitor',
   }
 
   return <AuthContext value={value}>{children}</AuthContext>

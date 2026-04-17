@@ -1,10 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 import ProtectedRoute from '#/components/ProtectedRoute'
-import { getBookings, getComplaints } from '#/services'
+import { getBookingsSync, getComplaintsSync } from '#/services/bookings.service'
 import DashboardStats from '#/components/admin/DashboardStats'
 import RevenueChart from '#/components/admin/RevenueChart'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
-import { Separator } from '#/components/ui/separator'
 import {
   DollarSign,
   Calendar,
@@ -18,8 +17,8 @@ export const Route = createFileRoute('/admin/dashboard')({
 })
 
 function DashboardPage() {
-  const bookings = getBookings()
-  const complaints = getComplaints()
+  const bookings = getBookingsSync()
+  const complaints = getComplaintsSync()
 
   // Calculate metrics
   const totalRevenue = bookings
@@ -50,10 +49,10 @@ function DashboardPage() {
     <ProtectedRoute requireAdmin>
       <div className="page-wrap px-4 py-8">
       <div className="mb-8">
-        <h1 className="display-title mb-2 text-3xl font-bold text-[var(--sea-ink)]">
+        <h1 className="display-title mb-2 text-3xl font-bold text-[var(--expressive-primary)]">
           Dashboard
         </h1>
-        <p className="text-[var(--sea-ink-soft)]">
+        <p className="text-[#000]">
           Overview of hotel operations and metrics
         </p>
       </div>
@@ -113,20 +112,20 @@ function DashboardPage() {
                 </div>
               )}
 
-              <div className="rounded-lg bg-[var(--foam)] p-3">
-                <p className="font-semibold text-[var(--sea-ink)]">
+              <div className="rounded-lg bg-[var(--expressive-background)] p-3">
+                <p className="font-semibold text-[var(--expressive-primary)]">
                   Room Maintenance
                 </p>
-                <p className="text-sm text-[var(--sea-ink-soft)]">
+                <p className="text-sm text-[#000]">
                   2 rooms need cleaning
                 </p>
               </div>
 
-              <div className="rounded-lg bg-[var(--foam)] p-3">
-                <p className="font-semibold text-[var(--sea-ink)]">
+              <div className="rounded-lg bg-[var(--expressive-background)] p-3">
+                <p className="font-semibold text-[var(--expressive-primary)]">
                   Today's Check-outs
                 </p>
-                <p className="text-sm text-[var(--sea-ink-soft)]">
+                <p className="text-sm text-[#000]">
                   5 rooms to prepare
                 </p>
               </div>
@@ -145,24 +144,24 @@ function DashboardPage() {
             {bookings.slice(0, 5).map((booking) => (
               <div
                 key={booking.id}
-                className="flex items-center justify-between rounded-lg bg-[var(--foam)] p-3"
+                className="flex items-center justify-between rounded-lg bg-[var(--expressive-background)] p-3"
               >
                 <div>
-                  <p className="font-medium text-[var(--sea-ink)]">
+                  <p className="font-medium text-[var(--expressive-primary)]">
                     {booking.id}
                   </p>
-                  <p className="text-sm text-[var(--sea-ink-soft)]">
+                  <p className="text-sm text-[#000]">
                     {new Date(booking.createdAt).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold text-[var(--sea-ink)]">
+                  <p className="font-semibold text-[var(--expressive-primary)]">
                     ${booking.totalAmount}
                   </p>
                   <p
                     className={`text-sm ${
                       booking.status === 'confirmed'
-                        ? 'text-[var(--palm)]'
+                        ? 'text-[#000]'
                         : 'text-yellow-600'
                     }`}
                   >

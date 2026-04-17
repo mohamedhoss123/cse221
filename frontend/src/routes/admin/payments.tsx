@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { getPayments } from '#/services/payments.service'
+import { getPaymentsSync } from '#/services/payments.service'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent } from '#/components/ui/card'
 import { Badge } from '#/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '#/components/ui/table'
-import { DollarSign, RefreshCw } from 'lucide-react'
+import { DollarSign, RefreshCw, Undo } from 'lucide-react'
 import { format } from 'date-fns'
 import RefundDialog from '#/components/admin/RefundDialog'
 
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/admin/payments')({
 })
 
 function AdminPaymentsPage() {
-  const [payments] = useState(getPayments())
+  const [payments] = useState(getPaymentsSync())
   const [selectedPayment, setSelectedPayment] = useState<typeof payments[0] | null>(null)
   const [refundDialogOpen, setRefundDialogOpen] = useState(false)
 
@@ -145,10 +145,12 @@ function AdminPaymentsPage() {
                       <TableCell className="text-right">
                         {payment.status === 'paid' && (
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
+                            className="border-[#ce0031] text-[#ce0031] hover:bg-[#ce0031] hover:text-white"
                             onClick={() => handleRefund(payment)}
                           >
+                            <Undo className="mr-2 h-4 w-4" />
                             Refund
                           </Button>
                         )}

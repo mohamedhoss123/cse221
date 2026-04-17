@@ -12,7 +12,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const { login } = useAuth()
+  const { login, isAdmin, isVisitor } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,8 +21,16 @@ export default function LoginForm() {
     setIsLoading(true)
 
     try {
-      await login({ email, password })
-      navigate({ to: '/', replace: true })
+      const result = await login({ email, password })
+      
+      // Redirect based on user role from the login response
+      if (result && result.user && result.user.role === 'admin') {
+        navigate({ to: '/admin', replace: true })
+      } else if (result && result.user && result.user.role === 'visitor') {
+        navigate({ to: '/customer', replace: true })
+      } else {
+        navigate({ to: '/', replace: true })
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to login')
     } finally {
@@ -50,14 +58,14 @@ export default function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               required
               disabled={isLoading}
-              className="h-12 border-slate-300 focus:border-amber-500 focus:ring-amber-500/20 bg-white"
+              className="h-12 border-slate-300 focus:border-[var(--expressive-primary)] focus:ring-[var(--expressive-primary)]/20 bg-white"
             />
           </div>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="password" className="text-slate-700 font-medium">Password</Label>
-              <a href="#" className="text-sm text-amber-600 hover:text-amber-700 font-medium">
+              <a href="#" className="text-sm text-[var(--expressive-primary)] hover:text-[var(--expressive-primary)] font-medium">
                 Forgot password?
               </a>
             </div>
@@ -69,14 +77,14 @@ export default function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               required
               disabled={isLoading}
-              className="h-12 border-slate-300 focus:border-amber-500 focus:ring-amber-500/20 bg-white"
+              className="h-12 border-slate-300 focus:border-[var(--expressive-primary)] focus:ring-[var(--expressive-primary)]/20 bg-white"
             />
           </div>
         </div>
 
         <Button
           type="submit"
-          className="w-full h-12 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-medium shadow-lg shadow-amber-500/30 transition-all duration-200"
+          className="w-full h-12 bg-gradient-to-r from-[var(--expressive-primary)] to-[var(--expressive-accent)] hover:from-[var(--expressive-primary)] hover:to-[var(--expressive-accent)] text-white font-medium shadow-lg shadow-[var(--expressive-accent)]/30 transition-all duration-200"
           disabled={isLoading}
         >
           {isLoading ? (
@@ -94,12 +102,12 @@ export default function LoginForm() {
           <p className="text-xs font-medium text-slate-700 mb-2">Demo Accounts</p>
           <div className="space-y-1 text-xs text-slate-600">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-amber-700">Admin:</span>
+              <span className="font-semibold text-[var(--expressive-primary)]">Admin:</span>
               <span>admin@hotel.com / admin123</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-amber-700">Customer:</span>
-              <span>customer@hotel.com / customer123</span>
+              <span className="font-semibold text-[var(--expressive-primary)]">Visitor:</span>
+              <span>visitor@hotel.com / visitor123</span>
             </div>
           </div>
         </div>

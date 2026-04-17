@@ -10,7 +10,7 @@ import { ArrowLeft, Calendar, Users, DollarSign, MapPin } from 'lucide-react'
 import { format } from 'date-fns'
 import BookingStatusUpdate from '#/components/admin/BookingStatusUpdate'
 
-export const Route = createFileRoute('/admin/bookings/$id')({
+export const Route = createFileRoute('/admin/bookings/id')({
   component: AdminBookingDetailsPage,
   loader: async ({ params }) => {
     const booking = await getBookingById(params.id)

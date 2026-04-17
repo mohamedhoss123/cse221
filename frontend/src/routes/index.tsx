@@ -24,10 +24,10 @@ function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-600" />
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--expressive-primary)] to-[var(--expressive-accent)]" />
               <span className="text-xl font-light text-slate-900">
                 Luxury
-                <span className="font-semibold text-amber-600">Stays</span>
+                <span className="font-semibold text-[var(--expressive-primary)]">Stays</span>
               </span>
             </div>
             <div className="hidden md:flex items-center gap-8">
@@ -48,7 +48,7 @@ function LandingPage() {
                 </Button>
               </Link>
               <Link to="/auth/register">
-                <Button className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white shadow-lg shadow-amber-500/30">
+                <Button className="bg-gradient-to-r from-[var(--expressive-primary)] to-[var(--expressive-accent)] hover:from-[var(--expressive-primary)] hover:to-[var(--expressive-accent)] text-white shadow-lg shadow-[#f27b89]/30">
                   Get Started
                 </Button>
               </Link>
@@ -78,14 +78,14 @@ function LandingPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/50 to-slate-900" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-400 text-sm font-medium mb-8">
-            <Star className="w-4 h-4 fill-amber-400" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--expressive-accent)]/10 border border-[var(--expressive-accent)]/20 text-[var(--expressive-accent)] text-sm font-medium mb-8">
+            <Star className="w-4 h-4 fill-[#f27b89]" />
             <span>5-Star Luxury Experience</span>
           </div>
 
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-light tracking-tight text-white mb-6">
             Discover
-            <span className="block font-semibold text-amber-400 mt-2">Extraordinary Stays</span>
+            <span className="block font-semibold text-[var(--expressive-accent)] mt-2">Extraordinary Stays</span>
           </h1>
 
           <p className="text-xl sm:text-2xl text-slate-300 font-light max-w-3xl mx-auto mb-10 leading-relaxed">
@@ -97,7 +97,7 @@ function LandingPage() {
             <Link to="/auth/register">
               <Button
                 size="lg"
-                className="h-14 px-8 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-medium shadow-2xl shadow-amber-500/40 text-lg"
+                className="h-14 px-8 bg-gradient-to-r from-[var(--expressive-primary)] to-[var(--expressive-accent)] hover:from-[var(--expressive-primary)] hover:to-[var(--expressive-accent)] text-white font-medium shadow-2xl shadow-[#f27b89]/40 text-lg"
               >
                 Start Your Journey
                 <ArrowRight className="ml-2 w-5 h-5" />
@@ -122,7 +122,7 @@ function LandingPage() {
               { value: '10K+', label: 'Happy Guests' },
             ].map((stat) => (
               <div key={stat.label}>
-                <div className="text-3xl sm:text-4xl font-semibold text-amber-400">{stat.value}</div>
+                <div className="text-3xl sm:text-4xl font-semibold text-[var(--expressive-accent)]">{stat.value}</div>
                 <div className="text-sm text-slate-400 mt-1">{stat.label}</div>
               </div>
             ))}
@@ -130,15 +130,15 @@ function LandingPage() {
         </div>
 
         {/* Bottom accent */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#f27b89] to-transparent" />
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 bg-gradient-to-br from-slate-50 to-slate-100">
+      <section id="features" className="py-24 bg-gradient-to-br from-[var(--expressive-background)] to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl font-light text-slate-900 mb-4">
-              Why Choose <span className="font-semibold text-amber-600">LuxuryStays</span>
+              Why Choose <span className="font-semibold text-[var(--expressive-primary)]">LuxuryStays</span>
             </h2>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto">
               Experience the perfect blend of elegance, comfort, and exceptional service
@@ -182,9 +182,9 @@ function LandingPage() {
               return (
                 <div
                   key={feature.title}
-                  className="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-amber-300"
+                  className="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-[#000]"
                 >
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[var(--expressive-primary)] to-[var(--expressive-accent)] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     <Icon className="w-7 h-7 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold text-slate-900 mb-3">{feature.title}</h3>
@@ -201,7 +201,7 @@ function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl font-light text-slate-900 mb-4">
-              World-Class <span className="font-semibold text-amber-600">Amenities</span>
+              World-Class <span className="font-semibold text-[var(--expressive-primary)]">Amenities</span>
             </h2>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto">
               Every detail designed for your comfort and convenience
@@ -235,9 +235,9 @@ function LandingPage() {
               return (
                 <div
                   key={amenity.title}
-                  className="text-center p-6 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200"
+                  className="text-center p-6 rounded-2xl bg-gradient-to-br from-[var(--expressive-background)] to-white border border-slate-200"
                 >
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-[var(--expressive-primary)] to-[var(--expressive-accent)] flex items-center justify-center">
                     <Icon className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-lg font-semibold text-slate-900 mb-2">{amenity.title}</h3>
@@ -267,7 +267,7 @@ function LandingPage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl font-light text-white mb-4">
-              Guest <span className="font-semibold text-amber-400">Testimonials</span>
+              Guest <span className="font-semibold text-[var(--expressive-accent)]">Testimonials</span>
             </h2>
             <p className="text-xl text-slate-300 max-w-2xl mx-auto">
               Hear what our guests have to say about their extraordinary experiences
@@ -301,7 +301,7 @@ function LandingPage() {
               >
                 <div className="flex gap-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
+                    <Star key={i} className="w-5 h-5 fill-[#f27b89] text-[var(--expressive-accent)]" />
                   ))}
                 </div>
                 <p className="text-slate-200 mb-6 leading-relaxed">"{testimonial.text}"</p>
@@ -315,15 +315,15 @@ function LandingPage() {
         </div>
 
         {/* Bottom accent */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#f27b89] to-transparent" />
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-br from-slate-50 to-slate-100">
+      <section className="py-24 bg-gradient-to-br from-[var(--expressive-background)] to-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl sm:text-5xl font-light text-slate-900 mb-6">
             Ready to Experience
-            <span className="block font-semibold text-amber-600 mt-2">True Luxury?</span>
+            <span className="block font-semibold text-[var(--expressive-primary)] mt-2">True Luxury?</span>
           </h2>
           <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
             Join thousands of discerning travelers who have made LuxuryStays their preferred destination
@@ -333,7 +333,7 @@ function LandingPage() {
             <Link to="/auth/register">
               <Button
                 size="lg"
-                className="h-14 px-8 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-medium shadow-xl shadow-amber-500/30 text-lg"
+                className="h-14 px-8 bg-gradient-to-r from-[var(--expressive-primary)] to-[var(--expressive-accent)] hover:from-[var(--expressive-primary)] hover:to-[var(--expressive-accent)] text-white font-medium shadow-xl shadow-[#f27b89]/30 text-lg"
               >
                 Create Your Account
                 <ArrowRight className="ml-2 w-5 h-5" />
@@ -343,7 +343,7 @@ function LandingPage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="h-14 px-8 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-lg"
+                className="h-14 px-8 border-2 border-slate-300 text-slate-700 hover:bg-[var(--expressive-background)] text-lg"
               >
                 Browse Rooms
               </Button>
@@ -357,10 +357,10 @@ function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-600" />
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--expressive-primary)] to-[var(--expressive-accent)]" />
               <span className="text-lg font-light text-white">
                 Luxury
-                <span className="font-semibold text-amber-400">Stays</span>
+                <span className="font-semibold text-[var(--expressive-accent)]">Stays</span>
               </span>
             </div>
             <div className="text-sm">

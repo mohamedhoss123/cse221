@@ -8,7 +8,7 @@ export const Route = createFileRoute('/customer')({
 
 function CustomerLayout() {
   return (
-    <ProtectedRoute>
+    <ProtectedRoute requireVisitor={true}>
       <div className="flex min-h-screen bg-slate-50">
         <CustomerSidebar className="fixed left-0 top-0 h-screen" />
         <main className="flex-1 ml-72">

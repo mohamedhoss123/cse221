@@ -12,9 +12,13 @@ export default function RegisterForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [phone, setPhone] = useState('')
+  const [address, setAddress] = useState('')
+  const [gender, setGender] = useState('')
+  const [birthdate, setBirthdate] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const { register } = useAuth()
+  const { register, isAdmin, isVisitor } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,8 +38,24 @@ export default function RegisterForm() {
     setIsLoading(true)
 
     try {
-      await register({ email, password, name })
-      navigate({ to: '/', replace: true })
+      const result = await register({ 
+        email, 
+        password, 
+        name, 
+        phone: phone || undefined,
+        address: address || undefined,
+        gender: gender || undefined,
+        birthdate: birthdate || undefined
+      })
+      
+      // Redirect based on user role from the register response
+      if (result && result.user && result.user.role === 'admin') {
+        navigate({ to: '/admin', replace: true })
+      } else if (result && result.user && result.user.role === 'visitor') {
+        navigate({ to: '/customer', replace: true })
+      } else {
+        navigate({ to: '/customer', replace: true })
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to register')
     } finally {
@@ -63,7 +83,7 @@ export default function RegisterForm() {
               onChange={(e) => setName(e.target.value)}
               required
               disabled={isLoading}
-              className="h-12 border-slate-300 focus:border-amber-500 focus:ring-amber-500/20 bg-white"
+              className="h-12 border-slate-300 focus:border-[var(--expressive-primary)] focus:ring-[var(--expressive-primary)]/20 bg-white"
             />
           </div>
 
@@ -77,7 +97,61 @@ export default function RegisterForm() {
               onChange={(e) => setEmail(e.target.value)}
               required
               disabled={isLoading}
-              className="h-12 border-slate-300 focus:border-amber-500 focus:ring-amber-500/20 bg-white"
+              className="h-12 border-slate-300 focus:border-[var(--expressive-primary)] focus:ring-[var(--expressive-primary)]/20 bg-white"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="phone" className="text-slate-700 font-medium">Phone (Optional)</Label>
+            <Input
+              id="phone"
+              type="tel"
+              placeholder="+1 234 567 8900"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              disabled={isLoading}
+              className="h-12 border-slate-300 focus:border-[var(--expressive-primary)] focus:ring-[var(--expressive-primary)]/20 bg-white"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="address" className="text-slate-700 font-medium">Address (Optional)</Label>
+            <Input
+              id="address"
+              type="text"
+              placeholder="123 Main St, City, Country"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              disabled={isLoading}
+              className="h-12 border-slate-300 focus:border-[var(--expressive-primary)] focus:ring-[var(--expressive-primary)]/20 bg-white"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="gender" className="text-slate-700 font-medium">Gender (Optional)</Label>
+            <select
+              id="gender"
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              disabled={isLoading}
+              className="h-12 w-full border-slate-300 focus:border-[var(--expressive-primary)] focus:ring-[var(--expressive-primary)]/20 bg-white px-3 py-2 rounded-md"
+            >
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="birthdate" className="text-slate-700 font-medium">Birthdate (Optional)</Label>
+            <Input
+              id="birthdate"
+              type="date"
+              value={birthdate}
+              onChange={(e) => setBirthdate(e.target.value)}
+              disabled={isLoading}
+              className="h-12 border-slate-300 focus:border-[var(--expressive-primary)] focus:ring-[var(--expressive-primary)]/20 bg-white"
             />
           </div>
 
@@ -86,12 +160,12 @@ export default function RegisterForm() {
             <Input
               id="password"
               type="password"
-              placeholder="••••••••"
+              placeholder="•••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               disabled={isLoading}
-              className="h-12 border-slate-300 focus:border-amber-500 focus:ring-amber-500/20 bg-white"
+              className="h-12 border-slate-300 focus:border-[var(--expressive-primary)] focus:ring-[var(--expressive-primary)]/20 bg-white"
             />
             <p className="text-xs text-slate-500">Must be at least 6 characters</p>
           </div>
@@ -101,19 +175,19 @@ export default function RegisterForm() {
             <Input
               id="confirmPassword"
               type="password"
-              placeholder="••••••••"
+              placeholder="•••••••••"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               disabled={isLoading}
-              className="h-12 border-slate-300 focus:border-amber-500 focus:ring-amber-500/20 bg-white"
+              className="h-12 border-slate-300 focus:border-[var(--expressive-primary)] focus:ring-[var(--expressive-primary)]/20 bg-white"
             />
           </div>
         </div>
-
+ 
         <Button
           type="submit"
-          className="w-full h-12 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-medium shadow-lg shadow-amber-500/30 transition-all duration-200"
+          className="w-full h-12 bg-gradient-to-r from-[var(--expressive-primary)] to-[var(--expressive-accent)] hover:from-[var(--expressive-primary)] hover:to-[var(--expressive-accent)] text-white font-medium shadow-lg shadow-[var(--expressive-accent)]/30 transition-all duration-200"
           disabled={isLoading}
         >
           {isLoading ? (
@@ -129,9 +203,9 @@ export default function RegisterForm() {
         {/* Terms notice */}
         <p className="text-xs text-slate-500 text-center">
           By creating an account, you agree to our{' '}
-          <a href="#" className="text-amber-600 hover:text-amber-700 font-medium">Terms of Service</a>
+          <a href="#" className="text-[var(--expressive-primary)] hover:text-[var(--expressive-primary)] font-medium">Terms of Service</a>
           {' '}and{' '}
-          <a href="#" className="text-amber-600 hover:text-amber-700 font-medium">Privacy Policy</a>
+          <a href="#" className="text-[var(--expressive-primary)] hover:text-[var(--expressive-primary)] font-medium">Privacy Policy</a>
         </p>
       </form>
     </div>

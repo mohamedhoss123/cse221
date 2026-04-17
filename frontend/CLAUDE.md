@@ -127,7 +127,29 @@ When working with UI:
 - Follow shadcn/ui patterns for consistency
 - Leverage Radix UI primitives for accessibility
 - Use Tailwind utility classes for styling
-- Maintain the ocean/palm color theme defined in CSS variables
+
+### Color Scheme
+
+The application uses a modern, vibrant color palette:
+
+**Primary Colors:**
+- **Primary Red/Dark Pink**: `#ce0031` - Used for primary actions, buttons, and highlights
+- **Secondary Teal**: `#000` - Used for secondary actions, accents, and complementary elements
+- **Background Pink**: `#fef7f8` - Used for light backgrounds and subtle contrasts
+- **Accent Pink**: `#f27b89` - Used for intermediate accents, gradients, and hover states
+
+**Usage Guidelines:**
+- Use `#ce0031` for: primary buttons, active states, important CTAs
+- Use `#000` for: secondary buttons, links, info accents
+- Use `#fef7f8` for: page backgrounds, card backgrounds, subtle sections
+- Use `#f27b89` for: gradients, hover states, decorative elements
+- Use `from-[#ce0031] to-[#f27b89]` for: primary gradients
+- Use `from-[#000] to-[#f27b89]` for: secondary gradients
+
+**Neutral Colors:**
+- Text: Slate-900 for headings, Slate-600 for body
+- Borders: Slate-200 for subtle borders
+- White backgrounds for cards and content areas
 
 ### State Management
 

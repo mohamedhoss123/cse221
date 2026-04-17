@@ -60,7 +60,7 @@ function InvoicePage() {
     totalAmount: 1400,
     paidAmount: 600,
     remainingAmount: 800,
-    status: 'partial' as const,
+    status: 'partial' as 'pending' | 'partial' | 'paid' | 'overdue',
     dueDate: '2025-06-01',
     createdAt: '2025-04-15',
     payments: [
@@ -94,22 +94,22 @@ function InvoicePage() {
       pending: {
         icon: Clock,
         label: 'Pending',
-        className: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+        className: 'bg-yellow-100 text-[var(--expressive-text)] border-yellow-200',
       },
       partial: {
         icon: AlertCircle,
         label: 'Partial Payment',
-        className: 'bg-amber-100 text-amber-700 border-amber-200',
+        className: 'bg-amber-100 text-[var(--expressive-text)] border-amber-200',
       },
       paid: {
         icon: CheckCircle2,
         label: 'Paid',
-        className: 'bg-green-100 text-green-700 border-green-200',
+        className: 'bg-green-100 text-[var(--expressive-text)] border-green-200',
       },
       overdue: {
         icon: AlertCircle,
         label: 'Overdue',
-        className: 'bg-red-100 text-red-700 border-red-200',
+        className: 'bg-red-100 text-[var(--expressive-primary)] border-red-200',
       },
     }
 
@@ -167,19 +167,19 @@ function InvoicePage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-light text-slate-900">
-              Invoice <span className="font-semibold text-amber-600">#{invoice.id}</span>
+            <h1 className="text-3xl font-light text-[var(--expressive-primary)]">
+              Invoice <span className="font-semibold text-[var(--expressive-primary)]">#{invoice.id}</span>
             </h1>
             {getStatusBadge()}
           </div>
-          <p className="text-slate-600">
+          <p className="text-[var(--expressive-text)]">
             Booking #{invoice.bookingId} • Created on {format(new Date(invoice.createdAt), 'MMMM d, yyyy')}
           </p>
         </div>
         <div className="flex gap-3">
           <Button
             variant="outline"
-            className="border-slate-300"
+            className="bg-[var(--expressive-surface)] text-[var(--expressive-text)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
             onClick={() => toast.info('Downloading receipt...')}
           >
             <Download className="w-4 h-4 mr-2" />
@@ -187,7 +187,7 @@ function InvoicePage() {
           </Button>
           {invoice.status !== 'paid' && (
             <Button
-              className="bg-gradient-to-r from-amber-600 to-amber-700"
+              className="bg-[var(--expressive-primary)] text-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all"
               onClick={() => setShowPaymentDialog(true)}
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -201,57 +201,57 @@ function InvoicePage() {
         {/* Left Column - Invoice Details */}
         <div className="lg:col-span-2 space-y-6">
           {/* Booking Details Card */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200">
+          <div className="bg-[var(--expressive-surface)] rounded-2xl p-6 border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)]">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
-                <FileText className="w-5 h-5 text-amber-600" />
+              <div className="w-10 h-10 rounded-xl bg-[var(--expressive-accent)]/20 flex items-center justify-center">
+                <FileText className="w-5 h-5 text-[var(--expressive-primary)]" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">Booking Details</h2>
-                <p className="text-sm text-slate-600">Reservation information</p>
+                <h2 className="text-lg font-semibold text-[var(--expressive-primary)]">Booking Details</h2>
+                <p className="text-sm text-[var(--expressive-text)]">Reservation information</p>
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs text-slate-500 mb-1">Room Type</p>
-                  <p className="text-sm font-medium text-slate-900">{invoice.booking.roomName}</p>
+                  <p className="text-xs text-[var(--expressive-text)] mb-1">Room Type</p>
+                  <p className="text-sm font-medium text-[var(--expressive-primary)]">{invoice.booking.roomName}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 mb-1">Check-in</p>
+                  <p className="text-xs text-[var(--expressive-text)] mb-1">Check-in</p>
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-slate-400" />
-                    <p className="text-sm font-medium text-slate-900">
+                    <Calendar className="w-4 h-4 text-[var(--expressive-text)]" />
+                    <p className="text-sm font-medium text-[var(--expressive-primary)]">
                       {format(new Date(invoice.booking.checkIn), 'MMM d, yyyy')}
                     </p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 mb-1">Guests</p>
-                  <p className="text-sm font-medium text-slate-900">{invoice.booking.guests} guests</p>
+                  <p className="text-xs text-[var(--expressive-text)] mb-1">Guests</p>
+                  <p className="text-sm font-medium text-[var(--expressive-primary)]">{invoice.booking.guests} guests</p>
                 </div>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs text-slate-500 mb-1">Booking ID</p>
-                  <p className="text-sm font-medium text-slate-900">{invoice.booking.id}</p>
+                  <p className="text-xs text-[var(--expressive-text)] mb-1">Booking ID</p>
+                  <p className="text-sm font-medium text-[var(--expressive-primary)]">{invoice.booking.id}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 mb-1">Check-out</p>
+                  <p className="text-xs text-[var(--expressive-text)] mb-1">Check-out</p>
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-slate-400" />
-                    <p className="text-sm font-medium text-slate-900">
+                    <Calendar className="w-4 h-4 text-[var(--expressive-text)]" />
+                    <p className="text-sm font-medium text-[var(--expressive-primary)]">
                       {format(new Date(invoice.booking.checkOut), 'MMM d, yyyy')}
                     </p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 mb-1">Due Date</p>
+                  <p className="text-xs text-[var(--expressive-text)] mb-1">Due Date</p>
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-slate-400" />
-                    <p className="text-sm font-medium text-slate-900">
+                    <Clock className="w-4 h-4 text-[var(--expressive-text)]" />
+                    <p className="text-sm font-medium text-[var(--expressive-primary)]">
                       {format(new Date(invoice.dueDate), 'MMM d, yyyy')}
                     </p>
                   </div>
@@ -261,51 +261,51 @@ function InvoicePage() {
           </div>
 
           {/* Payment History */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200">
+          <div className="bg-[var(--expressive-surface)] rounded-2xl p-6 border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)]">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                  <CreditCard className="w-5 h-5 text-blue-600" />
+                <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+                  <CreditCard className="w-5 h-5 text-[var(--expressive-text)]" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-900">Payment History</h2>
-                  <p className="text-sm text-slate-600">{invoice.payments.length} transaction(s)</p>
+                  <h2 className="text-lg font-semibold text-[var(--expressive-primary)]">Payment History</h2>
+                  <p className="text-sm text-[var(--expressive-text)]">{invoice.payments.length} transaction(s)</p>
                 </div>
               </div>
             </div>
 
             {invoice.payments.length === 0 ? (
               <div className="text-center py-8">
-                <CreditCard className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-600">No payments yet</p>
+                <CreditCard className="w-12 h-12 text-[var(--expressive-text)] mx-auto mb-3" />
+                <p className="text-[var(--expressive-text)]">No payments yet</p>
               </div>
             ) : (
               <div className="space-y-3">
                 {invoice.payments.map((payment, index) => (
                   <div
                     key={payment.id}
-                    className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors"
+                    className="flex items-center justify-between p-4 bg-[var(--expressive-background)] rounded-xl hover:bg-slate-100 transition-colors"
                   >
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                        <CheckCircle2 className="w-5 h-5 text-green-600" />
+                        <CheckCircle2 className="w-5 h-5 text-[var(--expressive-text)]" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <p className="text-sm font-semibold text-slate-900">
+                          <p className="text-sm font-semibold text-[var(--expressive-primary)]">
                             {payment.method?.replace('_', ' ').toUpperCase()}
                           </p>
-                          <span className="text-xs text-slate-500">•</span>
-                          <p className="text-xs text-slate-500">{payment.transactionId}</p>
+                          <span className="text-xs text-[var(--expressive-text)]">•</span>
+                          <p className="text-xs text-[var(--expressive-text)]">{payment.transactionId}</p>
                         </div>
-                        <p className="text-xs text-slate-600">
+                        <p className="text-xs text-[var(--expressive-text)]">
                           {format(new Date(payment.createdAt), 'MMM d, yyyy • h:mm a')}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-semibold text-green-600">-${payment.amount}</p>
-                      <p className="text-xs text-slate-600">
+                      <p className="text-lg font-semibold text-[var(--expressive-text)]">-${payment.amount}</p>
+                      <p className="text-xs text-[var(--expressive-text)]">
                         {index + 1} of {invoice.payments.length} payment{invoice.payments.length > 1 ? 's' : ''}
                       </p>
                     </div>
@@ -324,18 +324,18 @@ function InvoicePage() {
 
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-slate-300">Amount Paid</span>
+                <span className="text-sm text-[var(--expressive-text)]">Amount Paid</span>
                 <span className="text-sm font-semibold">${invoice.paidAmount}</span>
               </div>
               <div className="w-full bg-slate-700 rounded-full h-3 mb-4">
                 <div
-                  className="bg-gradient-to-r from-amber-500 to-amber-400 h-3 rounded-full transition-all duration-500"
+                  className="bg-gradient-to-r from-[var(--expressive-primary)] to-[var(--expressive-accent)] h-3 rounded-full transition-all duration-500"
                   style={{ width: `${progressPercentage}%` }}
                 />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-300">Progress</span>
-                <span className="text-sm font-semibold text-amber-400">
+                <span className="text-sm text-[var(--expressive-text)]">Progress</span>
+                <span className="text-sm font-semibold text-[var(--expressive-accent)]">
                   {progressPercentage.toFixed(0)}%
                 </span>
               </div>
@@ -343,28 +343,28 @@ function InvoicePage() {
 
             <div className="space-y-3 pt-4 border-t border-slate-700">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-300">Total Amount</span>
+                <span className="text-sm text-[var(--expressive-text)]">Total Amount</span>
                 <span className="text-sm font-semibold">${invoice.totalAmount}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-300">Paid</span>
-                <span className="text-sm font-semibold text-green-400">${invoice.paidAmount}</span>
+                <span className="text-sm text-[var(--expressive-text)]">Paid</span>
+                <span className="text-sm font-semibold text-[var(--expressive-text)]">${invoice.paidAmount}</span>
               </div>
               <div className="flex items-center justify-between pt-3 border-t border-slate-700">
                 <span className="text-base font-semibold">Remaining</span>
-                <span className="text-xl font-bold text-amber-400">${invoice.remainingAmount}</span>
+                <span className="text-xl font-bold text-[var(--expressive-accent)]">${invoice.remainingAmount}</span>
               </div>
             </div>
           </div>
 
           {/* Quick Payment Actions */}
           {invoice.status !== 'paid' && (
-            <div className="bg-white rounded-2xl p-6 border border-slate-200">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">Quick Payment</h3>
+            <div className="bg-[var(--expressive-surface)] rounded-2xl p-6 border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)]">
+              <h3 className="text-lg font-semibold text-[var(--expressive-primary)] mb-4">Quick Payment</h3>
               <div className="grid grid-cols-2 gap-3">
                 <Button
                   variant="outline"
-                  className="border-slate-300"
+                  className="bg-[var(--expressive-surface)] text-[var(--expressive-text)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
                   onClick={() => handleQuickAmount(Math.min(200, invoice.remainingAmount))}
                   disabled={200 > invoice.remainingAmount}
                 >
@@ -372,7 +372,7 @@ function InvoicePage() {
                 </Button>
                 <Button
                   variant="outline"
-                  className="border-slate-300"
+                  className="bg-[var(--expressive-surface)] text-[var(--expressive-text)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
                   onClick={() => handleQuickAmount(Math.min(400, invoice.remainingAmount))}
                   disabled={400 > invoice.remainingAmount}
                 >
@@ -380,14 +380,14 @@ function InvoicePage() {
                 </Button>
                 <Button
                   variant="outline"
-                  className="border-slate-300 col-span-2"
+                  className="col-span-2 bg-[var(--expressive-surface)] text-[var(--expressive-text)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
                   onClick={() => handleQuickAmount(invoice.remainingAmount)}
                 >
                   Pay Remaining (${invoice.remainingAmount})
                 </Button>
               </div>
               <Button
-                className="w-full mt-3 bg-gradient-to-r from-amber-600 to-amber-700"
+                className="w-full mt-3 bg-[var(--expressive-primary)] text-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all"
                 onClick={() => setShowPaymentDialog(true)}
               >
                 Custom Amount
@@ -397,9 +397,9 @@ function InvoicePage() {
           )}
 
           {/* Payment Methods Info */}
-          <div className="bg-amber-50 rounded-2xl p-6 border border-amber-200">
-            <h3 className="text-sm font-semibold text-amber-900 mb-3">Accepted Payment Methods</h3>
-            <div className="space-y-2 text-xs text-amber-800">
+          <div className="bg-[var(--expressive-accent)]/20 rounded-2xl p-6 border border-[var(--expressive-accent)]/30">
+            <h3 className="text-sm font-semibold text-[var(--expressive-primary)] mb-3">Accepted Payment Methods</h3>
+            <div className="space-y-2 text-xs text-[var(--expressive-text)]">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Credit/Debit Cards</span>
@@ -419,7 +419,7 @@ function InvoicePage() {
 
       {/* Payment Dialog */}
       <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-2xl">
           <DialogHeader>
             <DialogTitle>Make a Payment</DialogTitle>
             <DialogDescription>
@@ -431,7 +431,7 @@ function InvoicePage() {
             <div className="space-y-2">
               <Label htmlFor="amount">Payment Amount</Label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--expressive-text)] font-semibold">
                   $
                 </span>
                 <Input
@@ -440,13 +440,13 @@ function InvoicePage() {
                   placeholder="0.00"
                   value={paymentAmount}
                   onChange={(e) => setPaymentAmount(e.target.value)}
-                  className="pl-8 h-12 border-slate-300"
+                  className="pl-8 h-12 bg-[var(--expressive-background)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-xl focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-[var(--expressive-primary)] transition-colors"
                   min="1"
                   max={invoice.remainingAmount}
                   step="0.01"
                 />
               </div>
-              <p className="text-xs text-slate-600">
+              <p className="text-xs text-[var(--expressive-text)]">
                 Remaining balance: <span className="font-semibold">${invoice.remainingAmount}</span>
               </p>
             </div>
@@ -454,10 +454,10 @@ function InvoicePage() {
             <div className="space-y-2">
               <Label htmlFor="method">Payment Method</Label>
               <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                <SelectTrigger className="h-12 border-slate-300">
+                <SelectTrigger className="h-12 bg-[var(--expressive-background)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-xl focus:ring-0 focus:ring-offset-0 focus:border-[var(--expressive-primary)] transition-colors">
                   <SelectValue placeholder="Select payment method" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-xl">
                   <SelectItem value="credit_card">Credit Card</SelectItem>
                   <SelectItem value="debit_card">Debit Card</SelectItem>
                   <SelectItem value="paypal">PayPal</SelectItem>
@@ -471,14 +471,14 @@ function InvoicePage() {
             <Button
               variant="outline"
               onClick={() => setShowPaymentDialog(false)}
-              className="border-slate-300"
+              className="bg-[var(--expressive-surface)] text-[var(--expressive-text)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
               disabled={isProcessing}
             >
               Cancel
             </Button>
             <Button
               onClick={handleMakePayment}
-              className="bg-gradient-to-r from-amber-600 to-amber-700"
+              className="bg-[var(--expressive-primary)] text-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all"
               disabled={isProcessing}
             >
               {isProcessing ? (

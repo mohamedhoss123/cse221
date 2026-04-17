@@ -2,7 +2,7 @@ export interface User {
   id: string
   email: string
   name: string
-  role: 'customer' | 'admin'
+  role: 'visitor' | 'admin'
 }
 
 export interface LoginCredentials {
@@ -14,6 +14,10 @@ export interface RegisterData {
   email: string
   password: string
   name: string
+  phone?: string
+  address?: string
+  gender?: string
+  birthdate?: string
 }
 
 export interface AuthState {

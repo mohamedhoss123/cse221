@@ -40,25 +40,25 @@ export default function CustomerSidebar({ className }: CustomerSidebarProps) {
       {/* Logo */}
       <div className="p-6 border-b border-slate-200">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-600" />
-          <span className="text-xl font-light text-slate-900">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--expressive-primary)] to-[var(--expressive-accent)]" />
+          <span className="text-xl font-light text-[var(--expressive-primary)]">
             Luxury
-            <span className="font-semibold text-amber-600">Stays</span>
+            <span className="font-semibold text-[var(--expressive-primary)]">Stays</span>
           </span>
         </Link>
       </div>
 
       {/* User Info */}
-      <div className="p-4 mx-4 mt-4 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl">
+      <div className="p-4 mx-4 mt-4 bg-gradient-to-br from-[var(--expressive-background)] to-white rounded-xl">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white font-semibold">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--expressive-primary)] to-[var(--expressive-accent)] flex items-center justify-center text-white font-semibold">
             {user?.name?.charAt(0).toUpperCase() || 'U'}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-slate-900 truncate">
+            <p className="text-sm font-semibold text-[var(--expressive-primary)] truncate">
               {user?.name || 'Guest'}
             </p>
-            <p className="text-xs text-slate-600 truncate">
+            <p className="text-xs text-[#000] truncate">
               {user?.email || ''}
             </p>
           </div>
@@ -67,7 +67,7 @@ export default function CustomerSidebar({ className }: CustomerSidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-        <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+        <p className="px-3 text-xs font-semibold text-[#000] uppercase tracking-wider mb-3">
           Menu
         </p>
         {navItems.map((item) => {
@@ -76,9 +76,9 @@ export default function CustomerSidebar({ className }: CustomerSidebarProps) {
             <Link
               key={item.to}
               to={item.to}
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-all duration-200 hover:bg-gradient-to-r hover:from-amber-50 hover:to-transparent hover:text-amber-700"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#000] transition-all duration-200 hover:bg-gradient-to-r hover:from-[var(--expressive-accent)]/10 hover:to-transparent hover:text-[var(--expressive-primary)]"
               activeProps={{
-                className: 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md',
+                className: 'bg-gradient-to-r from-[var(--expressive-primary)] to-[var(--expressive-accent)] text-white shadow-md',
               }}
             >
               <Icon className="h-5 w-5" />
@@ -92,7 +92,7 @@ export default function CustomerSidebar({ className }: CustomerSidebarProps) {
       <div className="p-4 border-t border-slate-200">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 w-full rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-all duration-200 hover:bg-red-50 hover:text-red-700"
+          className="flex items-center gap-3 w-full rounded-lg px-3 py-2.5 text-sm font-medium text-[#000] transition-all duration-200 hover:bg-red-50 hover:text-[var(--expressive-primary)]"
         >
           <LogOut className="h-5 w-5" />
           Sign Out

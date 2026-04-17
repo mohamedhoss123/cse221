@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '#/components/ui/dropdown-menu'
-import { User, LogOut, Menu } from 'lucide-react'
+import { User, LogOut } from 'lucide-react'
 
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth()
@@ -44,8 +44,9 @@ export default function Header() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {user.role === 'customer' && <CustomerNav />}
-                {user.role === 'admin' && <AdminNav />}
+                <CustomerNav />
+                <DropdownMenuSeparator />
+                <AdminNav />
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout} className="cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />
@@ -73,33 +74,27 @@ export default function Header() {
           >
             Home
           </Link>
-          {isAuthenticated && user?.role === 'customer' && (
-            <Link
-              to="/customer/rooms"
-              className="nav-link"
-              activeProps={{ className: 'nav-link is-active' }}
-            >
-              Rooms
-            </Link>
-          )}
-          {isAuthenticated && user?.role === 'customer' && (
-            <Link
-              to="/customer/bookings"
-              className="nav-link"
-              activeProps={{ className: 'nav-link is-active' }}
-            >
-              My Bookings
-            </Link>
-          )}
-          {isAuthenticated && user?.role === 'admin' && (
-            <Link
-              to="/admin/dashboard"
-              className="nav-link"
-              activeProps={{ className: 'nav-link is-active' }}
-            >
-              Dashboard
-            </Link>
-          )}
+          <Link
+            to="/customer/rooms"
+            className="nav-link"
+            activeProps={{ className: 'nav-link is-active' }}
+          >
+            Rooms
+          </Link>
+          <Link
+            to="/customer/bookings"
+            className="nav-link"
+            activeProps={{ className: 'nav-link is-active' }}
+          >
+            My Bookings
+          </Link>
+          <Link
+            to="/admin/dashboard"
+            className="nav-link"
+            activeProps={{ className: 'nav-link is-active' }}
+          >
+            Admin Dashboard
+          </Link>
         </div>
       </nav>
     </header>

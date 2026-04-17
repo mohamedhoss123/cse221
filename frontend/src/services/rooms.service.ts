@@ -2,9 +2,7 @@ import { mockDelay } from '../lib/api'
 import { mockRooms } from '../mock-data/rooms'
 import type { Room, RoomFilters } from '../types/room.types'
 
-export async function getRooms(filters?: RoomFilters): Promise<Room[]> {
-  await mockDelay()
-
+export function getRoomsSync(filters?: RoomFilters): Room[] {
   let filtered = [...mockRooms]
 
   if (filters?.type) {
@@ -34,6 +32,11 @@ export async function getRooms(filters?: RoomFilters): Promise<Room[]> {
   }
 
   return filtered
+}
+
+export async function getRooms(filters?: RoomFilters): Promise<Room[]> {
+  await mockDelay()
+  return getRoomsSync(filters)
 }
 
 export async function getRoomById(id: string): Promise<Room | undefined> {

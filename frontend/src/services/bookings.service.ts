@@ -2,12 +2,16 @@ import { mockDelay } from '../lib/api'
 import { mockBookings, mockComplaints } from '../mock-data/bookings'
 import type { Booking, BookingStatus, Complaint } from '../types/booking.types'
 
-export async function getBookings(customerId?: string): Promise<Booking[]> {
-  await mockDelay()
+export function getBookingsSync(customerId?: string): Booking[] {
   if (customerId) {
     return mockBookings.filter(booking => booking.customerId === customerId)
   }
   return [...mockBookings]
+}
+
+export async function getBookings(customerId?: string): Promise<Booking[]> {
+  await mockDelay()
+  return getBookingsSync(customerId)
 }
 
 export async function getBookingById(id: string): Promise<Booking | undefined> {
@@ -52,12 +56,16 @@ export async function cancelBooking(id: string): Promise<boolean> {
 }
 
 // Complaints
-export async function getComplaints(customerId?: string): Promise<Complaint[]> {
-  await mockDelay()
+export function getComplaintsSync(customerId?: string): Complaint[] {
   if (customerId) {
     return mockComplaints.filter(complaint => complaint.customerId === customerId)
   }
   return [...mockComplaints]
+}
+
+export async function getComplaints(customerId?: string): Promise<Complaint[]> {
+  await mockDelay()
+  return getComplaintsSync(customerId)
 }
 
 export async function getComplaintById(id: string): Promise<Complaint | undefined> {

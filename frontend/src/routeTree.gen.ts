@@ -10,33 +10,42 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as CustomerRouteImport } from './routes/customer'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as CustomerRoomsRouteImport } from './routes/customer/rooms'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as CustomerProfileRouteImport } from './routes/customer/profile'
-import { Route as CustomerPaymentsRouteImport } from './routes/customer/payments'
 import { Route as CustomerComplaintsRouteImport } from './routes/customer/complaints'
 import { Route as CustomerBookingsRouteImport } from './routes/customer/bookings'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
-import { Route as AdminRoomsRouteImport } from './routes/admin/rooms'
 import { Route as AdminPaymentsRouteImport } from './routes/admin/payments'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
-import { Route as AdminComplaintsRouteImport } from './routes/admin/complaints'
-import { Route as AdminBookingsRouteImport } from './routes/admin/bookings'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin/analytics'
-import { Route as CustomerRoomsIdRouteImport } from './routes/customer/rooms.$id'
-import { Route as CustomerPaymentsInvoiceIdRouteImport } from './routes/customer/payments.$invoiceId'
+import { Route as CustomerRoomsIndexRouteImport } from './routes/customer/rooms/index'
+import { Route as CustomerPaymentsIndexRouteImport } from './routes/customer/payments/index'
+import { Route as AdminSettingsIndexRouteImport } from './routes/admin/settings/index'
+import { Route as AdminRoomsIndexRouteImport } from './routes/admin/rooms/index'
+import { Route as AdminComplaintsIndexRouteImport } from './routes/admin/complaints/index'
+import { Route as AdminBookingsIndexRouteImport } from './routes/admin/bookings/index'
+import { Route as CustomerRoomsIdRouteImport } from './routes/customer/rooms/$id'
+import { Route as CustomerPaymentsInvoiceIdRouteImport } from './routes/customer/payments/$invoiceId'
 import { Route as CustomerBookingsNewRouteImport } from './routes/customer/bookings.new'
 import { Route as CustomerBookingsIdRouteImport } from './routes/customer/bookings.$id'
-import { Route as AdminRoomsNewRouteImport } from './routes/admin/rooms.new'
-import { Route as AdminComplaintsIdRouteImport } from './routes/admin/complaints.$id'
-import { Route as AdminBookingsIdRouteImport } from './routes/admin/bookings.$id'
-import { Route as AdminRoomsIdEditRouteImport } from './routes/admin/rooms.$id.edit'
+import { Route as AdminSettingsSecurityRouteImport } from './routes/admin/settings/security'
+import { Route as AdminRoomsNewRouteImport } from './routes/admin/rooms/new'
+import { Route as AdminComplaintsIdRouteImport } from './routes/admin/complaints/$id'
+import { Route as AdminBookingsIdRouteImport } from './routes/admin/bookings/id'
+import { Route as AdminRoomsIdEditRouteImport } from './routes/admin/rooms/$id.edit'
 
 const CustomerRoute = CustomerRouteImport.update({
   id: '/customer',
   path: '/customer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -49,19 +58,14 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CustomerRoomsRoute = CustomerRoomsRouteImport.update({
-  id: '/rooms',
-  path: '/rooms',
-  getParentRoute: () => CustomerRoute,
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const CustomerProfileRoute = CustomerProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => CustomerRoute,
-} as any)
-const CustomerPaymentsRoute = CustomerPaymentsRouteImport.update({
-  id: '/payments',
-  path: '/payments',
   getParentRoute: () => CustomerRoute,
 } as any)
 const CustomerComplaintsRoute = CustomerComplaintsRouteImport.update({
@@ -84,46 +88,61 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRoomsRoute = AdminRoomsRouteImport.update({
-  id: '/admin/rooms',
-  path: '/admin/rooms',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
-  id: '/admin/payments',
-  path: '/admin/payments',
-  getParentRoute: () => rootRouteImport,
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
-  id: '/admin/dashboard',
-  path: '/admin/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminComplaintsRoute = AdminComplaintsRouteImport.update({
-  id: '/admin/complaints',
-  path: '/admin/complaints',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminBookingsRoute = AdminBookingsRouteImport.update({
-  id: '/admin/bookings',
-  path: '/admin/bookings',
-  getParentRoute: () => rootRouteImport,
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
-  id: '/admin/analytics',
-  path: '/admin/analytics',
-  getParentRoute: () => rootRouteImport,
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AdminRoute,
+} as any)
+const CustomerRoomsIndexRoute = CustomerRoomsIndexRouteImport.update({
+  id: '/rooms/',
+  path: '/rooms/',
+  getParentRoute: () => CustomerRoute,
+} as any)
+const CustomerPaymentsIndexRoute = CustomerPaymentsIndexRouteImport.update({
+  id: '/payments/',
+  path: '/payments/',
+  getParentRoute: () => CustomerRoute,
+} as any)
+const AdminSettingsIndexRoute = AdminSettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRoomsIndexRoute = AdminRoomsIndexRouteImport.update({
+  id: '/rooms/',
+  path: '/rooms/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminComplaintsIndexRoute = AdminComplaintsIndexRouteImport.update({
+  id: '/complaints/',
+  path: '/complaints/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBookingsIndexRoute = AdminBookingsIndexRouteImport.update({
+  id: '/bookings/',
+  path: '/bookings/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const CustomerRoomsIdRoute = CustomerRoomsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => CustomerRoomsRoute,
+  id: '/rooms/$id',
+  path: '/rooms/$id',
+  getParentRoute: () => CustomerRoute,
 } as any)
 const CustomerPaymentsInvoiceIdRoute =
   CustomerPaymentsInvoiceIdRouteImport.update({
-    id: '/$invoiceId',
-    path: '/$invoiceId',
-    getParentRoute: () => CustomerPaymentsRoute,
+    id: '/payments/$invoiceId',
+    path: '/payments/$invoiceId',
+    getParentRoute: () => CustomerRoute,
   } as any)
 const CustomerBookingsNewRoute = CustomerBookingsNewRouteImport.update({
   id: '/new',
@@ -135,51 +154,60 @@ const CustomerBookingsIdRoute = CustomerBookingsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => CustomerBookingsRoute,
 } as any)
+const AdminSettingsSecurityRoute = AdminSettingsSecurityRouteImport.update({
+  id: '/settings/security',
+  path: '/settings/security',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminRoomsNewRoute = AdminRoomsNewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => AdminRoomsRoute,
+  id: '/rooms/new',
+  path: '/rooms/new',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminComplaintsIdRoute = AdminComplaintsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AdminComplaintsRoute,
+  id: '/complaints/$id',
+  path: '/complaints/$id',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminBookingsIdRoute = AdminBookingsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AdminBookingsRoute,
+  id: '/bookings/id',
+  path: '/bookings/id',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminRoomsIdEditRoute = AdminRoomsIdEditRouteImport.update({
-  id: '/$id/edit',
-  path: '/$id/edit',
-  getParentRoute: () => AdminRoomsRoute,
+  id: '/rooms/$id/edit',
+  path: '/rooms/$id/edit',
+  getParentRoute: () => AdminRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/customer': typeof CustomerRouteWithChildren
   '/admin/analytics': typeof AdminAnalyticsRoute
-  '/admin/bookings': typeof AdminBookingsRouteWithChildren
-  '/admin/complaints': typeof AdminComplaintsRouteWithChildren
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/payments': typeof AdminPaymentsRoute
-  '/admin/rooms': typeof AdminRoomsRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/customer/bookings': typeof CustomerBookingsRouteWithChildren
   '/customer/complaints': typeof CustomerComplaintsRoute
-  '/customer/payments': typeof CustomerPaymentsRouteWithChildren
   '/customer/profile': typeof CustomerProfileRoute
-  '/customer/rooms': typeof CustomerRoomsRouteWithChildren
-  '/admin/bookings/$id': typeof AdminBookingsIdRoute
+  '/admin/': typeof AdminIndexRoute
+  '/admin/bookings/id': typeof AdminBookingsIdRoute
   '/admin/complaints/$id': typeof AdminComplaintsIdRoute
   '/admin/rooms/new': typeof AdminRoomsNewRoute
+  '/admin/settings/security': typeof AdminSettingsSecurityRoute
   '/customer/bookings/$id': typeof CustomerBookingsIdRoute
   '/customer/bookings/new': typeof CustomerBookingsNewRoute
   '/customer/payments/$invoiceId': typeof CustomerPaymentsInvoiceIdRoute
   '/customer/rooms/$id': typeof CustomerRoomsIdRoute
+  '/admin/bookings/': typeof AdminBookingsIndexRoute
+  '/admin/complaints/': typeof AdminComplaintsIndexRoute
+  '/admin/rooms/': typeof AdminRoomsIndexRoute
+  '/admin/settings/': typeof AdminSettingsIndexRoute
+  '/customer/payments/': typeof CustomerPaymentsIndexRoute
+  '/customer/rooms/': typeof CustomerRoomsIndexRoute
   '/admin/rooms/$id/edit': typeof AdminRoomsIdEditRoute
 }
 export interface FileRoutesByTo {
@@ -187,52 +215,59 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/customer': typeof CustomerRouteWithChildren
   '/admin/analytics': typeof AdminAnalyticsRoute
-  '/admin/bookings': typeof AdminBookingsRouteWithChildren
-  '/admin/complaints': typeof AdminComplaintsRouteWithChildren
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/payments': typeof AdminPaymentsRoute
-  '/admin/rooms': typeof AdminRoomsRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/customer/bookings': typeof CustomerBookingsRouteWithChildren
   '/customer/complaints': typeof CustomerComplaintsRoute
-  '/customer/payments': typeof CustomerPaymentsRouteWithChildren
   '/customer/profile': typeof CustomerProfileRoute
-  '/customer/rooms': typeof CustomerRoomsRouteWithChildren
-  '/admin/bookings/$id': typeof AdminBookingsIdRoute
+  '/admin': typeof AdminIndexRoute
+  '/admin/bookings/id': typeof AdminBookingsIdRoute
   '/admin/complaints/$id': typeof AdminComplaintsIdRoute
   '/admin/rooms/new': typeof AdminRoomsNewRoute
+  '/admin/settings/security': typeof AdminSettingsSecurityRoute
   '/customer/bookings/$id': typeof CustomerBookingsIdRoute
   '/customer/bookings/new': typeof CustomerBookingsNewRoute
   '/customer/payments/$invoiceId': typeof CustomerPaymentsInvoiceIdRoute
   '/customer/rooms/$id': typeof CustomerRoomsIdRoute
+  '/admin/bookings': typeof AdminBookingsIndexRoute
+  '/admin/complaints': typeof AdminComplaintsIndexRoute
+  '/admin/rooms': typeof AdminRoomsIndexRoute
+  '/admin/settings': typeof AdminSettingsIndexRoute
+  '/customer/payments': typeof CustomerPaymentsIndexRoute
+  '/customer/rooms': typeof CustomerRoomsIndexRoute
   '/admin/rooms/$id/edit': typeof AdminRoomsIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/customer': typeof CustomerRouteWithChildren
   '/admin/analytics': typeof AdminAnalyticsRoute
-  '/admin/bookings': typeof AdminBookingsRouteWithChildren
-  '/admin/complaints': typeof AdminComplaintsRouteWithChildren
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/payments': typeof AdminPaymentsRoute
-  '/admin/rooms': typeof AdminRoomsRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/customer/bookings': typeof CustomerBookingsRouteWithChildren
   '/customer/complaints': typeof CustomerComplaintsRoute
-  '/customer/payments': typeof CustomerPaymentsRouteWithChildren
   '/customer/profile': typeof CustomerProfileRoute
-  '/customer/rooms': typeof CustomerRoomsRouteWithChildren
-  '/admin/bookings/$id': typeof AdminBookingsIdRoute
+  '/admin/': typeof AdminIndexRoute
+  '/admin/bookings/id': typeof AdminBookingsIdRoute
   '/admin/complaints/$id': typeof AdminComplaintsIdRoute
   '/admin/rooms/new': typeof AdminRoomsNewRoute
+  '/admin/settings/security': typeof AdminSettingsSecurityRoute
   '/customer/bookings/$id': typeof CustomerBookingsIdRoute
   '/customer/bookings/new': typeof CustomerBookingsNewRoute
   '/customer/payments/$invoiceId': typeof CustomerPaymentsInvoiceIdRoute
   '/customer/rooms/$id': typeof CustomerRoomsIdRoute
+  '/admin/bookings/': typeof AdminBookingsIndexRoute
+  '/admin/complaints/': typeof AdminComplaintsIndexRoute
+  '/admin/rooms/': typeof AdminRoomsIndexRoute
+  '/admin/settings/': typeof AdminSettingsIndexRoute
+  '/customer/payments/': typeof CustomerPaymentsIndexRoute
+  '/customer/rooms/': typeof CustomerRoomsIndexRoute
   '/admin/rooms/$id/edit': typeof AdminRoomsIdEditRoute
 }
 export interface FileRouteTypes {
@@ -240,27 +275,31 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
     | '/customer'
     | '/admin/analytics'
-    | '/admin/bookings'
-    | '/admin/complaints'
     | '/admin/dashboard'
     | '/admin/payments'
-    | '/admin/rooms'
     | '/auth/login'
     | '/auth/register'
     | '/customer/bookings'
     | '/customer/complaints'
-    | '/customer/payments'
     | '/customer/profile'
-    | '/customer/rooms'
-    | '/admin/bookings/$id'
+    | '/admin/'
+    | '/admin/bookings/id'
     | '/admin/complaints/$id'
     | '/admin/rooms/new'
+    | '/admin/settings/security'
     | '/customer/bookings/$id'
     | '/customer/bookings/new'
     | '/customer/payments/$invoiceId'
     | '/customer/rooms/$id'
+    | '/admin/bookings/'
+    | '/admin/complaints/'
+    | '/admin/rooms/'
+    | '/admin/settings/'
+    | '/customer/payments/'
+    | '/customer/rooms/'
     | '/admin/rooms/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -268,64 +307,66 @@ export interface FileRouteTypes {
     | '/about'
     | '/customer'
     | '/admin/analytics'
-    | '/admin/bookings'
-    | '/admin/complaints'
     | '/admin/dashboard'
     | '/admin/payments'
-    | '/admin/rooms'
     | '/auth/login'
     | '/auth/register'
     | '/customer/bookings'
     | '/customer/complaints'
-    | '/customer/payments'
     | '/customer/profile'
-    | '/customer/rooms'
-    | '/admin/bookings/$id'
+    | '/admin'
+    | '/admin/bookings/id'
     | '/admin/complaints/$id'
     | '/admin/rooms/new'
+    | '/admin/settings/security'
     | '/customer/bookings/$id'
     | '/customer/bookings/new'
     | '/customer/payments/$invoiceId'
     | '/customer/rooms/$id'
+    | '/admin/bookings'
+    | '/admin/complaints'
+    | '/admin/rooms'
+    | '/admin/settings'
+    | '/customer/payments'
+    | '/customer/rooms'
     | '/admin/rooms/$id/edit'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
     | '/customer'
     | '/admin/analytics'
-    | '/admin/bookings'
-    | '/admin/complaints'
     | '/admin/dashboard'
     | '/admin/payments'
-    | '/admin/rooms'
     | '/auth/login'
     | '/auth/register'
     | '/customer/bookings'
     | '/customer/complaints'
-    | '/customer/payments'
     | '/customer/profile'
-    | '/customer/rooms'
-    | '/admin/bookings/$id'
+    | '/admin/'
+    | '/admin/bookings/id'
     | '/admin/complaints/$id'
     | '/admin/rooms/new'
+    | '/admin/settings/security'
     | '/customer/bookings/$id'
     | '/customer/bookings/new'
     | '/customer/payments/$invoiceId'
     | '/customer/rooms/$id'
+    | '/admin/bookings/'
+    | '/admin/complaints/'
+    | '/admin/rooms/'
+    | '/admin/settings/'
+    | '/customer/payments/'
+    | '/customer/rooms/'
     | '/admin/rooms/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRouteWithChildren
   CustomerRoute: typeof CustomerRouteWithChildren
-  AdminAnalyticsRoute: typeof AdminAnalyticsRoute
-  AdminBookingsRoute: typeof AdminBookingsRouteWithChildren
-  AdminComplaintsRoute: typeof AdminComplaintsRouteWithChildren
-  AdminDashboardRoute: typeof AdminDashboardRoute
-  AdminPaymentsRoute: typeof AdminPaymentsRoute
-  AdminRoomsRoute: typeof AdminRoomsRouteWithChildren
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
 }
@@ -337,6 +378,13 @@ declare module '@tanstack/react-router' {
       path: '/customer'
       fullPath: '/customer'
       preLoaderRoute: typeof CustomerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -353,25 +401,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/customer/rooms': {
-      id: '/customer/rooms'
-      path: '/rooms'
-      fullPath: '/customer/rooms'
-      preLoaderRoute: typeof CustomerRoomsRouteImport
-      parentRoute: typeof CustomerRoute
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/customer/profile': {
       id: '/customer/profile'
       path: '/profile'
       fullPath: '/customer/profile'
       preLoaderRoute: typeof CustomerProfileRouteImport
-      parentRoute: typeof CustomerRoute
-    }
-    '/customer/payments': {
-      id: '/customer/payments'
-      path: '/payments'
-      fullPath: '/customer/payments'
-      preLoaderRoute: typeof CustomerPaymentsRouteImport
       parentRoute: typeof CustomerRoute
     }
     '/customer/complaints': {
@@ -402,61 +443,82 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/rooms': {
-      id: '/admin/rooms'
-      path: '/admin/rooms'
-      fullPath: '/admin/rooms'
-      preLoaderRoute: typeof AdminRoomsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/payments': {
       id: '/admin/payments'
-      path: '/admin/payments'
+      path: '/payments'
       fullPath: '/admin/payments'
       preLoaderRoute: typeof AdminPaymentsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/dashboard': {
       id: '/admin/dashboard'
-      path: '/admin/dashboard'
+      path: '/dashboard'
       fullPath: '/admin/dashboard'
       preLoaderRoute: typeof AdminDashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/complaints': {
-      id: '/admin/complaints'
-      path: '/admin/complaints'
-      fullPath: '/admin/complaints'
-      preLoaderRoute: typeof AdminComplaintsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/bookings': {
-      id: '/admin/bookings'
-      path: '/admin/bookings'
-      fullPath: '/admin/bookings'
-      preLoaderRoute: typeof AdminBookingsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/analytics': {
       id: '/admin/analytics'
-      path: '/admin/analytics'
+      path: '/analytics'
       fullPath: '/admin/analytics'
       preLoaderRoute: typeof AdminAnalyticsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/customer/rooms/': {
+      id: '/customer/rooms/'
+      path: '/rooms'
+      fullPath: '/customer/rooms/'
+      preLoaderRoute: typeof CustomerRoomsIndexRouteImport
+      parentRoute: typeof CustomerRoute
+    }
+    '/customer/payments/': {
+      id: '/customer/payments/'
+      path: '/payments'
+      fullPath: '/customer/payments/'
+      preLoaderRoute: typeof CustomerPaymentsIndexRouteImport
+      parentRoute: typeof CustomerRoute
+    }
+    '/admin/settings/': {
+      id: '/admin/settings/'
+      path: '/settings'
+      fullPath: '/admin/settings/'
+      preLoaderRoute: typeof AdminSettingsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/rooms/': {
+      id: '/admin/rooms/'
+      path: '/rooms'
+      fullPath: '/admin/rooms/'
+      preLoaderRoute: typeof AdminRoomsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/complaints/': {
+      id: '/admin/complaints/'
+      path: '/complaints'
+      fullPath: '/admin/complaints/'
+      preLoaderRoute: typeof AdminComplaintsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/bookings/': {
+      id: '/admin/bookings/'
+      path: '/bookings'
+      fullPath: '/admin/bookings/'
+      preLoaderRoute: typeof AdminBookingsIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/customer/rooms/$id': {
       id: '/customer/rooms/$id'
-      path: '/$id'
+      path: '/rooms/$id'
       fullPath: '/customer/rooms/$id'
       preLoaderRoute: typeof CustomerRoomsIdRouteImport
-      parentRoute: typeof CustomerRoomsRoute
+      parentRoute: typeof CustomerRoute
     }
     '/customer/payments/$invoiceId': {
       id: '/customer/payments/$invoiceId'
-      path: '/$invoiceId'
+      path: '/payments/$invoiceId'
       fullPath: '/customer/payments/$invoiceId'
       preLoaderRoute: typeof CustomerPaymentsInvoiceIdRouteImport
-      parentRoute: typeof CustomerPaymentsRoute
+      parentRoute: typeof CustomerRoute
     }
     '/customer/bookings/new': {
       id: '/customer/bookings/new'
@@ -472,36 +534,77 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerBookingsIdRouteImport
       parentRoute: typeof CustomerBookingsRoute
     }
+    '/admin/settings/security': {
+      id: '/admin/settings/security'
+      path: '/settings/security'
+      fullPath: '/admin/settings/security'
+      preLoaderRoute: typeof AdminSettingsSecurityRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/rooms/new': {
       id: '/admin/rooms/new'
-      path: '/new'
+      path: '/rooms/new'
       fullPath: '/admin/rooms/new'
       preLoaderRoute: typeof AdminRoomsNewRouteImport
-      parentRoute: typeof AdminRoomsRoute
+      parentRoute: typeof AdminRoute
     }
     '/admin/complaints/$id': {
       id: '/admin/complaints/$id'
-      path: '/$id'
+      path: '/complaints/$id'
       fullPath: '/admin/complaints/$id'
       preLoaderRoute: typeof AdminComplaintsIdRouteImport
-      parentRoute: typeof AdminComplaintsRoute
+      parentRoute: typeof AdminRoute
     }
-    '/admin/bookings/$id': {
-      id: '/admin/bookings/$id'
-      path: '/$id'
-      fullPath: '/admin/bookings/$id'
+    '/admin/bookings/id': {
+      id: '/admin/bookings/id'
+      path: '/bookings/id'
+      fullPath: '/admin/bookings/id'
       preLoaderRoute: typeof AdminBookingsIdRouteImport
-      parentRoute: typeof AdminBookingsRoute
+      parentRoute: typeof AdminRoute
     }
     '/admin/rooms/$id/edit': {
       id: '/admin/rooms/$id/edit'
-      path: '/$id/edit'
+      path: '/rooms/$id/edit'
       fullPath: '/admin/rooms/$id/edit'
       preLoaderRoute: typeof AdminRoomsIdEditRouteImport
-      parentRoute: typeof AdminRoomsRoute
+      parentRoute: typeof AdminRoute
     }
   }
 }
+
+interface AdminRouteChildren {
+  AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminPaymentsRoute: typeof AdminPaymentsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminBookingsIdRoute: typeof AdminBookingsIdRoute
+  AdminComplaintsIdRoute: typeof AdminComplaintsIdRoute
+  AdminRoomsNewRoute: typeof AdminRoomsNewRoute
+  AdminSettingsSecurityRoute: typeof AdminSettingsSecurityRoute
+  AdminBookingsIndexRoute: typeof AdminBookingsIndexRoute
+  AdminComplaintsIndexRoute: typeof AdminComplaintsIndexRoute
+  AdminRoomsIndexRoute: typeof AdminRoomsIndexRoute
+  AdminSettingsIndexRoute: typeof AdminSettingsIndexRoute
+  AdminRoomsIdEditRoute: typeof AdminRoomsIdEditRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminPaymentsRoute: AdminPaymentsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  AdminBookingsIdRoute: AdminBookingsIdRoute,
+  AdminComplaintsIdRoute: AdminComplaintsIdRoute,
+  AdminRoomsNewRoute: AdminRoomsNewRoute,
+  AdminSettingsSecurityRoute: AdminSettingsSecurityRoute,
+  AdminBookingsIndexRoute: AdminBookingsIndexRoute,
+  AdminComplaintsIndexRoute: AdminComplaintsIndexRoute,
+  AdminRoomsIndexRoute: AdminRoomsIndexRoute,
+  AdminSettingsIndexRoute: AdminSettingsIndexRoute,
+  AdminRoomsIdEditRoute: AdminRoomsIdEditRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface CustomerBookingsRouteChildren {
   CustomerBookingsIdRoute: typeof CustomerBookingsIdRoute
@@ -516,97 +619,35 @@ const CustomerBookingsRouteChildren: CustomerBookingsRouteChildren = {
 const CustomerBookingsRouteWithChildren =
   CustomerBookingsRoute._addFileChildren(CustomerBookingsRouteChildren)
 
-interface CustomerPaymentsRouteChildren {
-  CustomerPaymentsInvoiceIdRoute: typeof CustomerPaymentsInvoiceIdRoute
-}
-
-const CustomerPaymentsRouteChildren: CustomerPaymentsRouteChildren = {
-  CustomerPaymentsInvoiceIdRoute: CustomerPaymentsInvoiceIdRoute,
-}
-
-const CustomerPaymentsRouteWithChildren =
-  CustomerPaymentsRoute._addFileChildren(CustomerPaymentsRouteChildren)
-
-interface CustomerRoomsRouteChildren {
-  CustomerRoomsIdRoute: typeof CustomerRoomsIdRoute
-}
-
-const CustomerRoomsRouteChildren: CustomerRoomsRouteChildren = {
-  CustomerRoomsIdRoute: CustomerRoomsIdRoute,
-}
-
-const CustomerRoomsRouteWithChildren = CustomerRoomsRoute._addFileChildren(
-  CustomerRoomsRouteChildren,
-)
-
 interface CustomerRouteChildren {
   CustomerBookingsRoute: typeof CustomerBookingsRouteWithChildren
   CustomerComplaintsRoute: typeof CustomerComplaintsRoute
-  CustomerPaymentsRoute: typeof CustomerPaymentsRouteWithChildren
   CustomerProfileRoute: typeof CustomerProfileRoute
-  CustomerRoomsRoute: typeof CustomerRoomsRouteWithChildren
+  CustomerPaymentsInvoiceIdRoute: typeof CustomerPaymentsInvoiceIdRoute
+  CustomerRoomsIdRoute: typeof CustomerRoomsIdRoute
+  CustomerPaymentsIndexRoute: typeof CustomerPaymentsIndexRoute
+  CustomerRoomsIndexRoute: typeof CustomerRoomsIndexRoute
 }
 
 const CustomerRouteChildren: CustomerRouteChildren = {
   CustomerBookingsRoute: CustomerBookingsRouteWithChildren,
   CustomerComplaintsRoute: CustomerComplaintsRoute,
-  CustomerPaymentsRoute: CustomerPaymentsRouteWithChildren,
   CustomerProfileRoute: CustomerProfileRoute,
-  CustomerRoomsRoute: CustomerRoomsRouteWithChildren,
+  CustomerPaymentsInvoiceIdRoute: CustomerPaymentsInvoiceIdRoute,
+  CustomerRoomsIdRoute: CustomerRoomsIdRoute,
+  CustomerPaymentsIndexRoute: CustomerPaymentsIndexRoute,
+  CustomerRoomsIndexRoute: CustomerRoomsIndexRoute,
 }
 
 const CustomerRouteWithChildren = CustomerRoute._addFileChildren(
   CustomerRouteChildren,
 )
 
-interface AdminBookingsRouteChildren {
-  AdminBookingsIdRoute: typeof AdminBookingsIdRoute
-}
-
-const AdminBookingsRouteChildren: AdminBookingsRouteChildren = {
-  AdminBookingsIdRoute: AdminBookingsIdRoute,
-}
-
-const AdminBookingsRouteWithChildren = AdminBookingsRoute._addFileChildren(
-  AdminBookingsRouteChildren,
-)
-
-interface AdminComplaintsRouteChildren {
-  AdminComplaintsIdRoute: typeof AdminComplaintsIdRoute
-}
-
-const AdminComplaintsRouteChildren: AdminComplaintsRouteChildren = {
-  AdminComplaintsIdRoute: AdminComplaintsIdRoute,
-}
-
-const AdminComplaintsRouteWithChildren = AdminComplaintsRoute._addFileChildren(
-  AdminComplaintsRouteChildren,
-)
-
-interface AdminRoomsRouteChildren {
-  AdminRoomsNewRoute: typeof AdminRoomsNewRoute
-  AdminRoomsIdEditRoute: typeof AdminRoomsIdEditRoute
-}
-
-const AdminRoomsRouteChildren: AdminRoomsRouteChildren = {
-  AdminRoomsNewRoute: AdminRoomsNewRoute,
-  AdminRoomsIdEditRoute: AdminRoomsIdEditRoute,
-}
-
-const AdminRoomsRouteWithChildren = AdminRoomsRoute._addFileChildren(
-  AdminRoomsRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRouteWithChildren,
   CustomerRoute: CustomerRouteWithChildren,
-  AdminAnalyticsRoute: AdminAnalyticsRoute,
-  AdminBookingsRoute: AdminBookingsRouteWithChildren,
-  AdminComplaintsRoute: AdminComplaintsRouteWithChildren,
-  AdminDashboardRoute: AdminDashboardRoute,
-  AdminPaymentsRoute: AdminPaymentsRoute,
-  AdminRoomsRoute: AdminRoomsRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
 }

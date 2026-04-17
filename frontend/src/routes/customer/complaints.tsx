@@ -51,7 +51,7 @@ function ComplaintsPage() {
   const getStatusIcon = (status: typeof complaints[number]['status']) => {
     switch (status) {
       case 'resolved':
-        return <CheckCircle className="h-5 w-5 text-[var(--palm)]" />
+        return <CheckCircle className="h-5 w-5 text-green-500" />
       case 'in_progress':
         return <Clock className="h-5 w-5 text-yellow-500" />
       case 'open':
@@ -64,12 +64,12 @@ function ComplaintsPage() {
   const resolvedComplaints = complaints.filter((c) => c.status === 'resolved')
 
   return (
-    <div className="page-wrap px-4 py-8">
+    <div className="p-8">
       <div className="mb-8">
-        <h1 className="display-title mb-2 text-3xl font-bold text-[var(--sea-ink)]">
+        <h1 className="font-light mb-2 text-3xl font-bold text-[var(--expressive-primary)]">
           Complaints & Support
         </h1>
-        <p className="text-[var(--sea-ink-soft)]">
+        <p className="text-[var(--expressive-text)]">
           Submit issues and track their resolution status
         </p>
       </div>
@@ -82,7 +82,7 @@ function ComplaintsPage() {
 
         <TabsContent value="new" className="mt-6">
           <div className="mx-auto max-w-2xl">
-            <Card className="island-shell">
+            <Card className="bg-[var(--expressive-surface)] rounded-2xl border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MessageSquare className="h-5 w-5" />
@@ -131,10 +131,10 @@ function ComplaintsPage() {
         <TabsContent value="history" className="mt-6">
           <div className="space-y-4">
             {complaints.length === 0 ? (
-              <Card className="island-shell">
+              <Card className="bg-[var(--expressive-surface)] rounded-2xl border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)]">
                 <CardContent className="py-12 text-center">
-                  <MessageSquare className="mx-auto mb-4 h-12 w-12 text-[var(--sea-ink-soft)]" />
-                  <p className="text-lg text-[var(--sea-ink-soft)]">
+                  <MessageSquare className="mx-auto mb-4 h-12 w-12 text-[var(--expressive-text)]" />
+                  <p className="text-lg text-[var(--expressive-text)]">
                     No complaints submitted yet
                   </p>
                 </CardContent>
@@ -143,7 +143,7 @@ function ComplaintsPage() {
               <>
                 {openComplaints.length > 0 && (
                   <div>
-                    <h3 className="mb-3 font-semibold text-[var(--sea-ink)]">
+                    <h3 className="mb-3 font-semibold text-[var(--expressive-primary)]">
                       Open ({openComplaints.length})
                     </h3>
                     <div className="space-y-3">
@@ -161,7 +161,7 @@ function ComplaintsPage() {
                 {inProgressComplaints.length > 0 && (
                   <>
                     <Separator />
-                    <h3 className="mb-3 mt-6 font-semibold text-[var(--sea-ink)]">
+                    <h3 className="mb-3 mt-6 font-semibold text-[var(--expressive-primary)]">
                       In Progress ({inProgressComplaints.length})
                     </h3>
                     <div className="space-y-3">
@@ -179,7 +179,7 @@ function ComplaintsPage() {
                 {resolvedComplaints.length > 0 && (
                   <>
                     <Separator />
-                    <h3 className="mb-3 mt-6 font-semibold text-[var(--sea-ink)]">
+                    <h3 className="mb-3 mt-6 font-semibold text-[var(--expressive-primary)]">
                       Resolved ({resolvedComplaints.length})
                     </h3>
                     <div className="space-y-3">
@@ -217,14 +217,14 @@ function ComplaintCard({
   getStatusIcon: (status: typeof complaint.status) => React.ReactNode
 }) {
   return (
-    <Card className="island-shell">
+    <Card className="bg-[var(--expressive-surface)] rounded-2xl border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)]">
       <CardContent className="p-6">
         <div className="mb-3 flex items-start justify-between">
           <div>
-            <h4 className="font-semibold text-[var(--sea-ink)]">
+            <h4 className="font-semibold text-[var(--expressive-primary)]">
               {complaint.subject}
             </h4>
-            <p className="text-sm text-[var(--sea-ink-soft)]">
+            <p className="text-sm text-[var(--expressive-text)]">
               {format(new Date(complaint.createdAt), 'MMM d, yyyy • h:mm a')}
             </p>
           </div>
@@ -233,17 +233,17 @@ function ComplaintCard({
           </Badge>
         </div>
 
-        <p className="mb-4 text-[var(--sea-ink-soft)]">{complaint.message}</p>
+        <p className="mb-4 text-[var(--expressive-text)]">{complaint.message}</p>
 
         {complaint.response && (
-          <div className="rounded-lg bg-[var(--foam)] p-4">
+          <div className="rounded-xl bg-[var(--expressive-background)] p-4">
             <div className="mb-2 flex items-center gap-2">
               {getStatusIcon(complaint.status)}
-              <p className="text-sm font-semibold text-[var(--sea-ink)]">
+              <p className="text-sm font-semibold text-[var(--expressive-primary)]">
                 Response
               </p>
             </div>
-            <p className="text-sm text-[var(--sea-ink-soft)]">
+            <p className="text-sm text-[var(--expressive-text)]">
               {complaint.response}
             </p>
           </div>

@@ -5,80 +5,119 @@ interface AuthResponse {
   token: string
 }
 
-// Simulated delay
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+interface BackendResponse {
+  success: boolean
+  message?: string
+  data?: {
+    user: {
+      id: number
+      email: string
+      name: string
+      role: 'user' | 'admin'
+      created_at: string
+      updated_at: string
+    }
+    token: string
+  }
+}
 
-// Mock users database
-const mockUsers: User[] = [
-  {
-    id: '1',
-    email: 'admin@hotel.com',
-    name: 'Admin User',
-    role: 'admin',
-  },
-  {
-    id: '2',
-    email: 'customer@hotel.com',
-    name: 'John Customer',
-    role: 'customer',
-  },
-]
+const API_BASE = 'http://localhost:5000/api/users'
 
-const mockPasswords: Record<string, string> = {
-  'admin@hotel.com': 'admin123',
-  'customer@hotel.com': 'customer123',
+// Handle role mismatch: backend uses 'user', frontend expects 'visitor'
+function normalizeRole(role: 'user' | 'admin'): 'visitor' | 'admin' {
+  return role === 'admin' ? 'admin' : 'visitor'
 }
 
 export async function login(credentials: LoginCredentials): Promise<AuthResponse> {
-  await delay(500)
+  const response = await fetch(`${API_BASE}/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(credentials),
+  })
 
-  const user = mockUsers.find(u => u.email === credentials.email)
+  const result: BackendResponse = await response.json()
 
-  if (!user || mockPasswords[credentials.email] !== credentials.password) {
-    throw new Error('Invalid email or password')
+  if (!response.ok || !result.success) {
+    throw new Error(result.message || 'Login failed')
   }
 
-  const token = `mock_token_${user.id}_${Date.now()}`
+  if (!result.data) {
+    throw new Error('Invalid response from server')
+  }
+
+  const normalizedUser: User = {
+    id: result.data.user.id.toString(),
+    email: result.data.user.email,
+    name: result.data.user.name,
+    role: normalizeRole(result.data.user.role),
+  }
 
   return {
-    user,
-    token,
+    user: normalizedUser,
+    token: result.data.token,
   }
 }
 
 export async function register(data: RegisterData): Promise<AuthResponse> {
-  await delay(500)
+  const response = await fetch(`${API_BASE}/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
 
-  const existingUser = mockUsers.find(u => u.email === data.email)
-  if (existingUser) {
-    throw new Error('Email already registered')
+  const result: BackendResponse = await response.json()
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.message || 'Registration failed')
   }
 
-  const newUser: User = {
-    id: `${mockUsers.length + 1}`,
-    email: data.email,
-    name: data.name,
-    role: 'customer',
+  if (!result.data) {
+    throw new Error('Invalid response from server')
   }
 
-  mockUsers.push(newUser)
-  mockPasswords[data.email] = data.password
-
-  const token = `mock_token_${newUser.id}_${Date.now()}`
+  const normalizedUser: User = {
+    id: result.data.user.id.toString(),
+    email: result.data.user.email,
+    name: result.data.user.name,
+    role: normalizeRole(result.data.user.role),
+  }
 
   return {
-    user: newUser,
-    token,
+    user: normalizedUser,
+    token: result.data.token,
   }
 }
 
 export async function logout(): Promise<void> {
-  await delay(200)
   // In a real app, this would invalidate the token on the server
+  // For now, we just clear it from the frontend
 }
 
-export async function getCurrentUser(): Promise<User> {
-  await delay(300)
-  // In a real app, this would validate the token and return the current user
-  throw new Error('Not implemented')
+export async function getCurrentUser(token: string): Promise<User> {
+  const response = await fetch(`${API_BASE}/profile`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  })
+
+  const result = await response.json()
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.message || 'Failed to get current user')
+  }
+
+  const normalizedUser: User = {
+    id: result.data.id.toString(),
+    email: result.data.email,
+    name: result.data.name,
+    role: normalizeRole(result.data.role),
+  }
+
+  return normalizedUser
 }

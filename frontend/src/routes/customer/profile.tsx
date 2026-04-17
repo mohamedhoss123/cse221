@@ -31,18 +31,18 @@ function ProfilePage() {
   }
 
   return (
-    <div className="page-wrap px-4 py-8">
+    <div className="p-8">
       <div className="mb-8">
-        <h1 className="display-title mb-2 text-3xl font-bold text-[var(--sea-ink)]">
+        <h1 className="font-light mb-2 text-3xl font-bold text-[var(--expressive-primary)]">
           My Profile
         </h1>
-        <p className="text-[var(--sea-ink-soft)]">
+        <p className="text-[#000]">
           Manage your account information
         </p>
       </div>
 
       <div className="mx-auto max-w-2xl">
-        <Card className="island-shell">
+        <Card className="bg-[var(--expressive-surface)] rounded-2xl border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)]">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Personal Information</CardTitle>
@@ -56,7 +56,7 @@ function ProfilePage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="flex items-center justify-center">
-                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[var(--lagoon-deep)]">
+                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[var(--expressive-primary)]">
                   <User className="h-12 w-12 text-white" />
                 </div>
               </div>
@@ -65,7 +65,7 @@ function ProfilePage() {
                 <div>
                   <Label htmlFor="name">Full Name</Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--sea-ink-soft)]" />
+                    <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#000]" />
                     <Input
                       id="name"
                       value={formData.name}
@@ -81,7 +81,7 @@ function ProfilePage() {
                 <div>
                   <Label htmlFor="email">Email</Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--sea-ink-soft)]" />
+                    <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#000]" />
                     <Input
                       id="email"
                       type="email"
@@ -98,7 +98,7 @@ function ProfilePage() {
                 <div>
                   <Label htmlFor="phone">Phone Number</Label>
                   <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--sea-ink-soft)]" />
+                    <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#000]" />
                     <Input
                       id="phone"
                       type="tel"
@@ -116,7 +116,7 @@ function ProfilePage() {
                 <div>
                   <Label htmlFor="address">Address</Label>
                   <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--sea-ink-soft)]" />
+                    <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#000]" />
                     <Input
                       id="address"
                       value={formData.address}
@@ -149,11 +149,11 @@ function ProfilePage() {
                   </>
                 ) : (
                   <div className="space-y-2 text-sm">
-                    <p className="text-[var(--sea-ink-soft)]">
+                    <p className="text-[#000]">
                       <span className="font-semibold">Account Type:</span>{' '}
                       {user?.role === 'admin' ? 'Administrator' : 'Customer'}
                     </p>
-                    <p className="text-[var(--sea-ink-soft)]">
+                    <p className="text-[#000]">
                       <span className="font-semibold">Member Since:</span>{' '}
                       {new Date().toLocaleDateString('en-US', {
                         year: 'numeric',

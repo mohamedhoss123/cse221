@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
-import { getComplaints } from '#/services/complaints.service'
+import { getComplaintsSync } from '#/services/bookings.service'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent } from '#/components/ui/card'
 import { Badge } from '#/components/ui/badge'
@@ -8,12 +8,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '#
 import { MessageSquare } from 'lucide-react'
 import { format } from 'date-fns'
 
-export const Route = createFileRoute('/admin/complaints')({
+export const Route = createFileRoute('/admin/complaints/')({
   component: AdminComplaintsPage,
 })
 
 function AdminComplaintsPage() {
-  const [complaints] = useState(getComplaints())
+  const [complaints] = useState(getComplaintsSync())
 
   const getStatusColor = (status: typeof complaints[number]['status']) => {
     switch (status) {

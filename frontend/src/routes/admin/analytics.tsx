@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { getBookings, getRooms } from '#/services'
+import { getBookingsSync } from '#/services/bookings.service'
+import { getRoomsSync } from '#/services/rooms.service'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import { Separator } from '#/components/ui/separator'
 import {
@@ -24,8 +25,8 @@ export const Route = createFileRoute('/admin/analytics')({
 })
 
 function AnalyticsPage() {
-  const bookings = getBookings()
-  const rooms = getRooms()
+  const bookings = getBookingsSync()
+  const rooms = getRoomsSync()
 
   // Calculate metrics
   const totalRevenue = bookings
@@ -50,7 +51,7 @@ function AnalyticsPage() {
     value: count,
   }))
 
-  const COLORS = ['#4fb8b2', '#2f6a4a', '#328f97', '#e7f0e8']
+  const COLORS = ['#ce0031', '#f27b89', '#000', '#fef7f8']
 
   // Monthly revenue data (mock)
   const monthlyRevenueData = [
@@ -90,10 +91,10 @@ function AnalyticsPage() {
   return (
     <div className="page-wrap px-4 py-8">
       <div className="mb-8">
-        <h1 className="display-title mb-2 text-3xl font-bold text-[var(--sea-ink)]">
+        <h1 className="display-title mb-2 text-3xl font-bold text-[var(--expressive-primary)]">
           Analytics & Reports
         </h1>
-        <p className="text-[var(--sea-ink-soft)]">
+        <p className="text-[#000]">
           Hotel performance insights and metrics
         </p>
       </div>
@@ -104,12 +105,12 @@ function AnalyticsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[var(--sea-ink-soft)]">Total Revenue</p>
-                <p className="text-2xl font-bold text-[var(--sea-ink)]">
+                <p className="text-sm text-[#000]">Total Revenue</p>
+                <p className="text-2xl font-bold text-[var(--expressive-primary)]">
                   ${totalRevenue.toLocaleString()}
                 </p>
               </div>
-              <DollarSign className="h-8 w-8 text-[var(--lagoon-deep)]" />
+              <DollarSign className="h-8 w-8 text-[var(--expressive-accent)]" />
             </div>
           </CardContent>
         </Card>
@@ -118,10 +119,10 @@ function AnalyticsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[var(--sea-ink-soft)]">Total Bookings</p>
-                <p className="text-2xl font-bold text-[var(--sea-ink)]">{totalBookings}</p>
+                <p className="text-sm text-[#000]">Total Bookings</p>
+                <p className="text-2xl font-bold text-[var(--expressive-primary)]">{totalBookings}</p>
               </div>
-              <Calendar className="h-8 w-8 text-[var(--lagoon-deep)]" />
+              <Calendar className="h-8 w-8 text-[var(--expressive-accent)]" />
             </div>
           </CardContent>
         </Card>
@@ -130,12 +131,12 @@ function AnalyticsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[var(--sea-ink-soft)]">Completion Rate</p>
-                <p className="text-2xl font-bold text-[var(--sea-ink)]">
+                <p className="text-sm text-[#000]">Completion Rate</p>
+                <p className="text-2xl font-bold text-[var(--expressive-primary)]">
                   {completionRate.toFixed(1)}%
                 </p>
               </div>
-              <TrendingUp className="h-8 w-8 text-[var(--palm)]" />
+              <TrendingUp className="h-8 w-8 text-[#000]" />
             </div>
           </CardContent>
         </Card>
@@ -144,12 +145,12 @@ function AnalyticsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[var(--sea-ink-soft)]">Avg Guests/Booking</p>
-                <p className="text-2xl font-bold text-[var(--sea-ink)]">
+                <p className="text-sm text-[#000]">Avg Guests/Booking</p>
+                <p className="text-2xl font-bold text-[var(--expressive-primary)]">
                   {avgGuestsPerBooking.toFixed(1)}
                 </p>
               </div>
-              <Users className="h-8 w-8 text-[var(--lagoon-deep)]" />
+              <Users className="h-8 w-8 text-[var(--expressive-accent)]" />
             </div>
           </CardContent>
         </Card>
@@ -169,8 +170,8 @@ function AnalyticsPage() {
                 <YAxis />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: 'var(--surface-strong)',
-                    border: '1px solid var(--line)',
+                    backgroundColor: '#fef7f8',
+                    border: '1px solid #f27b89',
                     borderRadius: '8px',
                   }}
                   formatter={(value: number) => `$${value.toLocaleString()}`}
@@ -179,7 +180,7 @@ function AnalyticsPage() {
                 <Line
                   type="monotone"
                   dataKey="revenue"
-                  stroke="var(--lagoon-deep)"
+                  stroke="#ce0031"
                   strokeWidth={2}
                   name="Revenue"
                 />
@@ -201,13 +202,13 @@ function AnalyticsPage() {
                 <YAxis />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: 'var(--surface-strong)',
-                    border: '1px solid var(--line)',
+                    backgroundColor: '#fef7f8',
+                    border: '1px solid #f27b89',
                     borderRadius: '8px',
                   }}
                 />
                 <Legend />
-                <Bar dataKey="bookings" fill="var(--lagoon-deep)" name="Bookings" />
+                <Bar dataKey="bookings" fill="#ce0031" name="Bookings" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -256,12 +257,12 @@ function AnalyticsPage() {
                 <YAxis dataKey="name" type="category" width={150} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: 'var(--surface-strong)',
-                    border: '1px solid var(--line)',
+                    backgroundColor: '#fef7f8',
+                    border: '1px solid #f27b89',
                     borderRadius: '8px',
                   }}
                 />
-                <Bar dataKey="bookings" fill="var(--lagoon-deep)" />
+                <Bar dataKey="bookings" fill="#ce0031" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

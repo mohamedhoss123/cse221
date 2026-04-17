@@ -2,12 +2,16 @@ import { mockDelay } from '../lib/api'
 import { mockPayments, mockBookings } from '../mock-data/bookings'
 import type { Payment, PaymentStatus } from '../types/booking.types'
 
-export async function getPayments(customerId?: string): Promise<Payment[]> {
-  await mockDelay()
+export function getPaymentsSync(customerId?: string): Payment[] {
   if (customerId) {
     return mockPayments.filter(payment => payment.customerId === customerId)
   }
   return [...mockPayments]
+}
+
+export async function getPayments(customerId?: string): Promise<Payment[]> {
+  await mockDelay()
+  return getPaymentsSync(customerId)
 }
 
 export async function getPaymentById(id: string): Promise<Payment | undefined> {
