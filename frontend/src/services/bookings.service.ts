@@ -65,7 +65,7 @@ export async function updateBookingStatus(
 
 export async function cancelBooking(id: string): Promise<boolean> {
   try {
-    const response = await apiClient.post<{ success: boolean }>(`/bookings/${id}/cancel`)
+    const response = await apiClient.delete<{ success: boolean; message: string }>(`/bookings/${id}`)
 
     if (!response.success) {
       throw new Error(response.message || 'Failed to cancel booking')
@@ -74,5 +74,28 @@ export async function cancelBooking(id: string): Promise<boolean> {
     return response.success
   } catch (error: any) {
     throw new Error(error.message || 'Failed to cancel booking')
+  }
+}
+
+export async function checkRoomAvailability(
+  roomId: string,
+  checkIn: string,
+  checkOut: string
+): Promise<{ available: boolean; conflictingBookings: number }> {
+  try {
+    const response = await apiClient.get<{ available: boolean; conflictingBookings: number }>(
+      `/bookings/room/${roomId}/availability`,
+      {
+        params: { checkIn, checkOut }
+      }
+    )
+
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'Failed to check room availability')
+    }
+
+    return response.data
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to check room availability')
   }
 }

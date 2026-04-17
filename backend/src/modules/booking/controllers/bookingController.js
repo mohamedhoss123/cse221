@@ -57,9 +57,33 @@ const cancelBooking = async (req, res, next) => {
   }
 };
 
+const checkRoomAvailability = async (req, res, next) => {
+  try {
+    const { roomId } = req.params;
+    const { checkIn, checkOut } = req.query;
+
+    if (!checkIn || !checkOut) {
+      return res.status(400).json({
+        success: false,
+        message: 'checkIn and checkOut dates are required'
+      });
+    }
+
+    const availability = await bookingService.checkRoomAvailability(roomId, checkIn, checkOut);
+
+    res.status(200).json({
+      success: true,
+      data: availability
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllBookings,
   getBookingById,
   createBooking,
-  cancelBooking
+  cancelBooking,
+  checkRoomAvailability
 };

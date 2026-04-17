@@ -1,9 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
 import { getRoomById } from '#/services/rooms.service'
 import { Button } from '#/components/ui/button'
 import { Badge } from '#/components/ui/badge'
 import { Separator } from '#/components/ui/separator'
+import { BookingModal } from '#/components/customer/BookingModal'
 
 export const Route = createFileRoute('/customer/rooms/$id')({
   component: RoomDetailsPage,
@@ -16,6 +18,7 @@ export const Route = createFileRoute('/customer/rooms/$id')({
 function RoomDetailsPage() {
   const { room } = Route.useLoaderData()
   const navigate = useNavigate()
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
 
   if (!room) {
     return (
@@ -31,7 +34,7 @@ function RoomDetailsPage() {
   }
 
   const handleBookNow = () => {
-    navigate({ to: '/customer/bookings/new', search: { roomId: room.id } })
+    setIsBookingModalOpen(true)
   }
 
   return (
@@ -105,6 +108,13 @@ function RoomDetailsPage() {
           </div>
         </div>
       </div>
+
+      {/* Booking Modal */}
+      <BookingModal
+        room={room}
+        open={isBookingModalOpen}
+        onOpenChange={setIsBookingModalOpen}
+      />
     </div>
   )
 }
