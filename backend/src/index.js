@@ -7,6 +7,7 @@ const { initDatabase } = require('./database/init');
 const { errorHandler, notFoundHandler } = require('./middleware/error');
 const userRoutes = require('./modules/user/routes/userRoutes');
 const roomRoutes = require('./modules/room/routes/roomRoutes');
+const bookingRoutes = require('./modules/booking/routes/bookingRoutes');
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.get('/health', (req, res) => {
 
 app.use('/api/users', userRoutes);
 app.use('/api/rooms', roomRoutes);
+app.use('/api/bookings', bookingRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
