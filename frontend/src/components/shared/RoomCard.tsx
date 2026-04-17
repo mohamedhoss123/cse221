@@ -22,43 +22,25 @@ export default function RoomCard({ room }: RoomCardProps) {
             </div>
             <div className="mb-4">
               <p className="text-xl font-semibold text-white">{room.type} Room</p>
-              <p className="text-sm text-white/80">{room.description}</p>
             </div>
-            <div className="flex items-center justify-center gap-8">
-              <div className="bg-white/20 rounded-lg px-4 py-2">
-                <p className="text-sm text-white mb-1">Capacity</p>
-                <p className="text-2xl font-bold text-white">{room.capacity}</p>
-                <p className="text-xs text-white/60">guests</p>
-              </div>
-              <div className="bg-white/20 rounded-lg px-4 py-2">
-                <p className="text-sm text-white mb-1">Price</p>
-                <p className="text-2xl font-bold text-white">${formatPrice(room.price)}</p>
-                <p className="text-xs text-white/60">per night</p>
-              </div>
+            <div className="bg-white/20 rounded-lg px-4 py-2">
+              <p className="text-sm text-white mb-1">Price</p>
+              <p className="text-2xl font-bold text-white">${formatPrice(room.price)}</p>
+              <p className="text-xs text-white/60">per night</p>
             </div>
           </div>
         </div>
-        {!room.available && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-[2px]">
-            <Badge variant="secondary" className="text-sm bg-white/90 text-[var(--expressive-primary)] border-none font-semibold px-3 py-1">
-              Currently Unavailable
-            </Badge>
-          </div>
-        )}
         <Badge className="absolute right-3 top-3 capitalize bg-[var(--expressive-accent)] text-white hover:bg-[var(--expressive-primary)] border-none shadow-sm">
           {room.type}
         </Badge>
       </div>
       <CardHeader className="pb-3">
-        <CardTitle className="line-clamp-1 text-xl font-semibold text-[var(--expressive-primary)]">{room.name}</CardTitle>
-        <CardDescription className="line-clamp-2 text-[#000]">{room.description}</CardDescription>
+        <CardTitle className="line-clamp-1 text-xl font-semibold text-[var(--expressive-primary)]">
+          {room.type} Room
+        </CardTitle>
       </CardHeader>
       <CardContent className="pb-4">
         <div className="flex items-center justify-between text-sm text-slate-600 mb-4">
-          <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
-            <Users className="h-4 w-4 text-[#000]" />
-            <span className="font-medium">{room.capacity} guests</span>
-          </div>
           <div className="flex items-center gap-1.5 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-100 text-amber-700">
             <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
             <span className="font-semibold">4.8</span>
@@ -74,11 +56,10 @@ export default function RoomCard({ room }: RoomCardProps) {
       <CardFooter>
         <Button 
           asChild 
-          className="w-full bg-gradient-to-r from-[var(--expressive-primary)] to-[var(--expressive-accent)] hover:opacity-90 transition-opacity shadow-sm" 
-          disabled={!room.available}
+          className="w-full bg-gradient-to-r from-[var(--expressive-primary)] to-[var(--expressive-accent)] hover:opacity-90 transition-opacity shadow-sm"
         >
           <Link to="/customer/rooms/$id" params={{ id: room.id }}>
-            {room.available ? 'View Details' : 'Unavailable'}
+            View Details
           </Link>
         </Button>
       </CardFooter>

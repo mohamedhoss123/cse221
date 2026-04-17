@@ -113,7 +113,7 @@ export default function BookingForm({ room }: BookingFormProps) {
                     id="guests"
                     type="number"
                     min="1"
-                    max={room.capacity}
+                    max="10"
                     value={bookingData.guests}
                     onChange={(e) =>
                       setBookingData({
@@ -126,7 +126,7 @@ export default function BookingForm({ room }: BookingFormProps) {
                   />
                 </div>
                 <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">
-                  Maximum capacity: {room.capacity} guests
+                  Maximum capacity: 10 guests
                 </p>
               </div>
 
@@ -135,7 +135,7 @@ export default function BookingForm({ room }: BookingFormProps) {
               <div>
                 <h3 className="mb-3 font-semibold text-[var(--sea-ink)]">Room Details</h3>
                 <div className="rounded-lg bg-[var(--foam)] p-4">
-                  <p className="font-medium text-[var(--sea-ink)]">{room.name}</p>
+                  <p className="font-medium text-[var(--sea-ink)]">{room.type} Room</p>
                   <p className="text-sm text-[var(--sea-ink-soft)]">{room.type}</p>
                 </div>
               </div>

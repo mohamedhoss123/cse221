@@ -4,8 +4,6 @@ import { getRoomById } from '#/services/rooms.service'
 import { Button } from '#/components/ui/button'
 import { Badge } from '#/components/ui/badge'
 import { Separator } from '#/components/ui/separator'
-import RoomGallery from '#/components/shared/RoomGallery'
-import { MapPin, Users, Check, X } from 'lucide-react'
 
 export const Route = createFileRoute('/customer/rooms/$id')({
   component: RoomDetailsPage,
@@ -33,7 +31,6 @@ function RoomDetailsPage() {
   }
 
   const handleBookNow = () => {
-    // Auth disabled - allow booking without login
     navigate({ to: '/customer/bookings/new', search: { roomId: room.id } })
   }
 
@@ -56,7 +53,7 @@ function RoomDetailsPage() {
               <div>
                 <Badge className="mb-2 capitalize">{room.type}</Badge>
                 <h1 className="font-light text-3xl font-bold text-[var(--expressive-primary)]">
-                  {room.name}
+                  {room.type} Room
                 </h1>
               </div>
               <div className="text-right">
@@ -68,34 +65,13 @@ function RoomDetailsPage() {
             </div>
           </div>
 
-          <RoomGallery 
-            type={room.type} 
-            description={room.description}
-            price={room.price}
-            capacity={room.capacity}
-          />
-
-          <div className="mt-8">
-            <h2 className="mb-4 text-xl font-semibold text-[var(--expressive-primary)]">
-              About This Room
-            </h2>
-            <p className="text-[var(--expressive-text)]">{room.description}</p>
-          </div>
-
           <Separator className="my-8" />
 
           <div>
             <h2 className="mb-4 text-xl font-semibold text-[var(--expressive-primary)]">
-              Amenities
+              Room Type
             </h2>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {room.amenities.map((amenity) => (
-                <div key={amenity} className="flex items-center gap-2">
-                  <Check className="h-5 w-5 text-[var(--expressive-primary)]" />
-                  <span className="text-[var(--expressive-text)]">{amenity}</span>
-                </div>
-              ))}
-            </div>
+            <p className="text-[var(--expressive-text)]">{room.type}</p>
           </div>
         </div>
 
@@ -112,52 +88,20 @@ function RoomDetailsPage() {
             <Separator className="my-4" />
 
             <div className="mb-6 space-y-3">
-              <div className="flex items-center gap-2 text-sm">
-                <Users className="h-5 w-5 text-[var(--expressive-text)]" />
-                <span className="text-[var(--expressive-text)]">
-                  Up to {room.capacity} guests
-                </span>
+              <div>
+                <p className="text-[var(--expressive-text)] font-medium">
+                  {room.type} Room
+                </p>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <MapPin className="h-5 w-5 text-[var(--expressive-text)]" />
-                <span className="text-[var(--expressive-text)]">
-                  Hotel Main Building
-                </span>
-              </div>
-            </div>
-
-            <Separator className="my-4" />
-
-            <div className="mb-4">
-              {room.available ? (
-                <div className="flex items-center gap-2 text-sm text-green-500">
-                  <Check className="h-5 w-5" />
-                  <span>Available for your dates</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 text-sm text-red-500">
-                  <X className="h-5 w-5" />
-                  <span>Currently unavailable</span>
-                </div>
-              )}
             </div>
 
             <Button
               className="w-full bg-[var(--expressive-primary)] text-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
               size="lg"
               onClick={handleBookNow}
-              disabled={!room.available}
             >
-              {room.available ? 'Book Now' : 'Unavailable'}
+              Book Now
             </Button>
-
-            {/* Auth disabled
-            {!isAuthenticated && (
-              <p className="mt-3 text-center text-xs text-[var(--expressive-text)]">
-                Login required to book
-              </p>
-            )}
-            */}
           </div>
         </div>
       </div>

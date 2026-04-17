@@ -5,7 +5,7 @@ import type { Room } from '#/types/room.types'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent } from '#/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '#/components/ui/table'
-import { Plus, Pencil, Trash2, Bed, CheckCircle2, XCircle, Search } from 'lucide-react'
+import { Plus, Pencil, Trash2, Bed, Search } from 'lucide-react'
 import { toast } from 'sonner'
 
 export const Route = createFileRoute('/admin/rooms/')({
@@ -42,23 +42,6 @@ function AdminRoomsPage() {
     } catch (error) {
       toast.error('Failed to delete room')
     }
-  }
-
-  const getStatusBadge = (available: boolean) => {
-    if (available) {
-      return (
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border-2 border-green-200">
-          <CheckCircle2 className="w-3.5 h-3.5" />
-          Available
-        </div>
-      )
-    }
-    return (
-      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-[var(--expressive-primary)] border-2 border-red-200">
-        <XCircle className="w-3.5 h-3.5" />
-        Unavailable
-      </div>
-    )
   }
 
   return (
@@ -106,8 +89,6 @@ function AdminRoomsPage() {
                     <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Room Details</TableHead>
                     <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Type</TableHead>
                     <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Price/Night</TableHead>
-                    <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Capacity</TableHead>
-                    <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Status</TableHead>
                     <TableHead className="text-[var(--expressive-primary)] font-bold py-4 text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -124,7 +105,7 @@ function AdminRoomsPage() {
                               {room.type}
                             </p>
                             <p className="text-xs text-[var(--expressive-text)] mt-0.5 font-medium">
-                              ID: {room.room_id || 'N/A'}
+                              ID: {room.id || 'N/A'}
                             </p>
                           </div>
                         </div>
@@ -139,18 +120,10 @@ function AdminRoomsPage() {
                           ${room.price}
                         </span>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex items-center text-[var(--expressive-text)] text-sm font-semibold">
-                          <span className="mr-1">{room.capacity}</span> guests
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {getStatusBadge(room.available)}
-                      </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button variant="outline" size="icon" asChild className="border-2 border-[var(--expressive-secondary)] shadow-[2px_2px_0_0_var(--expressive-secondary)] hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_var(--expressive-secondary)] transition-all bg-[var(--expressive-surface)] text-[var(--expressive-text)] hover:text-[var(--expressive-primary)] font-bold">
-                            <Link to="/admin/rooms/$id/edit" params={{ id: room.room_id || '' }}>
+                            <Link to="/admin/rooms/$id/edit" params={{ id: room.id || '' }}>
                               <Pencil className="h-4 w-4" />
                             </Link>
                           </Button>

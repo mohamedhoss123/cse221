@@ -2,7 +2,7 @@ const { query } = require('../../../database/connection');
 
 class RoomService {
   async getAllRooms(filters = {}) {
-    let sql = 'SELECT * FROM ROOM';
+    let sql = 'SELECT room_id, type, price FROM ROOM';
     const params = [];
 
     if (filters.type) {
@@ -37,16 +37,15 @@ class RoomService {
     const rooms = await query(sql, params);
 
     return rooms.map(room => ({
-      room_id: room.room_id.toString(),
+      id: room.room_id.toString(),
       type: room.type,
-      price: room.price,
-      description: room.type
+      price: room.price
     }));
   }
 
   async getRoomById(roomId) {
     const rooms = await query(
-      'SELECT * FROM ROOM WHERE room_id = ?',
+      'SELECT room_id, type, price FROM ROOM WHERE room_id = ?',
       [roomId]
     );
 
@@ -58,15 +57,14 @@ class RoomService {
 
     const room = rooms[0];
     return {
-      room_id: room.room_id.toString(),
+      id: room.room_id.toString(),
       type: room.type,
-      price: room.price,
-      description: room.type
+      price: room.price
     };
   }
 
   async createRoom(roomData) {
-    const { type, price, description } = roomData;
+    const { type, price } = roomData;
 
     const result = await query(
       'INSERT INTO ROOM (type, price) VALUES (?, ?)',
@@ -74,16 +72,15 @@ class RoomService {
     );
 
     const rooms = await query(
-      'SELECT * FROM ROOM WHERE room_id = ?',
+      'SELECT room_id, type, price FROM ROOM WHERE room_id = ?',
       [result.insertId]
     );
 
     const room = rooms[0];
     return {
-      room_id: room.room_id.toString(),
+      id: room.room_id.toString(),
       type: room.type,
-      price: room.price,
-      description: room.type
+      price: room.price
     };
   }
 
@@ -99,7 +96,7 @@ class RoomService {
       throw error;
     }
 
-    const { type, price, description } = roomData;
+    const { type, price } = roomData;
     const updates = [];
     const values = [];
 
@@ -111,11 +108,6 @@ class RoomService {
     if (price !== undefined) {
       updates.push('price = ?');
       values.push(price);
-    }
-
-    if (description !== undefined) {
-      updates.push('description = ?');
-      values.push(description);
     }
 
     if (updates.length === 0) {
