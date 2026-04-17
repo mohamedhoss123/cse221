@@ -186,7 +186,7 @@ export function BookingModal({ room, open, onOpenChange }: BookingModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] bg-white">
         <DialogHeader>
           <DialogTitle>Book {room.type} Room</DialogTitle>
           <DialogDescription>
