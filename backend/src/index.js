@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const { initDatabase } = require('./database/init');
 const { errorHandler, notFoundHandler } = require('./middleware/error');
 const userRoutes = require('./modules/user/routes/userRoutes');
+const roomRoutes = require('./modules/room/routes/roomRoutes');
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/api/users', userRoutes);
+app.use('/api/rooms', roomRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

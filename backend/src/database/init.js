@@ -6,7 +6,10 @@ const initDatabase = async () => {
   try {
     // Read and execute schema.sql file
     const schemaPath = path.join(__dirname, '../../schema.sql');
-    const schemaSql = await fs.readFile(schemaPath, 'utf8');
+    let schemaSql = await fs.readFile(schemaPath, 'utf8');
+    
+    // Convert CREATE TABLE to CREATE TABLE IF NOT EXISTS to handle existing tables
+    schemaSql = schemaSql.replace(/CREATE TABLE/gi, 'CREATE TABLE IF NOT EXISTS');
     
     // Split by semicolon to execute individual statements
     const statements = schemaSql
@@ -15,7 +18,7 @@ const initDatabase = async () => {
       .filter(stmt => stmt.length > 0);
     
     for (const statement of statements) {
-      if (statement.toLowerCase().includes('create table')) {
+      if (statement.toLowerCase().includes('create table') || statement.toLowerCase().includes('create table if not exists')) {
         await pool.execute(statement);
       }
     }

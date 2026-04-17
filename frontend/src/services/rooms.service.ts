@@ -1,75 +1,96 @@
-import { mockDelay } from '../lib/api'
-import { mockRooms } from '../mock-data/rooms'
 import type { Room, RoomFilters } from '../types/room.types'
-
-export function getRoomsSync(filters?: RoomFilters): Room[] {
-  let filtered = [...mockRooms]
-
-  if (filters?.type) {
-    filtered = filtered.filter(room => room.type === filters.type)
-  }
-
-  if (filters?.minPrice !== undefined) {
-    filtered = filtered.filter(room => room.price >= filters.minPrice!)
-  }
-
-  if (filters?.maxPrice !== undefined) {
-    filtered = filtered.filter(room => room.price <= filters.maxPrice!)
-  }
-
-  if (filters?.capacity !== undefined) {
-    filtered = filtered.filter(room => room.capacity >= filters.capacity!)
-  }
-
-  if (filters?.available !== undefined) {
-    filtered = filtered.filter(room => room.available === filters.available)
-  }
-
-  if (filters?.amenities && filters.amenities.length > 0) {
-    filtered = filtered.filter(room =>
-      filters.amenities!.every(amenity => room.amenities.includes(amenity))
-    )
-  }
-
-  return filtered
-}
+import { apiClient } from '../lib/api-client'
 
 export async function getRooms(filters?: RoomFilters): Promise<Room[]> {
-  await mockDelay()
-  return getRoomsSync(filters)
+  try {
+    const queryParams: any = {}
+
+    if (filters?.type) {
+      queryParams.type = filters.type
+    }
+
+    if (filters?.minPrice !== undefined) {
+      queryParams.minPrice = filters.minPrice
+    }
+
+    if (filters?.maxPrice !== undefined) {
+      queryParams.maxPrice = filters.maxPrice
+    }
+
+    if (filters?.capacity !== undefined) {
+      queryParams.capacity = filters.capacity
+    }
+
+    if (filters?.available !== undefined) {
+      queryParams.available = filters.available ? 1 : 0
+    }
+
+    const response = await apiClient.get<Room[]>('/rooms', { 
+      params: queryParams 
+    })
+
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'Failed to get rooms')
+    }
+
+    return response.data
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to get rooms')
+  }
 }
 
-export async function getRoomById(id: string): Promise<Room | undefined> {
-  await mockDelay()
-  return mockRooms.find(room => room.id === id)
+export async function getRoomById(id: string): Promise<Room> {
+  try {
+    const response = await apiClient.get<Room>(`/rooms/${id}`)
+
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'Failed to get room')
+    }
+
+    return response.data
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to get room')
+  }
 }
 
 export async function createRoom(room: Omit<Room, 'id'>): Promise<Room> {
-  await mockDelay()
-  const newRoom: Room = {
-    ...room,
-    id: `${mockRooms.length + 1}`,
+  try {
+    const response = await apiClient.post<Room>('/rooms', room)
+
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'Failed to create room')
+    }
+
+    return response.data
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to create room')
   }
-  mockRooms.push(newRoom)
-  return newRoom
 }
 
-export async function updateRoom(id: string, updates: Partial<Room>): Promise<Room | undefined> {
-  await mockDelay()
-  const index = mockRooms.findIndex(room => room.id === id)
-  if (index !== -1) {
-    mockRooms[index] = { ...mockRooms[index], ...updates }
-    return mockRooms[index]
+export async function updateRoom(id: string, updates: Partial<Room>): Promise<Room> {
+  try {
+    const response = await apiClient.put<Room>(`/rooms/${id}`, updates)
+
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'Failed to update room')
+    }
+
+    return response.data
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to update room')
   }
-  return undefined
 }
 
 export async function deleteRoom(id: string): Promise<boolean> {
-  await mockDelay()
-  const index = mockRooms.findIndex(room => room.id === id)
-  if (index !== -1) {
-    mockRooms.splice(index, 1)
-    return true
+  try {
+    const response = await apiClient.delete<{ success: boolean }>(`/rooms/${id}`)
+
+    if (!response.success) {
+      throw new Error(response.message || 'Failed to delete room')
+    }
+
+    return response.success
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to delete room')
   }
-  return false
 }

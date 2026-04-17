@@ -53,7 +53,6 @@ export default function RoomForm({ room, onSubmit, isSubmitting = false }: RoomF
     capacity: room?.capacity || 2,
     isAvailable: room?.isAvailable ?? true,
     amenities: room?.amenities || [],
-    images: room?.images || [],
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -143,9 +142,9 @@ export default function RoomForm({ room, onSubmit, isSubmitting = false }: RoomF
               required
             />
           </div>
-
+ 
           <Separator />
-
+ 
           <div>
             <Label className="mb-3 block">Amenities</Label>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -163,25 +162,9 @@ export default function RoomForm({ room, onSubmit, isSubmitting = false }: RoomF
               ))}
             </div>
           </div>
-
+ 
           <Separator />
-
-          <div>
-            <Label htmlFor="images">Image URLs (one per line)</Label>
-            <Textarea
-              id="images"
-              value={formData.images.join('\n')}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  images: e.target.value.split('\n').filter((url) => url.trim() !== ''),
-                })
-              }
-              placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
-              rows={4}
-            />
-          </div>
-
+ 
           <div className="flex items-center space-x-2">
             <Checkbox
               id="isAvailable"
@@ -192,7 +175,7 @@ export default function RoomForm({ room, onSubmit, isSubmitting = false }: RoomF
               Available for booking
             </Label>
           </div>
-
+ 
           <div className="flex gap-3">
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? 'Saving...' : room ? 'Update Room' : 'Create Room'}

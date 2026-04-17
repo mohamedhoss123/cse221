@@ -1,13 +1,10 @@
 export type RoomType = 'standard' | 'deluxe' | 'suite' | 'penthouse'
 
 export interface Room {
-  id: string
-  name: string
+  room_id: string
   type: RoomType
   price: number
   description: string
-  amenities: string[]
-  images: string[]
   capacity: number
   available: boolean
 }
@@ -18,5 +15,4 @@ export interface RoomFilters {
   maxPrice?: number
   capacity?: number
   available?: boolean
-  amenities?: string[]
 }

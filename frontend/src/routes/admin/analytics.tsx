@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { getBookingsSync } from '#/services/bookings.service'
-import { getRoomsSync } from '#/services/rooms.service'
+import { useState, useEffect } from 'react'
+import { getBookings } from '#/services/bookings.service'
+import { getRooms } from '#/services/rooms.service'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import { Separator } from '#/components/ui/separator'
 import {
@@ -25,8 +26,32 @@ export const Route = createFileRoute('/admin/analytics')({
 })
 
 function AnalyticsPage() {
-  const bookings = getBookingsSync()
-  const rooms = getRoomsSync()
+  const [bookings, setBookings] = useState<any[]>([])
+  const [rooms, setRooms] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  const loadData = async () => {
+    try {
+      const [bookingsData, roomsData] = await Promise.all([
+        getBookings(),
+        getRooms()
+      ])
+      setBookings(bookingsData)
+      setRooms(roomsData)
+    } catch (error) {
+      console.error('Failed to load analytics data:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (isLoading) {
+    return <div className="p-8">Loading...</div>
+  }
 
   // Calculate metrics
   const totalRevenue = bookings

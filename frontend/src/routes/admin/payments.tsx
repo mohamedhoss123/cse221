@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
-import { getPaymentsSync } from '#/services/payments.service'
+import { useState, useEffect } from 'react'
+import { getPayments } from '#/services/payments.service'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent } from '#/components/ui/card'
 import { Badge } from '#/components/ui/badge'
@@ -14,9 +14,29 @@ export const Route = createFileRoute('/admin/payments')({
 })
 
 function AdminPaymentsPage() {
-  const [payments] = useState(getPaymentsSync())
+  const [payments, setPayments] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [selectedPayment, setSelectedPayment] = useState<typeof payments[0] | null>(null)
   const [refundDialogOpen, setRefundDialogOpen] = useState(false)
+
+  useEffect(() => {
+    loadPayments()
+  }, [])
+
+  const loadPayments = async () => {
+    try {
+      const data = await getPayments()
+      setPayments(data)
+    } catch (error) {
+      console.error('Failed to load payments:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (isLoading) {
+    return <div className="p-8">Loading...</div>
+  }
 
   const getPaymentStatusColor = (status: typeof payments[number]['status']) => {
     switch (status) {

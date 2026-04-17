@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState } from 'react'
-import { getComplaintsSync } from '#/services/bookings.service'
+import { useState, useEffect } from 'react'
+import { getComplaints } from '#/services/complaints.service'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent } from '#/components/ui/card'
 import { Badge } from '#/components/ui/badge'
@@ -13,7 +13,27 @@ export const Route = createFileRoute('/admin/complaints/')({
 })
 
 function AdminComplaintsPage() {
-  const [complaints] = useState(getComplaintsSync())
+  const [complaints, setComplaints] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    loadComplaints()
+  }, [])
+
+  const loadComplaints = async () => {
+    try {
+      const data = await getComplaints()
+      setComplaints(data)
+    } catch (error) {
+      console.error('Failed to load complaints:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (isLoading) {
+    return <div className="p-8">Loading...</div>
+  }
 
   const getStatusColor = (status: typeof complaints[number]['status']) => {
     switch (status) {

@@ -1,100 +1,78 @@
-import { mockDelay } from '../lib/api'
-import { mockBookings, mockComplaints } from '../mock-data/bookings'
-import type { Booking, BookingStatus, Complaint } from '../types/booking.types'
-
-export function getBookingsSync(customerId?: string): Booking[] {
-  if (customerId) {
-    return mockBookings.filter(booking => booking.customerId === customerId)
-  }
-  return [...mockBookings]
-}
+import { apiClient } from '../lib/api-client'
+import type { Booking, BookingStatus } from '../types/booking.types'
 
 export async function getBookings(customerId?: string): Promise<Booking[]> {
-  await mockDelay()
-  return getBookingsSync(customerId)
+  try {
+    const params = customerId ? { customerId } : {}
+    const response = await apiClient.get<Booking[]>('/bookings', { params })
+
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'Failed to get bookings')
+    }
+
+    return response.data
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to get bookings')
+  }
 }
 
-export async function getBookingById(id: string): Promise<Booking | undefined> {
-  await mockDelay()
-  return mockBookings.find(booking => booking.id === id)
+export async function getBookingById(id: string): Promise<Booking> {
+  try {
+    const response = await apiClient.get<Booking>(`/bookings/${id}`)
+
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'Failed to get booking')
+    }
+
+    return response.data
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to get booking')
+  }
 }
 
 export async function createBooking(
   booking: Omit<Booking, 'id' | 'createdAt'>
 ): Promise<Booking> {
-  await mockDelay()
-  const newBooking: Booking = {
-    ...booking,
-    id: `BKG-${String(mockBookings.length + 1).padStart(3, '0')}`,
-    createdAt: new Date().toISOString(),
+  try {
+    const response = await apiClient.post<Booking>('/bookings', booking)
+
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'Failed to create booking')
+    }
+
+    return response.data
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to create booking')
   }
-  mockBookings.push(newBooking)
-  return newBooking
 }
 
 export async function updateBookingStatus(
   id: string,
   status: BookingStatus
-): Promise<Booking | undefined> {
-  await mockDelay()
-  const booking = mockBookings.find(b => b.id === id)
-  if (booking) {
-    booking.status = status
-    return booking
+): Promise<Booking> {
+  try {
+    const response = await apiClient.put<Booking>(`/bookings/${id}/status`, { status })
+
+    if (!response.success || !response.data) {
+      throw new Error(response.message || 'Failed to update booking status')
+    }
+
+    return response.data
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to update booking status')
   }
-  return undefined
 }
 
 export async function cancelBooking(id: string): Promise<boolean> {
-  await mockDelay()
-  const booking = mockBookings.find(b => b.id === id)
-  if (booking) {
-    booking.status = 'cancelled'
-    return true
+  try {
+    const response = await apiClient.post<{ success: boolean }>(`/bookings/${id}/cancel`)
+
+    if (!response.success) {
+      throw new Error(response.message || 'Failed to cancel booking')
+    }
+
+    return response.success
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to cancel booking')
   }
-  return false
-}
-
-// Complaints
-export function getComplaintsSync(customerId?: string): Complaint[] {
-  if (customerId) {
-    return mockComplaints.filter(complaint => complaint.customerId === customerId)
-  }
-  return [...mockComplaints]
-}
-
-export async function getComplaints(customerId?: string): Promise<Complaint[]> {
-  await mockDelay()
-  return getComplaintsSync(customerId)
-}
-
-export async function getComplaintById(id: string): Promise<Complaint | undefined> {
-  await mockDelay()
-  return mockComplaints.find(complaint => complaint.id === id)
-}
-
-export async function createComplaint(
-  complaint: Omit<Complaint, 'id' | 'createdAt'>
-): Promise<Complaint> {
-  await mockDelay()
-  const newComplaint: Complaint = {
-    ...complaint,
-    id: `CMP-${String(mockComplaints.length + 1).padStart(3, '0')}`,
-    createdAt: new Date().toISOString(),
-  }
-  mockComplaints.push(newComplaint)
-  return newComplaint
-}
-
-export async function updateComplaint(
-  id: string,
-  updates: Partial<Complaint>
-): Promise<Complaint | undefined> {
-  await mockDelay()
-  const complaint = mockComplaints.find(c => c.id === id)
-  if (complaint) {
-    Object.assign(complaint, updates)
-    return complaint
-  }
-  return undefined
 }

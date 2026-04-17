@@ -68,7 +68,12 @@ function RoomDetailsPage() {
             </div>
           </div>
 
-          <RoomGallery images={room.images} name={room.name} />
+          <RoomGallery 
+            type={room.type} 
+            description={room.description}
+            price={room.price}
+            capacity={room.capacity}
+          />
 
           <div className="mt-8">
             <h2 className="mb-4 text-xl font-semibold text-[var(--expressive-primary)]">

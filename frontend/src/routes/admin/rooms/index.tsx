@@ -112,23 +112,19 @@ function AdminRoomsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {rooms.map((room) => (
+                   {rooms.map((room) => (
                     <TableRow key={room.id} className="border-b border-[var(--expressive-secondary)]/30 hover:bg-[var(--expressive-background)]/50 transition-colors">
                       <TableCell className="py-4">
                         <div className="flex items-center gap-4">
-                          <div className="relative h-14 w-20 rounded-xl overflow-hidden border-2 border-[var(--expressive-secondary)] shadow-[2px_2px_0_0_var(--expressive-secondary)]">
-                            <img
-                              src={room.images[0] || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80'}
-                              alt={room.name}
-                              className="h-full w-full object-cover"
-                            />
+                          <div className="h-14 w-20 rounded-xl border-2 border-[var(--expressive-secondary)] shadow-[2px_2px_0_0_var(--expressive-secondary)] bg-[var(--expressive-background)] flex items-center justify-center">
+                            <Bed className="h-8 w-8 text-[var(--expressive-primary)]" />
                           </div>
                           <div>
                             <p className="font-bold text-[var(--expressive-primary)]">
-                              {room.name}
+                              {room.type}
                             </p>
                             <p className="text-xs text-[var(--expressive-text)] mt-0.5 font-medium">
-                              ID: {room.id}
+                              ID: {room.room_id || 'N/A'}
                             </p>
                           </div>
                         </div>
@@ -153,8 +149,8 @@ function AdminRoomsPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button variant="outline" size="icon" asChild className="border-2 border-[var(--expressive-secondary)] shadow-[2px_2px_0_0_var(--expressive-secondary)] hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_var(--expressive-secondary)] transition-all bg-[var(--expressive-surface)] text-[var(--expressive-text)] hover:text-[var(--expressive-primary)]">
-                            <Link to="/admin/rooms/$id/edit" params={{ id: room.id }}>
+                          <Button variant="outline" size="icon" asChild className="border-2 border-[var(--expressive-secondary)] shadow-[2px_2px_0_0_var(--expressive-secondary)] hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_var(--expressive-secondary)] transition-all bg-[var(--expressive-surface)] text-[var(--expressive-text)] hover:text-[var(--expressive-primary)] font-bold">
+                            <Link to="/admin/rooms/$id/edit" params={{ id: room.room_id || '' }}>
                               <Pencil className="h-4 w-4" />
                             </Link>
                           </Button>

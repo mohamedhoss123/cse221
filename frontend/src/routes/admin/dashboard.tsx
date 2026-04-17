@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { useState, useEffect } from 'react'
 import ProtectedRoute from '#/components/ProtectedRoute'
-import { getBookingsSync, getComplaintsSync } from '#/services/bookings.service'
+import { getBookings } from '#/services/bookings.service'
+import { getComplaints } from '#/services/complaints.service'
 import DashboardStats from '#/components/admin/DashboardStats'
 import RevenueChart from '#/components/admin/RevenueChart'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
@@ -17,8 +19,36 @@ export const Route = createFileRoute('/admin/dashboard')({
 })
 
 function DashboardPage() {
-  const bookings = getBookingsSync()
-  const complaints = getComplaintsSync()
+  const [bookings, setBookings] = useState<any[]>([])
+  const [complaints, setComplaints] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  const loadData = async () => {
+    try {
+      const [bookingsData, complaintsData] = await Promise.all([
+        getBookings(),
+        getComplaints()
+      ])
+      setBookings(bookingsData)
+      setComplaints(complaintsData)
+    } catch (error) {
+      console.error('Failed to load dashboard data:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <ProtectedRoute requireAdmin>
+        <div className="p-8">Loading...</div>
+      </ProtectedRoute>
+    )
+  }
 
   // Calculate metrics
   const totalRevenue = bookings

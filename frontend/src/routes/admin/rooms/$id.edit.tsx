@@ -32,7 +32,7 @@ function EditRoomPage() {
 
     setIsSubmitting(true)
     try {
-      const updated = await updateRoom(room.id, data)
+      const updated = await updateRoom(room.room_id || '', data)
       if (updated) {
         setRoom(updated)
         toast.success('Room updated successfully')

@@ -14,12 +14,30 @@ export default function RoomCard({ room }: RoomCardProps) {
 
   return (
     <Card className="overflow-hidden border border-slate-200 rounded-2xl hover:shadow-lg transition-all duration-300 bg-white">
-      <div className="relative h-56 overflow-hidden">
-        <img
-          src={room.images[0] || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80'}
-          alt={room.name}
-          className="h-full w-full object-cover transition-transform hover:scale-105 duration-500"
-        />
+      <div className="relative h-56 overflow-hidden bg-gradient-to-br from-[var(--expressive-background)] to-[var(--expressive-primary)]/20">
+        <div className="h-full w-full flex items-center justify-center">
+          <div className="text-center">
+            <div className="mb-2">
+              <span className="text-3xl font-bold text-white">{room.type.charAt(0).toUpperCase()}</span>
+            </div>
+            <div className="mb-4">
+              <p className="text-xl font-semibold text-white">{room.type} Room</p>
+              <p className="text-sm text-white/80">{room.description}</p>
+            </div>
+            <div className="flex items-center justify-center gap-8">
+              <div className="bg-white/20 rounded-lg px-4 py-2">
+                <p className="text-sm text-white mb-1">Capacity</p>
+                <p className="text-2xl font-bold text-white">{room.capacity}</p>
+                <p className="text-xs text-white/60">guests</p>
+              </div>
+              <div className="bg-white/20 rounded-lg px-4 py-2">
+                <p className="text-sm text-white mb-1">Price</p>
+                <p className="text-2xl font-bold text-white">${formatPrice(room.price)}</p>
+                <p className="text-xs text-white/60">per night</p>
+              </div>
+            </div>
+          </div>
+        </div>
         {!room.available && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-[2px]">
             <Badge variant="secondary" className="text-sm bg-white/90 text-[var(--expressive-primary)] border-none font-semibold px-3 py-1">

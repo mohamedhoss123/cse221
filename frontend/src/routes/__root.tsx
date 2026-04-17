@@ -5,6 +5,7 @@ import { AuthProvider } from '#/stores/auth.store'
 import { Toaster } from '#/components/ui/sonner'
 import Header from '#/components/Header'
 import Footer from '#/components/Footer'
+import { useAuthError } from '#/hooks/useAuthError'
 
 import '../styles.css'
 
@@ -14,12 +15,15 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   const location = useLocation()
+  const { isRedirecting } = useAuthError()
 
-  // Check if current route is auth or landing page
+  if (isRedirecting) {
+    return null
+  }
+
   const isAuthRoute = location.pathname.startsWith('/auth')
   const isLandingPage = location.pathname === '/'
 
-  // Don't show header/footer for auth routes or landing page
   const showLayout = !isAuthRoute && !isLandingPage
 
   return (
