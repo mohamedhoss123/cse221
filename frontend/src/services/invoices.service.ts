@@ -1,10 +1,9 @@
 import { apiClient } from '../lib/api-client'
 import type { Invoice } from '../types/booking.types'
 
-export async function getInvoices(customerId?: string): Promise<Invoice[]> {
+export async function getInvoices(): Promise<Invoice[]> {
   try {
-    const params = customerId ? { customerId } : {}
-    const response = await apiClient.get<Invoice[]>('/invoices', { params })
+    const response = await apiClient.get<Invoice[]>('/invoices')
 
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Failed to get invoices')

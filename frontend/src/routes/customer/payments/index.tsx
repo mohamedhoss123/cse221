@@ -29,7 +29,7 @@ function PaymentsPage() {
   }, [])
 
   const loadInvoices = async () => {
-    const data = await getInvoices(user?.id)
+    const data = await getInvoices()
     setInvoices(data)
   }
 

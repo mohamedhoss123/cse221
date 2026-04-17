@@ -30,9 +30,7 @@ import {
 
 export const Route = createFileRoute('/customer/bookings')({
   loader: async () => {
-    const authUser = localStorage.getItem('auth_user')
-    const user = authUser ? JSON.parse(authUser) : { id: 'mock-user-1' }
-    const initialBookings = await getBookings(user.id)
+    const initialBookings = await getBookings()
     return { initialBookings }
   },
   component: MyBookingsPage,

@@ -162,13 +162,10 @@ export function BookingModal({ room, open, onOpenChange }: BookingModalProps) {
 
       const booking = await createBooking({
         roomId: room.id,
-        customerId: user.id,
         checkIn: bookingData.checkIn,
         checkOut: bookingData.checkOut,
         guests: bookingData.guests,
-        status: 'pending',
         totalAmount,
-        paymentStatus: 'pending',
       })
 
       // Close modal and navigate to booking details
