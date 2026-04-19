@@ -8,6 +8,21 @@ class PaymentService {
     // Verify invoice exists
     const invoice = await invoiceService.getInvoiceById(invoiceId);
 
+    // Prevent payment on already paid invoice
+    if (invoice.status === 'paid') {
+      const error = new Error('Invoice is already fully paid');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    // Validate payment amount doesn't exceed remaining balance
+    const remainingAmount = invoice.totalAmount - (invoice.paidAmount || 0);
+    if (amount > remainingAmount) {
+      const error = new Error(`Payment amount ($${amount}) exceeds remaining balance ($${remainingAmount})`);
+      error.statusCode = 400;
+      throw error;
+    }
+
     // Calculate current paid amount
     const currentPaidAmount = invoice.paidAmount || 0;
     const newPaidAmount = currentPaidAmount + amount;

@@ -9,6 +9,7 @@ const userRoutes = require('./modules/user/routes/userRoutes');
 const roomRoutes = require('./modules/room/routes/roomRoutes');
 const bookingRoutes = require('./modules/booking/routes/bookingRoutes');
 const invoiceRoutes = require('./modules/invoice/routes/invoiceRoutes');
+const paymentRoutes = require('./modules/payment/routes/paymentRoutes');
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/rooms', roomRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/invoices', invoiceRoutes);
+app.use('/api/payments', paymentRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

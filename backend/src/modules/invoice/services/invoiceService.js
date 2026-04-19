@@ -19,6 +19,14 @@ class InvoiceService {
       [userId]
     );
 
+    // Helper function to safely format date
+    const formatDate = (dateValue) => {
+      if (!dateValue) return null;
+      const date = new Date(dateValue);
+      if (isNaN(date.getTime())) return null;
+      return date.toISOString().split('T')[0];
+    };
+
     // For each invoice, get payment details and calculate status
     const invoicePromises = invoices.map(async (invoice) => {
       // Get payments for this invoice
@@ -58,22 +66,24 @@ class InvoiceService {
         paidAmount: paidAmount,
         remainingAmount: remainingAmount,
         status: status,
-        createdAt: invoice.date,
-        dueDate: dueDate.toISOString().split('T')[0],
+        createdAt: formatDate(invoice.date),
+        dueDate: formatDate(dueDate),
         customerId: invoice.customerId.toString(),
         booking: {
           id: invoice.reservationId.toString(),
           roomName: `${invoice.roomType.charAt(0).toUpperCase() + invoice.roomType.slice(1)} Room`,
-          checkIn: invoice.checkIn,
-          checkOut: invoice.checkOut,
+          checkIn: formatDate(invoice.checkIn),
+          checkOut: formatDate(invoice.checkOut),
           guests: numberOfNights // Using nights as placeholder since we don't have guest count
         },
-        payments: payments.map(p => ({
-          id: p.id.toString(),
-          amount: parseFloat(p.amount),
-          method: p.type,
-          date: p.date
-        }))
+        payments: payments
+          .map(p => ({
+            id: p.id.toString(),
+            amount: parseFloat(p.amount),
+            method: p.type,
+            date: formatDate(p.date)
+          }))
+          .filter(p => p.date !== null) // Filter out payments with invalid dates
       };
     });
 
@@ -86,8 +96,7 @@ class InvoiceService {
               i.ROOM_room_id as roomId, i.RESERVATION_reservvaion_id as reservationId,
               r.type as roomType, r.price as roomPrice,
               res.start_date as checkIn, res.end_date as checkOut,
-              u.name as customerName, u.user_id as customerId,
-              u.id as userID
+              u.name as customerName, u.user_id as customerId
        FROM INVOICE i
        JOIN ROOM r ON i.ROOM_room_id = r.room_id
        JOIN RESERVATION res ON i.RESERVATION_reservvaion_id = res.reservvaion_id
@@ -125,6 +134,14 @@ class InvoiceService {
       status = 'partial';
     }
 
+    // Helper function to safely format date
+    const formatDate = (dateValue) => {
+      if (!dateValue) return null;
+      const date = new Date(dateValue);
+      if (isNaN(date.getTime())) return null;
+      return date.toISOString().split('T')[0];
+    };
+
     // Calculate due date (30 days from invoice date)
     const invoiceDate = new Date(invoice.date);
     const dueDate = new Date(invoiceDate);
@@ -142,22 +159,30 @@ class InvoiceService {
       paidAmount: paidAmount,
       remainingAmount: remainingAmount,
       status: status,
-      createdAt: invoice.date,
-      dueDate: dueDate.toISOString().split('T')[0],
+      createdAt: formatDate(invoice.date),
+      dueDate: formatDate(dueDate),
       customerId: invoice.customerId.toString(),
       booking: {
         id: invoice.reservationId.toString(),
         roomName: `${invoice.roomType.charAt(0).toUpperCase() + invoice.roomType.slice(1)} Room`,
-        checkIn: invoice.checkIn,
-        checkOut: invoice.checkOut,
+        checkIn: formatDate(invoice.checkIn),
+        checkOut: formatDate(invoice.checkOut),
         guests: numberOfNights
       },
       payments: payments.map(p => ({
         id: p.id.toString(),
         amount: parseFloat(p.amount),
         method: p.type,
-        date: p.date
-      }))
+        date: formatDate(p.date)
+      })).filter(p => p.date !== null), // Filter out payments with invalid dates
+      // Additional fields for frontend compatibility
+      reservationId: invoice.reservationId.toString(),
+      roomId: invoice.roomId.toString(),
+      roomType: invoice.roomType,
+      visitorId: invoice.visitorId.toString(),
+      date: formatDate(invoice.date),
+      customerName: invoice.customerName,
+      amount: totalAmount
     };
   }
 
@@ -188,31 +213,6 @@ class InvoiceService {
     };
   }
 
-  async getInvoiceById(invoiceId) {
-    const invoices = await query(
-      'SELECT i.invoce_id as id, i.amount, i.date, i.VISITOR_visitor_id as visitorId, i.ROOM_room_id as roomId, i.RESERVATION_reservvaion_id as reservationId, r.type as roomType, u.name as customerName FROM INVOICE i JOIN ROOM r ON i.ROOM_room_id = r.room_id JOIN VISITOR v ON i.VISITOR_visitor_id = v.visitor_id JOIN USER u ON v.USER_user_id = u.user_id WHERE i.invoce_id = ?',
-      [invoiceId]
-    );
-
-    if (invoices.length === 0) {
-      const error = new Error('Invoice not found');
-      error.statusCode = 404;
-      throw error;
-    }
-
-    const invoice = invoices[0];
-    return {
-      id: invoice.id.toString(),
-      amount: parseFloat(invoice.amount),
-      date: invoice.date,
-      visitorId: invoice.visitorId.toString(),
-      roomId: invoice.roomId.toString(),
-      reservationId: invoice.reservationId.toString(),
-      roomType: invoice.roomType,
-      customerName: invoice.customerName
-    };
-  }
-
   async getAllInvoicesForVisitor(visitorId) {
     // Get all invoices for a visitor with full details
     const invoices = await query(
@@ -230,6 +230,14 @@ class InvoiceService {
        ORDER BY i.date DESC`,
       [visitorId]
     );
+
+    // Helper function to safely format date
+    const formatDate = (dateValue) => {
+      if (!dateValue) return null;
+      const date = new Date(dateValue);
+      if (isNaN(date.getTime())) return null;
+      return date.toISOString().split('T')[0];
+    };
 
     // For each invoice, get payment details and calculate status
     const invoicePromises = invoices.map(async (invoice) => {
@@ -270,22 +278,24 @@ class InvoiceService {
         paidAmount: paidAmount,
         remainingAmount: remainingAmount,
         status: status,
-        createdAt: invoice.date,
-        dueDate: dueDate.toISOString().split('T')[0],
+        createdAt: formatDate(invoice.date),
+        dueDate: formatDate(dueDate),
         customerId: invoice.customerId.toString(),
         booking: {
           id: invoice.reservationId.toString(),
           roomName: `${invoice.roomType.charAt(0).toUpperCase() + invoice.roomType.slice(1)} Room`,
-          checkIn: invoice.checkIn,
-          checkOut: invoice.checkOut,
+          checkIn: formatDate(invoice.checkIn),
+          checkOut: formatDate(invoice.checkOut),
           guests: numberOfNights // Using nights as placeholder since we don't have guest count
         },
-        payments: payments.map(p => ({
-          id: p.id.toString(),
-          amount: parseFloat(p.amount),
-          method: p.type,
-          date: p.date
-        }))
+        payments: payments
+          .map(p => ({
+            id: p.id.toString(),
+            amount: parseFloat(p.amount),
+            method: p.type,
+            date: formatDate(p.date)
+          }))
+          .filter(p => p.date !== null) // Filter out payments with invalid dates
       };
     });
 

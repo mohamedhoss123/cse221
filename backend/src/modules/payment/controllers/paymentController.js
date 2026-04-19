@@ -1,4 +1,5 @@
 const paymentService = require('../services/paymentService');
+const invoiceService = require('../../invoice/services/invoiceService');
 
 const createPayment = async (req, res, next) => {
   try {
@@ -18,6 +19,17 @@ const createPayment = async (req, res, next) => {
         success: false,
         message: 'Invalid payment method'
       });
+    }
+
+    // Verify invoice belongs to authenticated user
+    if (req.user.role === 'visitor') {
+      const invoiceForAuth = await invoiceService.getInvoiceById(invoiceId);
+      if (invoiceForAuth.visitorId != req.user.visitorId) {
+        return res.status(403).json({
+          success: false,
+          message: 'You do not have permission to create payments for this invoice'
+        });
+      }
     }
 
     const invoice = await paymentService.createPaymentForInvoice({

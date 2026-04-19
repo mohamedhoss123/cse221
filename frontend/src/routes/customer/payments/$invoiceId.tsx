@@ -57,7 +57,21 @@ function InvoicePage() {
   const [paymentAmount, setPaymentAmount] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
-  const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(invoice)
+  const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(
+    invoice ? { ...invoice, payments: invoice.payments || [] } : null
+  )
+
+  // Safe date formatting helper
+  const safeFormatDate = (dateValue: string | null | undefined, formatString: string) => {
+    if (!dateValue) return 'N/A'
+    const date = new Date(dateValue)
+    if (isNaN(date.getTime())) return 'N/A'
+    try {
+      return format(date, formatString)
+    } catch {
+      return 'N/A'
+    }
+  }
 
   if (error || !invoice) {
     return (
@@ -78,7 +92,7 @@ function InvoicePage() {
     )
   }
 
-  const progressPercentage = (currentInvoice!.paidAmount / currentInvoice!.totalAmount) * 100
+  const progressPercentage = currentInvoice!.totalAmount > 0 ? ((currentInvoice!.totalAmount - (currentInvoice!.remainingAmount || 0)) / currentInvoice!.totalAmount) * 100 : 0
 
   const getStatusBadge = () => {
     const statusConfig = {
@@ -117,14 +131,15 @@ function InvoicePage() {
 
   const handleMakePayment = async () => {
     const amount = parseFloat(paymentAmount)
+    const remainingAmount = currentInvoice!.remainingAmount || currentInvoice!.amount || 0
 
     if (!amount || amount <= 0) {
       toast.error('Please enter a valid amount')
       return
     }
 
-    if (amount > currentInvoice!.remainingAmount) {
-      toast.error(`Payment cannot exceed remaining balance of $${currentInvoice!.remainingAmount}`)
+    if (amount > remainingAmount) {
+      toast.error(`Payment cannot exceed remaining balance of $${remainingAmount}`)
       return
     }
 
@@ -154,12 +169,6 @@ function InvoicePage() {
     }
   }
 
-  const handleQuickAmount = (amount: number) => {
-    if (amount <= currentInvoice!.remainingAmount) {
-      setPaymentAmount(amount.toString())
-    }
-  }
-
   return (
     <div className="p-8">
       {/* Header */}
@@ -179,7 +188,7 @@ function InvoicePage() {
             {getStatusBadge()}
           </div>
           <p className="text-[var(--expressive-text)]">
-            Booking #{currentInvoice.bookingId} • Created on {format(new Date(currentInvoice.createdAt), 'MMMM d, yyyy')}
+            Booking #{currentInvoice.reservationId} • Created on {safeFormatDate(currentInvoice.date, 'MMMM d, yyyy')}
           </p>
         </div>
         <div className="flex gap-3">
@@ -222,45 +231,37 @@ function InvoicePage() {
               <div className="space-y-4">
                 <div>
                   <p className="text-xs text-[var(--expressive-text)] mb-1">Room Type</p>
-                  <p className="text-sm font-medium text-[var(--expressive-primary)]">{currentInvoice.booking.roomName}</p>
+                  <p className="text-sm font-medium text-[var(--expressive-primary)]">
+                    {currentInvoice.roomType ? `${currentInvoice.roomType.charAt(0).toUpperCase() + currentInvoice.roomType.slice(1)} Room` : 'N/A'}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-xs text-[var(--expressive-text)] mb-1">Check-in</p>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-[var(--expressive-text)]" />
-                    <p className="text-sm font-medium text-[var(--expressive-primary)]">
-                      {format(new Date(currentInvoice.booking.checkIn), 'MMM d, yyyy')}
-                    </p>
-                  </div>
+                  <p className="text-xs text-[var(--expressive-text)] mb-1">Reservation ID</p>
+                  <p className="text-sm font-medium text-[var(--expressive-primary)]">{currentInvoice.reservationId || 'N/A'}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-[var(--expressive-text)] mb-1">Guests</p>
-                  <p className="text-sm font-medium text-[var(--expressive-primary)]">{currentInvoice.booking.guests} guests</p>
+                  <p className="text-xs text-[var(--expressive-text)] mb-1">Room ID</p>
+                  <p className="text-sm font-medium text-[var(--expressive-primary)]">{currentInvoice.roomId || 'N/A'}</p>
                 </div>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs text-[var(--expressive-text)] mb-1">Booking ID</p>
-                  <p className="text-sm font-medium text-[var(--expressive-primary)]">{currentInvoice.booking.id}</p>
+                  <p className="text-xs text-[var(--expressive-text)] mb-1">Customer Name</p>
+                  <p className="text-sm font-medium text-[var(--expressive-primary)]">{currentInvoice.customerName || 'N/A'}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-[var(--expressive-text)] mb-1">Check-out</p>
+                  <p className="text-xs text-[var(--expressive-text)] mb-1">Invoice Date</p>
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-[var(--expressive-text)]" />
                     <p className="text-sm font-medium text-[var(--expressive-primary)]">
-                      {format(new Date(currentInvoice.booking.checkOut), 'MMM d, yyyy')}
+                      {safeFormatDate(currentInvoice.date, 'MMM d, yyyy')}
                     </p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-[var(--expressive-text)] mb-1">Due Date</p>
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-[var(--expressive-text)]" />
-                    <p className="text-sm font-medium text-[var(--expressive-primary)]">
-                      {format(new Date(currentInvoice.dueDate), 'MMM d, yyyy')}
-                    </p>
-                  </div>
+                  <p className="text-xs text-[var(--expressive-text)] mb-1">Amount</p>
+                  <p className="text-sm font-medium text-[var(--expressive-primary)]">${currentInvoice.amount || 0}</p>
                 </div>
               </div>
             </div>
@@ -275,12 +276,12 @@ function InvoicePage() {
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold text-[var(--expressive-primary)]">Payment History</h2>
-                  <p className="text-sm text-[var(--expressive-text)]">{currentInvoice.payments.length} transaction(s)</p>
+                  <p className="text-sm text-[var(--expressive-text)]">{currentInvoice.payments?.length ?? 0} transaction(s)</p>
                 </div>
               </div>
             </div>
 
-            {currentInvoice.payments.length === 0 ? (
+            {!currentInvoice.payments || currentInvoice.payments.length === 0 ? (
               <div className="text-center py-8">
                 <CreditCard className="w-12 h-12 text-[var(--expressive-text)] mx-auto mb-3" />
                 <p className="text-[var(--expressive-text)]">No payments yet</p>
@@ -303,7 +304,7 @@ function InvoicePage() {
                           </p>
                         </div>
                         <p className="text-xs text-[var(--expressive-text)]">
-                          {format(new Date(payment.date), 'MMM d, yyyy • h:mm a')}
+                          {safeFormatDate(payment.date, 'MMM d, yyyy • h:mm a')}
                         </p>
                       </div>
                     </div>
@@ -329,7 +330,7 @@ function InvoicePage() {
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-[var(--expressive-text)]">Amount Paid</span>
-                <span className="text-sm font-semibold">${currentInvoice.paidAmount}</span>
+                <span className="text-sm font-semibold">${currentInvoice.paidAmount || 0}</span>
               </div>
               <div className="w-full bg-slate-700 rounded-full h-3 mb-4">
                 <div
@@ -348,57 +349,18 @@ function InvoicePage() {
             <div className="space-y-3 pt-4 border-t border-slate-700">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-[var(--expressive-text)]">Total Amount</span>
-                <span className="text-sm font-semibold">${currentInvoice.totalAmount}</span>
+                <span className="text-sm font-semibold">${currentInvoice.amount || currentInvoice.totalAmount || 0}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-[var(--expressive-text)]">Paid</span>
-                <span className="text-sm font-semibold text-[var(--expressive-text)]">${currentInvoice.paidAmount}</span>
+                <span className="text-sm font-semibold text-[var(--expressive-text)]">${currentInvoice.paidAmount || 0}</span>
               </div>
               <div className="flex items-center justify-between pt-3 border-t border-slate-700">
                 <span className="text-base font-semibold">Remaining</span>
-                <span className="text-xl font-bold text-[var(--expressive-accent)]">${currentInvoice.remainingAmount}</span>
+                <span className="text-xl font-bold text-[var(--expressive-accent)]">${currentInvoice.remainingAmount || currentInvoice.amount || 0}</span>
               </div>
             </div>
           </div>
-
-          {/* Quick Payment Actions */}
-          {currentInvoice.status !== 'paid' && (
-            <div className="bg-[var(--expressive-surface)] rounded-2xl p-6 border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)]">
-              <h3 className="text-lg font-semibold text-[var(--expressive-primary)] mb-4">Quick Payment</h3>
-              <div className="grid grid-cols-2 gap-3">
-                <Button
-                  variant="outline"
-                  className="bg-[var(--expressive-surface)] text-[var(--expressive-text)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
-                  onClick={() => handleQuickAmount(Math.min(200, currentInvoice.remainingAmount))}
-                  disabled={200 > currentInvoice.remainingAmount}
-                >
-                  $200
-                </Button>
-                <Button
-                  variant="outline"
-                  className="bg-[var(--expressive-surface)] text-[var(--expressive-text)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
-                  onClick={() => handleQuickAmount(Math.min(400, currentInvoice.remainingAmount))}
-                  disabled={400 > currentInvoice.remainingAmount}
-                >
-                  $400
-                </Button>
-                <Button
-                  variant="outline"
-                  className="col-span-2 bg-[var(--expressive-surface)] text-[var(--expressive-text)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
-                  onClick={() => handleQuickAmount(currentInvoice.remainingAmount)}
-                >
-                  Pay Remaining (${currentInvoice.remainingAmount})
-                </Button>
-              </div>
-              <Button
-                className="w-full mt-3 bg-[var(--expressive-primary)] text-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all"
-                onClick={() => setShowPaymentDialog(true)}
-              >
-                Custom Amount
-                <ChevronRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
-          )}
 
           {/* Payment Methods Info */}
           <div className="bg-[var(--expressive-accent)]/20 rounded-2xl p-6 border border-[var(--expressive-accent)]/30">
@@ -446,12 +408,12 @@ function InvoicePage() {
                   onChange={(e) => setPaymentAmount(e.target.value)}
                   className="pl-8 h-12 bg-[var(--expressive-background)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-xl focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-[var(--expressive-primary)] transition-colors"
                   min="1"
-                  max={currentInvoice.remainingAmount}
+                  max={currentInvoice.remainingAmount || currentInvoice.amount || 0}
                   step="0.01"
                 />
               </div>
               <p className="text-xs text-[var(--expressive-text)]">
-                Remaining balance: <span className="font-semibold">${currentInvoice.remainingAmount}</span>
+                Remaining balance: <span className="font-semibold">${currentInvoice.remainingAmount || currentInvoice.amount || 0}</span>
               </p>
             </div>
 
