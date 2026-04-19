@@ -32,10 +32,13 @@ class BookingService {
   }
 
   async getAllBookings(filters = {}) {
-    let sql = 'SELECT r.reservvaion_id as id, r.start_date as checkIn, r.end_date as checkOut, r.ROOM_room_id as roomId, rm.type as roomType, rm.price, v.USER_user_id as customerId, u.name as customerName, i.invoce_id as invoiceId FROM RESERVATION r JOIN ROOM rm ON r.ROOM_room_id = rm.room_id JOIN VISITOR v ON r.VISITOR_visitor_id = v.visitor_id JOIN USER u ON v.USER_user_id = u.user_id LEFT JOIN INVOICE i ON r.reservvaion_id = i.RESERVATION_reservvaion_id';
+    let sql = 'SELECT r.reservvaion_id as id, r.start_date as checkIn, r.end_date as checkOut, r.ROOM_room_id as roomId, rm.type as roomType, rm.price, v.USER_user_id as customerId, v.visitor_id, u.name as customerName, i.invoce_id as invoiceId FROM RESERVATION r JOIN ROOM rm ON r.ROOM_room_id = rm.room_id JOIN VISITOR v ON r.VISITOR_visitor_id = v.visitor_id JOIN USER u ON v.USER_user_id = u.user_id LEFT JOIN INVOICE i ON r.reservvaion_id = i.RESERVATION_reservvaion_id';
     const params = [];
 
-    if (filters.customerId) {
+    if (filters.visitorId) {
+      sql += ' WHERE v.visitor_id = ?';
+      params.push(filters.visitorId);
+    } else if (filters.customerId) {
       sql += ' WHERE u.user_id = ?';
       params.push(filters.customerId);
     }
@@ -52,6 +55,7 @@ class BookingService {
         roomType: booking.roomType,
         roomPrice: booking.price,
         customerId: booking.customerId.toString(),
+        visitorId: booking.visitor_id.toString(),
         customerName: booking.customerName,
         checkIn: booking.checkIn,
         checkOut: booking.checkOut,
@@ -64,7 +68,7 @@ class BookingService {
 
   async getBookingById(bookingId) {
     const bookings = await query(
-      'SELECT r.reservvaion_id as id, r.start_date as checkIn, r.end_date as checkOut, r.ROOM_room_id as roomId, rm.type as roomType, rm.price, v.USER_user_id as customerId, u.name as customerName, i.invoce_id as invoiceId, i.amount as invoiceAmount FROM RESERVATION r JOIN ROOM rm ON r.ROOM_room_id = rm.room_id JOIN VISITOR v ON r.VISITOR_visitor_id = v.visitor_id JOIN USER u ON v.USER_user_id = u.user_id LEFT JOIN INVOICE i ON r.reservvaion_id = i.RESERVATION_reservvaion_id WHERE r.reservvaion_id = ?',
+      'SELECT r.reservvaion_id as id, r.start_date as checkIn, r.end_date as checkOut, r.ROOM_room_id as roomId, rm.type as roomType, rm.price, v.USER_user_id as customerId, v.visitor_id, u.name as customerName, i.invoce_id as invoiceId, i.amount as invoiceAmount FROM RESERVATION r JOIN ROOM rm ON r.ROOM_room_id = rm.room_id JOIN VISITOR v ON r.VISITOR_visitor_id = v.visitor_id JOIN USER u ON v.USER_user_id = u.user_id LEFT JOIN INVOICE i ON r.reservvaion_id = i.RESERVATION_reservvaion_id WHERE r.reservvaion_id = ?',
       [bookingId]
     );
 
@@ -91,6 +95,7 @@ class BookingService {
       roomType: booking.roomType,
       roomPrice: booking.price,
       customerId: booking.customerId.toString(),
+      visitorId: booking.visitor_id.toString(),
       customerName: booking.customerName,
       checkIn: booking.checkIn,
       checkOut: booking.checkOut,
@@ -102,7 +107,7 @@ class BookingService {
   }
 
   async createBooking(bookingData) {
-    const { roomId, customerId, checkIn, checkOut, guests, totalAmount } = bookingData;
+    const { roomId, visitorId, customerId, checkIn, checkOut, guests, totalAmount } = bookingData;
 
     // First, check if the room is available for the requested dates
     const availability = await this.checkRoomAvailability(roomId, checkIn, checkOut);
@@ -114,24 +119,27 @@ class BookingService {
       throw error;
     }
 
-    // Get visitor_id from user_id
-    const visitors = await query(
-      'SELECT visitor_id FROM VISITOR WHERE USER_user_id = ?',
-      [customerId]
-    );
+    // Use visitorId if provided, otherwise get it from customerId
+    let finalVisitorId = visitorId;
+    if (!finalVisitorId && customerId) {
+      const visitors = await query(
+        'SELECT visitor_id FROM VISITOR WHERE USER_user_id = ?',
+        [customerId]
+      );
 
-    if (visitors.length === 0) {
-      const error = new Error('Visitor not found');
-      error.statusCode = 404;
-      throw error;
+      if (visitors.length === 0) {
+        const error = new Error('Visitor not found');
+        error.statusCode = 404;
+        throw error;
+      }
+
+      finalVisitorId = visitors[0].visitor_id;
     }
-
-    const visitorId = visitors[0].visitor_id;
 
     // Create the reservation
     const result = await query(
       'INSERT INTO RESERVATION (start_date, end_date, ROOM_room_id, VISITOR_visitor_id) VALUES (?, ?, ?, ?)',
-      [checkIn, checkOut, roomId, visitorId]
+      [checkIn, checkOut, roomId, finalVisitorId]
     );
 
     const reservationId = result.insertId;
@@ -163,14 +171,14 @@ class BookingService {
     // Create invoice for this booking
     const invoice = await invoiceService.createInvoice({
       amount: calculatedTotalAmount,
-      visitorId: visitorId,
+      visitorId: finalVisitorId,
       roomId: roomId,
       reservationId: reservationId
     });
 
     // Get the complete booking details
     const bookings = await query(
-      'SELECT r.reservvaion_id as id, r.start_date as checkIn, r.end_date as checkOut, r.ROOM_room_id as roomId, rm.type as roomType, rm.price, v.USER_user_id as customerId, u.name as customerName FROM RESERVATION r JOIN ROOM rm ON r.ROOM_room_id = rm.room_id JOIN VISITOR v ON r.VISITOR_visitor_id = v.visitor_id JOIN USER u ON v.USER_user_id = u.user_id WHERE r.reservvaion_id = ?',
+      'SELECT r.reservvaion_id as id, r.start_date as checkIn, r.end_date as checkOut, r.ROOM_room_id as roomId, rm.type as roomType, rm.price, v.USER_user_id as customerId, v.visitor_id, u.name as customerName FROM RESERVATION r JOIN ROOM rm ON r.ROOM_room_id = rm.room_id JOIN VISITOR v ON r.VISITOR_visitor_id = v.visitor_id JOIN USER u ON v.USER_user_id = u.user_id WHERE r.reservvaion_id = ?',
       [reservationId]
     );
 
@@ -181,6 +189,7 @@ class BookingService {
       roomType: booking.roomType,
       roomPrice: booking.price,
       customerId: booking.customerId.toString(),
+      visitorId: booking.visitor_id.toString(),
       customerName: booking.customerName,
       checkIn: booking.checkIn,
       checkOut: booking.checkOut,

@@ -66,11 +66,26 @@ class UserService {
       throw error;
     }
 
-    const token = generateToken({
+    // Prepare token payload
+    const tokenPayload = {
       userId: user.id,
       email: user.email,
       role: user.role
-    });
+    };
+
+    // If user is a visitor, fetch and include visitor_id in token
+    if (user.role === 'visitor') {
+      const visitors = await query(
+        'SELECT visitor_id FROM VISITOR WHERE USER_user_id = ?',
+        [user.id]
+      );
+
+      if (visitors.length > 0) {
+        tokenPayload.visitorId = visitors[0].visitor_id;
+      }
+    }
+
+    const token = generateToken(tokenPayload);
 
     const { password: _, ...userWithoutPassword } = user;
 

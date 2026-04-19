@@ -5,13 +5,17 @@ const getInvoiceById = async (req, res, next) => {
     const invoice = await invoiceService.getInvoiceById(req.params.id);
 
     // Check if the invoice belongs to the authenticated user
-    // console.log('Authenticated user:', req.user);
-    // console.log('Invoice customer ID:', invoice);
-    if (invoice.visitorId !== req.user.userId && req.user.role !== 'admin') {
-      return res.status(403).json({
-        success: false,
-        message: 'You do not have permission to view this invoice'
-      });
+    // For visitors, compare visitorId from JWT with invoice's visitorId
+    // For admins, allow access to any invoice
+    console.log('Authenticated user:', req.user);
+    console.log('Invoice visitorId:', invoice);
+    if (req.user.role === 'visitor') {
+      if (invoice.visitorId != req.user.visitorId) {
+        return res.status(403).json({
+          success: false,
+          message: 'You do not have permission to view this invoice'
+        });
+      }
     }
 
     res.status(200).json({
@@ -25,10 +29,10 @@ const getInvoiceById = async (req, res, next) => {
 
 const getAllInvoices = async (req, res, next) => {
   try {
-    // Get customer ID from JWT token
-    const customerId = req.user.userId;
+    // Get visitor ID from JWT token (for visitors) or use userId (for admins)
+    const visitorId = req.user.role === 'visitor' ? req.user.visitorId : null;
 
-    const invoices = await invoiceService.getAllInvoicesForCustomer(customerId);
+    const invoices = await invoiceService.getAllInvoicesForVisitor(visitorId);
 
     res.status(200).json({
       success: true,
