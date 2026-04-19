@@ -1,15 +1,97 @@
 version: '3.8'
 
 services:
-  db:
+  # MySQL Database
+  cse221_db:
     image: mysql:8.0
-    container_name: mysql_db
+    container_name: cse221_mysql_db
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: mydb
       MYSQL_USER: sampleuser
       MYSQL_PASSWORD: samplepass
-
     ports:
-      - "3306:3306"
+      - "3307:3306"  # Custom port 3307 on host
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/schema.sql:/docker-entrypoint-initdb.d/schema.sql
     restart: unless-stopped
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  cse221_backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cse221_backend_api
+    environment:
+      PORT: 5000
+      NODE_ENV: development
+      DB_HOST: cse221_db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: rootpassword
+      DB_NAME: mydb
+      JWT_SECRET: dev-secret-key-change-in-production
+      JWT_EXPIRE: 7d
+    volumes:
+      - ./backend/src:/app/src  # Hot reload: mount source code
+      - /app/node_modules        # Prevent overwriting node_modules
+    ports:
+      - "5000:5000"  # Expose directly for development
+    depends_on:
+      cse221_db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - app_network
+
+  # Frontend
+  cse221_frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cse221_frontend_app
+    volumes:
+      - ./frontend/src:/app/src      # Hot reload: mount source
+      - ./frontend/public:/app/public
+      - /app/node_modules            # Prevent overwriting node_modules
+      - /app/dist                    # Prevent overwriting build
+    ports:
+      - "3000:3000"  # Expose directly for development
+    environment:
+      - VITE_API_URL=http://localhost/api
+    depends_on:
+      - cse221_backend
+    restart: unless-stopped
+    networks:
+      - app_network
+
+  # Nginx Reverse Proxy
+  cse221_nginx:
+    image: nginx:alpine
+    container_name: cse221_nginx_proxy
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"  # Main entry point
+    depends_on:
+      - cse221_backend
+      - cse221_frontend
+    restart: unless-stopped
+    networks:
+      - app_network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  app_network:
+    driver: bridge

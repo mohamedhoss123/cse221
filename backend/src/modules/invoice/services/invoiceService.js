@@ -86,7 +86,8 @@ class InvoiceService {
               i.ROOM_room_id as roomId, i.RESERVATION_reservvaion_id as reservationId,
               r.type as roomType, r.price as roomPrice,
               res.start_date as checkIn, res.end_date as checkOut,
-              u.name as customerName, u.user_id as customerId
+              u.name as customerName, u.user_id as customerId,
+              u.id as userID
        FROM INVOICE i
        JOIN ROOM r ON i.ROOM_room_id = r.room_id
        JOIN RESERVATION res ON i.RESERVATION_reservvaion_id = res.reservvaion_id
@@ -95,7 +96,7 @@ class InvoiceService {
        WHERE i.invoce_id = ?`,
       [invoiceId]
     );
-
+    console.log('Invoice query result:', invoices);
     if (invoices.length === 0) {
       const error = new Error('Invoice not found');
       error.statusCode = 404;

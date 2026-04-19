@@ -5,7 +5,9 @@ const getInvoiceById = async (req, res, next) => {
     const invoice = await invoiceService.getInvoiceById(req.params.id);
 
     // Check if the invoice belongs to the authenticated user
-    if (invoice.customerId !== req.user.userId && req.user.role !== 'admin') {
+    // console.log('Authenticated user:', req.user);
+    // console.log('Invoice customer ID:', invoice);
+    if (invoice.visitorId !== req.user.userId && req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'You do not have permission to view this invoice'

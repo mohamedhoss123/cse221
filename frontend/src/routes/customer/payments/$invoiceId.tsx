@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { useAuth } from '#/hooks/useAuth'
+import { useNavigate } from '@tanstack/react-router'
+import { getInvoiceById } from '#/services/invoices.service'
+import { createPaymentForInvoice } from '#/services/invoices.service'
 import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
@@ -29,65 +31,54 @@ import {
   Plus,
   Download,
   ChevronRight,
+  ArrowLeft,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
+import type { Invoice } from '#/types/booking.types'
 
 export const Route = createFileRoute('/customer/payments/$invoiceId')({
   component: InvoicePage,
+  loader: async ({ params }) => {
+    try {
+      const invoice = await getInvoiceById(params.invoiceId)
+      return { invoice }
+    } catch (error) {
+      return { invoice: null, error: true }
+    }
+  },
 })
 
 function InvoicePage() {
   const { invoiceId } = Route.useParams()
-  const { user } = useAuth()
+  const { invoice, error } = Route.useLoaderData()
+  const navigate = useNavigate()
   const [showPaymentDialog, setShowPaymentDialog] = useState(false)
   const [paymentAmount, setPaymentAmount] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
+  const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(invoice)
 
-  // Mock invoice data - in real app, fetch from API
-  const invoice = {
-    id: invoiceId,
-    bookingId: 'BK-12345',
-    booking: {
-      id: 'BK-12345',
-      roomName: 'Deluxe Ocean View Suite',
-      checkIn: '2025-06-15',
-      checkOut: '2025-06-20',
-      guests: 2,
-    },
-    customerId: user?.id || '1',
-    totalAmount: 1400,
-    paidAmount: 600,
-    remainingAmount: 800,
-    status: 'partial' as 'pending' | 'partial' | 'paid' | 'overdue',
-    dueDate: '2025-06-01',
-    createdAt: '2025-04-15',
-    payments: [
-      {
-        id: 'PAY-001',
-        bookingId: 'BK-12345',
-        customerId: user?.id || '1',
-        amount: 300,
-        status: 'paid' as const,
-        method: 'credit_card' as const,
-        transactionId: 'TXN-789456',
-        createdAt: '2025-04-16T10:30:00',
-      },
-      {
-        id: 'PAY-002',
-        bookingId: 'BK-12345',
-        customerId: user?.id || '1',
-        amount: 300,
-        status: 'paid' as const,
-        method: 'paypal' as const,
-        transactionId: 'TXN-789457',
-        createdAt: '2025-04-20T14:22:00',
-      },
-    ],
+  if (error || !invoice) {
+    return (
+      <div className="p-8">
+        <div className="bg-white rounded-2xl p-12 text-center border border-slate-200">
+          <FileText className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+          <h1 className="text-2xl font-semibold text-slate-900 mb-2">Invoice Not Found</h1>
+          <p className="text-slate-600 mb-6">The invoice you're looking for doesn't exist or you don't have permission to view it.</p>
+          <Button
+            onClick={() => navigate({ to: '/customer/payments' })}
+            className="bg-[var(--expressive-primary)] text-white"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Payments
+          </Button>
+        </div>
+      </div>
+    )
   }
 
-  const progressPercentage = (invoice.paidAmount / invoice.totalAmount) * 100
+  const progressPercentage = (currentInvoice!.paidAmount / currentInvoice!.totalAmount) * 100
 
   const getStatusBadge = () => {
     const statusConfig = {
@@ -113,7 +104,7 @@ function InvoicePage() {
       },
     }
 
-    const config = statusConfig[invoice.status]
+    const config = statusConfig[currentInvoice!.status as keyof typeof statusConfig] || statusConfig.pending
     const Icon = config.icon
 
     return (
@@ -132,8 +123,8 @@ function InvoicePage() {
       return
     }
 
-    if (amount > invoice.remainingAmount) {
-      toast.error(`Payment cannot exceed remaining balance of $${invoice.remainingAmount}`)
+    if (amount > currentInvoice!.remainingAmount) {
+      toast.error(`Payment cannot exceed remaining balance of $${currentInvoice!.remainingAmount}`)
       return
     }
 
@@ -144,19 +135,27 @@ function InvoicePage() {
 
     setIsProcessing(true)
 
-    // Simulate payment processing
-    setTimeout(() => {
+    try {
+      const updatedInvoice = await createPaymentForInvoice(
+        invoiceId,
+        amount,
+        paymentMethod as 'credit_card' | 'debit_card' | 'paypal' | 'bank_transfer'
+      )
+
+      setCurrentInvoice(updatedInvoice)
       toast.success(`Payment of $${amount} processed successfully!`)
       setPaymentAmount('')
       setPaymentMethod('')
       setShowPaymentDialog(false)
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to process payment')
+    } finally {
       setIsProcessing(false)
-      // In real app, refetch invoice data
-    }, 2000)
+    }
   }
 
   const handleQuickAmount = (amount: number) => {
-    if (amount <= invoice.remainingAmount) {
+    if (amount <= currentInvoice!.remainingAmount) {
       setPaymentAmount(amount.toString())
     }
   }
@@ -166,14 +165,21 @@ function InvoicePage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
+          <button
+            onClick={() => navigate({ to: '/customer/payments' })}
+            className="text-sm text-[var(--expressive-primary)] hover:underline mb-3 flex items-center gap-1"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Payments
+          </button>
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-3xl font-light text-[var(--expressive-primary)]">
-              Invoice <span className="font-semibold text-[var(--expressive-primary)]">#{invoice.id}</span>
+              Invoice <span className="font-semibold text-[var(--expressive-primary)]">#{currentInvoice.id}</span>
             </h1>
             {getStatusBadge()}
           </div>
           <p className="text-[var(--expressive-text)]">
-            Booking #{invoice.bookingId} • Created on {format(new Date(invoice.createdAt), 'MMMM d, yyyy')}
+            Booking #{currentInvoice.bookingId} • Created on {format(new Date(currentInvoice.createdAt), 'MMMM d, yyyy')}
           </p>
         </div>
         <div className="flex gap-3">
@@ -185,7 +191,7 @@ function InvoicePage() {
             <Download className="w-4 h-4 mr-2" />
             Download PDF
           </Button>
-          {invoice.status !== 'paid' && (
+          {currentInvoice.status !== 'paid' && (
             <Button
               className="bg-[var(--expressive-primary)] text-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all"
               onClick={() => setShowPaymentDialog(true)}
@@ -216,34 +222,34 @@ function InvoicePage() {
               <div className="space-y-4">
                 <div>
                   <p className="text-xs text-[var(--expressive-text)] mb-1">Room Type</p>
-                  <p className="text-sm font-medium text-[var(--expressive-primary)]">{invoice.booking.roomName}</p>
+                  <p className="text-sm font-medium text-[var(--expressive-primary)]">{currentInvoice.booking.roomName}</p>
                 </div>
                 <div>
                   <p className="text-xs text-[var(--expressive-text)] mb-1">Check-in</p>
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-[var(--expressive-text)]" />
                     <p className="text-sm font-medium text-[var(--expressive-primary)]">
-                      {format(new Date(invoice.booking.checkIn), 'MMM d, yyyy')}
+                      {format(new Date(currentInvoice.booking.checkIn), 'MMM d, yyyy')}
                     </p>
                   </div>
                 </div>
                 <div>
                   <p className="text-xs text-[var(--expressive-text)] mb-1">Guests</p>
-                  <p className="text-sm font-medium text-[var(--expressive-primary)]">{invoice.booking.guests} guests</p>
+                  <p className="text-sm font-medium text-[var(--expressive-primary)]">{currentInvoice.booking.guests} guests</p>
                 </div>
               </div>
 
               <div className="space-y-4">
                 <div>
                   <p className="text-xs text-[var(--expressive-text)] mb-1">Booking ID</p>
-                  <p className="text-sm font-medium text-[var(--expressive-primary)]">{invoice.booking.id}</p>
+                  <p className="text-sm font-medium text-[var(--expressive-primary)]">{currentInvoice.booking.id}</p>
                 </div>
                 <div>
                   <p className="text-xs text-[var(--expressive-text)] mb-1">Check-out</p>
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-[var(--expressive-text)]" />
                     <p className="text-sm font-medium text-[var(--expressive-primary)]">
-                      {format(new Date(invoice.booking.checkOut), 'MMM d, yyyy')}
+                      {format(new Date(currentInvoice.booking.checkOut), 'MMM d, yyyy')}
                     </p>
                   </div>
                 </div>
@@ -252,7 +258,7 @@ function InvoicePage() {
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-[var(--expressive-text)]" />
                     <p className="text-sm font-medium text-[var(--expressive-primary)]">
-                      {format(new Date(invoice.dueDate), 'MMM d, yyyy')}
+                      {format(new Date(currentInvoice.dueDate), 'MMM d, yyyy')}
                     </p>
                   </div>
                 </div>
@@ -269,19 +275,19 @@ function InvoicePage() {
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold text-[var(--expressive-primary)]">Payment History</h2>
-                  <p className="text-sm text-[var(--expressive-text)]">{invoice.payments.length} transaction(s)</p>
+                  <p className="text-sm text-[var(--expressive-text)]">{currentInvoice.payments.length} transaction(s)</p>
                 </div>
               </div>
             </div>
 
-            {invoice.payments.length === 0 ? (
+            {currentInvoice.payments.length === 0 ? (
               <div className="text-center py-8">
                 <CreditCard className="w-12 h-12 text-[var(--expressive-text)] mx-auto mb-3" />
                 <p className="text-[var(--expressive-text)]">No payments yet</p>
               </div>
             ) : (
               <div className="space-y-3">
-                {invoice.payments.map((payment, index) => (
+                {currentInvoice.payments.map((payment, index) => (
                   <div
                     key={payment.id}
                     className="flex items-center justify-between p-4 bg-[var(--expressive-background)] rounded-xl hover:bg-slate-100 transition-colors"
@@ -295,18 +301,16 @@ function InvoicePage() {
                           <p className="text-sm font-semibold text-[var(--expressive-primary)]">
                             {payment.method?.replace('_', ' ').toUpperCase()}
                           </p>
-                          <span className="text-xs text-[var(--expressive-text)]">•</span>
-                          <p className="text-xs text-[var(--expressive-text)]">{payment.transactionId}</p>
                         </div>
                         <p className="text-xs text-[var(--expressive-text)]">
-                          {format(new Date(payment.createdAt), 'MMM d, yyyy • h:mm a')}
+                          {format(new Date(payment.date), 'MMM d, yyyy • h:mm a')}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-semibold text-[var(--expressive-text)]">-${payment.amount}</p>
+                      <p className="text-lg font-semibold text-[var(--expressive-text)]">${payment.amount}</p>
                       <p className="text-xs text-[var(--expressive-text)]">
-                        {index + 1} of {invoice.payments.length} payment{invoice.payments.length > 1 ? 's' : ''}
+                        {index + 1} of {currentInvoice.payments.length} payment{currentInvoice.payments.length > 1 ? 's' : ''}
                       </p>
                     </div>
                   </div>
@@ -325,7 +329,7 @@ function InvoicePage() {
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-[var(--expressive-text)]">Amount Paid</span>
-                <span className="text-sm font-semibold">${invoice.paidAmount}</span>
+                <span className="text-sm font-semibold">${currentInvoice.paidAmount}</span>
               </div>
               <div className="w-full bg-slate-700 rounded-full h-3 mb-4">
                 <div
@@ -344,46 +348,46 @@ function InvoicePage() {
             <div className="space-y-3 pt-4 border-t border-slate-700">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-[var(--expressive-text)]">Total Amount</span>
-                <span className="text-sm font-semibold">${invoice.totalAmount}</span>
+                <span className="text-sm font-semibold">${currentInvoice.totalAmount}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-[var(--expressive-text)]">Paid</span>
-                <span className="text-sm font-semibold text-[var(--expressive-text)]">${invoice.paidAmount}</span>
+                <span className="text-sm font-semibold text-[var(--expressive-text)]">${currentInvoice.paidAmount}</span>
               </div>
               <div className="flex items-center justify-between pt-3 border-t border-slate-700">
                 <span className="text-base font-semibold">Remaining</span>
-                <span className="text-xl font-bold text-[var(--expressive-accent)]">${invoice.remainingAmount}</span>
+                <span className="text-xl font-bold text-[var(--expressive-accent)]">${currentInvoice.remainingAmount}</span>
               </div>
             </div>
           </div>
 
           {/* Quick Payment Actions */}
-          {invoice.status !== 'paid' && (
+          {currentInvoice.status !== 'paid' && (
             <div className="bg-[var(--expressive-surface)] rounded-2xl p-6 border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)]">
               <h3 className="text-lg font-semibold text-[var(--expressive-primary)] mb-4">Quick Payment</h3>
               <div className="grid grid-cols-2 gap-3">
                 <Button
                   variant="outline"
                   className="bg-[var(--expressive-surface)] text-[var(--expressive-text)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
-                  onClick={() => handleQuickAmount(Math.min(200, invoice.remainingAmount))}
-                  disabled={200 > invoice.remainingAmount}
+                  onClick={() => handleQuickAmount(Math.min(200, currentInvoice.remainingAmount))}
+                  disabled={200 > currentInvoice.remainingAmount}
                 >
                   $200
                 </Button>
                 <Button
                   variant="outline"
                   className="bg-[var(--expressive-surface)] text-[var(--expressive-text)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
-                  onClick={() => handleQuickAmount(Math.min(400, invoice.remainingAmount))}
-                  disabled={400 > invoice.remainingAmount}
+                  onClick={() => handleQuickAmount(Math.min(400, currentInvoice.remainingAmount))}
+                  disabled={400 > currentInvoice.remainingAmount}
                 >
                   $400
                 </Button>
                 <Button
                   variant="outline"
                   className="col-span-2 bg-[var(--expressive-surface)] text-[var(--expressive-text)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
-                  onClick={() => handleQuickAmount(invoice.remainingAmount)}
+                  onClick={() => handleQuickAmount(currentInvoice.remainingAmount)}
                 >
-                  Pay Remaining (${invoice.remainingAmount})
+                  Pay Remaining (${currentInvoice.remainingAmount})
                 </Button>
               </div>
               <Button
@@ -442,12 +446,12 @@ function InvoicePage() {
                   onChange={(e) => setPaymentAmount(e.target.value)}
                   className="pl-8 h-12 bg-[var(--expressive-background)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-xl focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-[var(--expressive-primary)] transition-colors"
                   min="1"
-                  max={invoice.remainingAmount}
+                  max={currentInvoice.remainingAmount}
                   step="0.01"
                 />
               </div>
               <p className="text-xs text-[var(--expressive-text)]">
-                Remaining balance: <span className="font-semibold">${invoice.remainingAmount}</span>
+                Remaining balance: <span className="font-semibold">${currentInvoice.remainingAmount}</span>
               </p>
             </div>
 
