@@ -1,6 +1,5 @@
 import type { Room, RoomFilters } from '../types/room.types'
 import BaseService from './base.service'
-import { buildEndpoint } from './base.service'
 
 export async function getRooms(filters?: RoomFilters): Promise<Room[]> {
   const queryParams: any = {}
@@ -29,8 +28,8 @@ export async function getRooms(filters?: RoomFilters): Promise<Room[]> {
     queryParams.available = filters.available
   }
 
-  const endpoint = buildEndpoint('/rooms', queryParams)
-  return BaseService.get<Room[]>(endpoint)
+  // Pass params as config object instead of building into URL
+  return BaseService.get<Room[]>('/rooms', { params: queryParams })
 }
 
 export async function getRoomById(id: string): Promise<Room> {

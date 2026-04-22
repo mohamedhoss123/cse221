@@ -28,6 +28,10 @@ class RoomService {
       conditions.push('status = ?');
       params.push(filters.status);
     }
+    if (filters.available !== undefined) {
+      conditions.push('status = ?');
+      params.push(filters.available ? 'available' : 'unavailable');
+    }
 
     if (conditions.length > 0) {
       sql += ' WHERE ' + conditions.join(' AND ');

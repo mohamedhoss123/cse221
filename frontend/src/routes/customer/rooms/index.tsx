@@ -168,7 +168,7 @@ function RoomsPage() {
                     <SelectTrigger className="w-full py-6 bg-[var(--expressive-background)] border-2 border-[var(--expressive-secondary)] rounded-xl font-mono text-sm focus:outline-none focus:ring-4 focus:ring-[var(--expressive-accent)] transition-all hover:shadow-[2px_2px_0_0_var(--expressive-secondary)] data-[state=open]:shadow-[2px_2px_0_0_var(--expressive-secondary)]">
                       <SelectValue placeholder="All types" />
                     </SelectTrigger>
-                    <SelectContent className="border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-xl font-mono">
+                    <SelectContent className="bg-white border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-xl font-mono text-[var(--expressive-text)]">
                       <SelectItem value="all" className="focus:bg-[var(--expressive-accent)] focus:text-white cursor-pointer py-2">All Types</SelectItem>
                       <SelectItem value="standard" className="focus:bg-[var(--expressive-accent)] focus:text-white cursor-pointer py-2">Standard</SelectItem>
                       <SelectItem value="deluxe" className="focus:bg-[var(--expressive-accent)] focus:text-white cursor-pointer py-2">Deluxe</SelectItem>
@@ -193,7 +193,7 @@ function RoomsPage() {
                     <SelectTrigger className="w-full py-6 bg-[var(--expressive-background)] border-2 border-[var(--expressive-secondary)] rounded-xl font-mono text-sm focus:outline-none focus:ring-4 focus:ring-[var(--expressive-accent)] transition-all hover:shadow-[2px_2px_0_0_var(--expressive-secondary)] data-[state=open]:shadow-[2px_2px_0_0_var(--expressive-secondary)]">
                       <SelectValue placeholder="Any price" />
                     </SelectTrigger>
-                    <SelectContent className="border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-xl font-mono">
+                    <SelectContent className="bg-white border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-xl font-mono text-[var(--expressive-text)]">
                       <SelectItem value="all" className="focus:bg-[var(--expressive-accent)] focus:text-white cursor-pointer py-2">Any Price</SelectItem>
                       <SelectItem value="200" className="focus:bg-[var(--expressive-accent)] focus:text-white cursor-pointer py-2">Under $200</SelectItem>
                       <SelectItem value="400" className="focus:bg-[var(--expressive-accent)] focus:text-white cursor-pointer py-2">Under $400</SelectItem>
@@ -218,7 +218,7 @@ function RoomsPage() {
                     <SelectTrigger className="w-full py-6 bg-[var(--expressive-background)] border-2 border-[var(--expressive-secondary)] rounded-xl font-mono text-sm focus:outline-none focus:ring-4 focus:ring-[var(--expressive-accent)] transition-all hover:shadow-[2px_2px_0_0_var(--expressive-secondary)] data-[state=open]:shadow-[2px_2px_0_0_var(--expressive-secondary)]">
                       <SelectValue placeholder="Any capacity" />
                     </SelectTrigger>
-                    <SelectContent className="border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-xl font-mono">
+                    <SelectContent className="bg-white border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-xl font-mono text-[var(--expressive-text)]">
                       <SelectItem value="all" className="focus:bg-[var(--expressive-accent)] focus:text-white cursor-pointer py-2">Any Capacity</SelectItem>
                       <SelectItem value="1" className="focus:bg-[var(--expressive-accent)] focus:text-white cursor-pointer py-2">1 Guest</SelectItem>
                       <SelectItem value="2" className="focus:bg-[var(--expressive-accent)] focus:text-white cursor-pointer py-2">2 Guests</SelectItem>
@@ -243,7 +243,7 @@ function RoomsPage() {
                     <SelectTrigger className="w-full py-6 bg-[var(--expressive-background)] border-2 border-[var(--expressive-secondary)] rounded-xl font-mono text-sm focus:outline-none focus:ring-4 focus:ring-[var(--expressive-accent)] transition-all hover:shadow-[2px_2px_0_0_var(--expressive-secondary)] data-[state=open]:shadow-[2px_2px_0_0_var(--expressive-secondary)]">
                       <SelectValue placeholder="All rooms" />
                     </SelectTrigger>
-                    <SelectContent className="border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-xl font-mono">
+                    <SelectContent className="bg-white border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-xl font-mono text-[var(--expressive-text)]">
                       <SelectItem value="all" className="focus:bg-[var(--expressive-accent)] focus:text-white cursor-pointer py-2">All Rooms</SelectItem>
                       <SelectItem value="available" className="focus:bg-[var(--expressive-accent)] focus:text-white cursor-pointer py-2">Available Now</SelectItem>
                     </SelectContent>
