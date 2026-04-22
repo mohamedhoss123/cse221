@@ -4,7 +4,20 @@ import type { Complaint } from '../types/booking.types'
 
 export async function getComplaints(customerId?: string): Promise<Complaint[]> {
   const endpoint = buildEndpoint('/complaints', { customerId })
-  return BaseService.get<Complaint[]>(endpoint)
+  const response = await BaseService.get<any[]>(endpoint)
+
+  // Transform backend response to match frontend types
+  return response.map((complaint: any) => ({
+    ...complaint,
+    // Map for backward compatibility
+    customerId: complaint.visitorId,
+    subject: complaint.type,
+    message: complaint.description,
+    // Add default values for missing fields
+    status: complaint.status || 'open',
+    response: complaint.response || '',
+    createdAt: complaint.createdAt || new Date().toISOString()
+  }))
 }
 
 export async function getComplaintById(id: string): Promise<Complaint> {
@@ -12,9 +25,17 @@ export async function getComplaintById(id: string): Promise<Complaint> {
 }
 
 export async function createComplaint(
-  complaint: Omit<Complaint, 'id' | 'createdAt'>
+  complaint: {
+    description: string  // was 'message'
+    type: string         // was 'subject'
+  }
 ): Promise<Complaint> {
-  return BaseService.post<Complaint>('/complaints', complaint)
+  // Map frontend fields to backend API contract
+  const payload = {
+    description: complaint.description,
+    type: complaint.type
+  }
+  return BaseService.post<Complaint>('/complaints', payload)
 }
 
 export async function updateComplaint(

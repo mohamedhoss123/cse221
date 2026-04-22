@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '#/hooks/useAuth'
 import { getComplaints, createComplaint } from '#/services/complaints.service'
 import { Button } from '#/components/ui/button'
@@ -20,9 +20,27 @@ export const Route = createFileRoute('/customer/complaints')({
 
 function ComplaintsPage() {
   const { user } = useAuth()
-  const [complaints, setComplaints] = useState(() =>
-    user ? getComplaints(user.id) : []
-  )
+  const [complaints, setComplaints] = useState<
+    Array<{
+      id: string
+      subject: string
+      message: string
+      status: 'open' | 'in_progress' | 'resolved'
+      response?: string
+      createdAt: string
+    }>
+  >([])
+
+  useEffect(() => {
+    loadComplaints()
+  }, [user])
+
+  const loadComplaints = async () => {
+    if (!user) return
+    const data = await getComplaints(user.id)
+    setComplaints(data)
+  }
+
   const [formData, setFormData] = useState({
     subject: '',
     message: '',
@@ -35,10 +53,8 @@ function ComplaintsPage() {
 
     try {
       const newComplaint = await createComplaint({
-        customerId: user.id,
-        subject: formData.subject,
-        message: formData.message,
-        status: 'open',
+        type: formData.subject,      // map subject → type
+        description: formData.message // map message → description
       })
       setComplaints((prev) => [newComplaint, ...prev])
       setFormData({ subject: '', message: '' })

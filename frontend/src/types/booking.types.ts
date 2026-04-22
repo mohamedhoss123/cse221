@@ -22,13 +22,19 @@ export interface Booking {
 
 export interface Complaint {
   id: string
-  customerId: string
-  bookingId?: string
-  subject: string
-  message: string
-  status: 'open' | 'in_progress' | 'resolved'
-  response?: string
-  createdAt: string
+  visitorId: string
+  description: string  // was 'message'
+  type: string         // was 'subject'
+  status?: 'open' | 'in_progress' | 'resolved'  // optional, not in schema
+  response?: string    // optional, not in schema
+  createdAt?: string   // optional, not in schema
+}
+
+// Keep for backward compatibility with components
+export interface ComplaintUI extends Complaint {
+  customerId?: string
+  subject?: string
+  message?: string
 }
 
 export interface Payment {
