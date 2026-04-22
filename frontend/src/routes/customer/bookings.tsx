@@ -6,7 +6,6 @@ import {
   Calendar,
   Clock,
   Users,
-  CreditCard,
   CheckCircle2,
   XCircle,
   Hourglass,
@@ -161,16 +160,6 @@ function MyBookingsPage() {
           <div>
             <p className="text-xs text-[var(--expressive-text)] mb-0.5">Guests</p>
             <p className="text-sm font-medium text-[var(--expressive-primary)]">{booking.guests}</p>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
-            <CreditCard className="w-5 h-5 text-[var(--expressive-text)]" />
-          </div>
-          <div>
-            <p className="text-xs text-[var(--expressive-text)] mb-0.5">Total</p>
-            <p className="text-sm font-semibold text-[var(--expressive-primary)]">${booking.totalPrice}</p>
           </div>
         </div>
       </div>

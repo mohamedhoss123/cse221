@@ -82,11 +82,13 @@ function PaymentsPage() {
           <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h3 className="text-lg font-semibold text-[var(--expressive-primary)]">{invoice.booking.roomName}</h3>
+              <h3 className="text-lg font-semibold text-[var(--expressive-primary)]">
+              {invoice.booking?.roomName || invoice.roomName || `Room #${invoice.roomId}`}
+            </h3>
               {getStatusBadge(invoice.status)}
               </div>
               <p className="text-sm text-[#000]">
-                Invoice #{invoice.id} • Booking #{invoice.bookingId}
+                Invoice #{invoice.id} • Booking #{invoice.booking?.id || invoice.reservationId}
               </p>
             </div>
           </div>
