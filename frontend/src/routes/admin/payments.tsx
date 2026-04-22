@@ -167,7 +167,7 @@ function AdminPaymentsPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="border-[#ce0031] text-[#ce0031] hover:bg-[#ce0031] hover:text-white"
+                            className="border-[#F5C518] text-[#F5C518] hover:bg-[#F5C518] hover:text-black"
                             onClick={() => handleRefund(payment)}
                           >
                             <Undo className="mr-2 h-4 w-4" />

@@ -185,7 +185,7 @@ export function BookingModal({ room, open, onOpenChange }: BookingModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] bg-white">
         <DialogHeader>
-          <DialogTitle>Book {room.type} Room</DialogTitle>
+          <DialogTitle>Book {room.name || `${room.type} Room`}</DialogTitle>
           <DialogDescription>
             Select your dates and confirm your booking
           </DialogDescription>
@@ -268,18 +268,6 @@ export function BookingModal({ room, open, onOpenChange }: BookingModalProps) {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Number of nights</span>
                   <span className="font-medium">{totalNights}</span>
-                </div>
-
-                <Separator />
-
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold">Total amount</span>
-                  <div className="flex items-center gap-1">
-                    <DollarSign className="h-5 w-5 text-[var(--expressive-primary)]" />
-                    <span className="text-xl font-bold text-[var(--expressive-primary)]">
-                      {totalAmount}
-                    </span>
-                  </div>
                 </div>
 
                 <Separator />

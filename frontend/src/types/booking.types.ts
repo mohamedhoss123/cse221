@@ -1,18 +1,23 @@
 export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed'
 export type PaymentStatus = 'pending' | 'paid' | 'refunded'
+export type InvoiceStatus = 'pending' | 'partial' | 'paid' | 'overdue'
 
 export interface Booking {
   id: string
   roomId: string
-  roomName?: string
+  roomType: string
+  roomPrice: number
   customerId: string
+  visitorId: string
+  customerName: string
   checkIn: string
   checkOut: string
-  guests: number
   status: BookingStatus
+  guests?: number
   totalAmount: number
-  paymentStatus: PaymentStatus
-  createdAt: string
+  invoiceId?: string | null
+  numberOfNights?: number
+  specialRequests?: string
 }
 
 export interface Complaint {
@@ -28,13 +33,10 @@ export interface Complaint {
 
 export interface Payment {
   id: string
-  bookingId: string
-  customerId: string
+  invoiceId?: string
   amount: number
-  status: PaymentStatus
-  method?: 'credit_card' | 'debit_card' | 'paypal' | 'bank_transfer'
-  transactionId?: string
-  createdAt: string
+  method?: string
+  date: string | null
 }
 
 export interface Invoice {
@@ -51,8 +53,17 @@ export interface Invoice {
   totalAmount: number
   paidAmount: number
   remainingAmount: number
-  status: 'pending' | 'partial' | 'paid' | 'overdue'
+  status: InvoiceStatus
   payments: Payment[]
   createdAt: string
   dueDate: string
+  // Additional backend fields
+  reservationId?: string
+  roomId?: string
+  roomType?: string
+  visitorId?: string
+  date?: string
+  customerName?: string
+  amount?: number
+  notes?: string
 }

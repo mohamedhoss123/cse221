@@ -1,9 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { createRoom } from '#/services/rooms.service'
 import RoomForm from '#/components/admin/RoomForm'
-import { toast } from 'sonner'
 
 export const Route = createFileRoute('/admin/rooms/new')({
   component: NewRoomPage,
@@ -11,20 +8,6 @@ export const Route = createFileRoute('/admin/rooms/new')({
 
 function NewRoomPage() {
   const navigate = useNavigate()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const handleSubmit = async (data: Omit<Room, 'id'>) => {
-    setIsSubmitting(true)
-    try {
-      await createRoom(data)
-      toast.success('Room created successfully')
-      navigate({ to: '/admin/rooms' })
-    } catch (error) {
-      toast.error('Failed to create room')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
 
   return (
     <div className="page-wrap px-4 py-8">
@@ -46,10 +29,7 @@ function NewRoomPage() {
         </p>
       </div>
 
-      <RoomForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
+      <RoomForm />
     </div>
   )
 }
-
-// Import Room type
-import type { Room } from '#/types/room.types'

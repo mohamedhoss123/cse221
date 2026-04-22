@@ -48,7 +48,7 @@ function LandingPage() {
                 </Button>
               </Link>
               <Link to="/auth/register">
-                <Button className="bg-gradient-to-r from-[var(--expressive-primary)] to-[var(--expressive-accent)] hover:from-[var(--expressive-primary)] hover:to-[var(--expressive-accent)] text-white shadow-lg shadow-[#f27b89]/30">
+                <Button className="bg-gradient-to-r from-[var(--expressive-primary)] to-[var(--expressive-accent)] hover:from-[var(--expressive-primary)] hover:to-[var(--expressive-accent)] text-black shadow-lg shadow-[#F5C518]/30">
                   Get Started
                 </Button>
               </Link>
@@ -79,7 +79,7 @@ function LandingPage() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--expressive-accent)]/10 border border-[var(--expressive-accent)]/20 text-[var(--expressive-accent)] text-sm font-medium mb-8">
-            <Star className="w-4 h-4 fill-[#f27b89]" />
+            <Star className="w-4 h-4 fill-[#F5C518]" />
             <span>5-Star Luxury Experience</span>
           </div>
 
@@ -97,7 +97,7 @@ function LandingPage() {
             <Link to="/auth/register">
               <Button
                 size="lg"
-                className="h-14 px-8 bg-gradient-to-r from-[var(--expressive-primary)] to-[var(--expressive-accent)] hover:from-[var(--expressive-primary)] hover:to-[var(--expressive-accent)] text-white font-medium shadow-2xl shadow-[#f27b89]/40 text-lg"
+                className="h-14 px-8 bg-gradient-to-r from-[var(--expressive-primary)] to-[var(--expressive-accent)] hover:from-[var(--expressive-primary)] hover:to-[var(--expressive-accent)] text-black font-medium shadow-2xl shadow-[#F5C518]/40 text-lg"
               >
                 Start Your Journey
                 <ArrowRight className="ml-2 w-5 h-5" />
@@ -122,7 +122,7 @@ function LandingPage() {
               { value: '10K+', label: 'Happy Guests' },
             ].map((stat) => (
               <div key={stat.label}>
-                <div className="text-3xl sm:text-4xl font-semibold text-[var(--expressive-accent)]">{stat.value}</div>
+                <div className="text-3xl sm:text-4xl font-semibold text-[#F5C518]">{stat.value}</div>
                 <div className="text-sm text-slate-400 mt-1">{stat.label}</div>
               </div>
             ))}
@@ -130,7 +130,7 @@ function LandingPage() {
         </div>
 
         {/* Bottom accent */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#f27b89] to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#F5C518] to-transparent" />
       </section>
 
       {/* Features Section */}
@@ -182,10 +182,10 @@ function LandingPage() {
               return (
                 <div
                   key={feature.title}
-                  className="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-[#000]"
+                  className="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-[#F5C518]"
                 >
                   <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[var(--expressive-primary)] to-[var(--expressive-accent)] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <Icon className="w-7 h-7 text-white" />
+                    <Icon className="w-7 h-7 text-black" />
                   </div>
                   <h3 className="text-xl font-semibold text-slate-900 mb-3">{feature.title}</h3>
                   <p className="text-slate-600 leading-relaxed">{feature.description}</p>
@@ -238,7 +238,7 @@ function LandingPage() {
                   className="text-center p-6 rounded-2xl bg-gradient-to-br from-[var(--expressive-background)] to-white border border-slate-200"
                 >
                   <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-[var(--expressive-primary)] to-[var(--expressive-accent)] flex items-center justify-center">
-                    <Icon className="w-8 h-8 text-white" />
+                    <Icon className="w-8 h-8 text-black" />
                   </div>
                   <h3 className="text-lg font-semibold text-slate-900 mb-2">{amenity.title}</h3>
                   <p className="text-sm text-slate-600">{amenity.description}</p>
@@ -267,7 +267,7 @@ function LandingPage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl sm:text-5xl font-light text-white mb-4">
-              Guest <span className="font-semibold text-[var(--expressive-accent)]">Testimonials</span>
+              Guest <span className="font-semibold text-[#F5C518]">Testimonials</span>
             </h2>
             <p className="text-xl text-slate-300 max-w-2xl mx-auto">
               Hear what our guests have to say about their extraordinary experiences
@@ -301,7 +301,7 @@ function LandingPage() {
               >
                 <div className="flex gap-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-[#f27b89] text-[var(--expressive-accent)]" />
+                    <Star key={i} className="w-5 h-5 fill-[#F5C518] text-[#F5C518]" />
                   ))}
                 </div>
                 <p className="text-slate-200 mb-6 leading-relaxed">"{testimonial.text}"</p>
@@ -315,7 +315,7 @@ function LandingPage() {
         </div>
 
         {/* Bottom accent */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#f27b89] to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#F5C518] to-transparent" />
       </section>
 
       {/* CTA Section */}
@@ -333,7 +333,7 @@ function LandingPage() {
             <Link to="/auth/register">
               <Button
                 size="lg"
-                className="h-14 px-8 bg-gradient-to-r from-[var(--expressive-primary)] to-[var(--expressive-accent)] hover:from-[var(--expressive-primary)] hover:to-[var(--expressive-accent)] text-white font-medium shadow-xl shadow-[#f27b89]/30 text-lg"
+                className="h-14 px-8 bg-gradient-to-r from-[var(--expressive-primary)] to-[var(--expressive-accent)] hover:from-[var(--expressive-primary)] hover:to-[var(--expressive-accent)] text-black font-medium shadow-xl shadow-[#F5C518]/30 text-lg"
               >
                 Create Your Account
                 <ArrowRight className="ml-2 w-5 h-5" />
@@ -360,7 +360,7 @@ function LandingPage() {
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--expressive-primary)] to-[var(--expressive-accent)]" />
               <span className="text-lg font-light text-white">
                 Luxury
-                <span className="font-semibold text-[var(--expressive-accent)]">Stays</span>
+                <span className="font-semibold text-[#F5C518]">Stays</span>
               </span>
             </div>
             <div className="text-sm">

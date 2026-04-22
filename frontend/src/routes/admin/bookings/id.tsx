@@ -99,7 +99,7 @@ function AdminBookingDetailsPage() {
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-[var(--sea-ink)]" />
                     <p className="font-medium text-[var(--sea-ink)]">
-                      {format(new Date(booking.checkIn), 'MMM d, yyyy')}
+                      {booking.checkIn ? format(new Date(booking.checkIn), 'MMM d, yyyy') : 'N/A'}
                     </p>
                   </div>
                 </div>
@@ -108,7 +108,7 @@ function AdminBookingDetailsPage() {
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-[var(--sea-ink)]" />
                     <p className="font-medium text-[var(--sea-ink)]">
-                      {format(new Date(booking.checkOut), 'MMM d, yyyy')}
+                      {booking.checkOut ? format(new Date(booking.checkOut), 'MMM d, yyyy') : 'N/A'}
                     </p>
                   </div>
                 </div>
@@ -130,7 +130,7 @@ function AdminBookingDetailsPage() {
             <CardContent>
               <p className="text-[var(--sea-ink-soft)]">Customer ID: {booking.customerId}</p>
               <p className="text-sm text-[var(--sea-ink-soft)]">
-                Booking created: {format(new Date(booking.createdAt), 'MMM d, yyyy • h:mm a')}
+                Booking created: {booking.createdAt ? format(new Date(booking.createdAt), 'MMM d, yyyy • h:mm a') : 'N/A'}
               </p>
             </CardContent>
           </Card>

@@ -1,5 +1,7 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { cn } from '#/lib/utils'
+import { useAuth } from '#/stores/auth.store'
+import { Button } from '#/components/ui/button'
 import {
   Bed,
   Calendar,
@@ -8,18 +10,18 @@ import {
   User,
   LogOut,
 } from 'lucide-react'
-import { useAuth } from '#/hooks/useAuth'
 
 interface CustomerSidebarProps {
   className?: string
 }
 
 export default function CustomerSidebar({ className }: CustomerSidebarProps) {
-  const { user, logout } = useAuth()
+  const { logout, user } = useAuth()
+  const navigate = useNavigate()
 
   const navItems = [
-    { to: '/customer/rooms', icon: Bed, label: 'Browse Rooms' },
-    { to: '/customer/bookings', icon: Calendar, label: 'My Bookings' },
+    { to: '/customer/rooms', icon: Bed, label: 'Rooms' },
+    { to: '/customer/bookings', icon: Calendar, label: 'Bookings' },
     { to: '/customer/payments', icon: CreditCard, label: 'Payments' },
     { to: '/customer/complaints', icon: MessageSquare, label: 'Support' },
     { to: '/customer/profile', icon: User, label: 'Profile' },
@@ -27,58 +29,32 @@ export default function CustomerSidebar({ className }: CustomerSidebarProps) {
 
   const handleLogout = () => {
     logout()
-    window.location.href = '/'
+    navigate({ to: '/auth/login' })
   }
 
   return (
     <aside
       className={cn(
-        'w-72 border-r border-slate-200 bg-white flex flex-col',
+        'w-64 border-r-2 border-[var(--expressive-secondary)] bg-[var(--expressive-surface)] p-6 shadow-[4px_0_0_0_var(--expressive-secondary)] flex flex-col',
         className
       )}
     >
-      {/* Logo */}
-      <div className="p-6 border-b border-slate-200">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--expressive-primary)] to-[var(--expressive-accent)]" />
-          <span className="text-xl font-light text-[var(--expressive-primary)]">
-            Luxury
-            <span className="font-semibold text-[var(--expressive-primary)]">Stays</span>
-          </span>
-        </Link>
+      <div className="mb-8">
+        <h2 className="text-2xl font-light text-[var(--expressive-primary)]">
+          Customer<span className="font-semibold block">Portal</span>
+        </h2>
       </div>
-
-      {/* User Info */}
-      <div className="p-4 mx-4 mt-4 bg-gradient-to-br from-[var(--expressive-background)] to-white rounded-xl">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--expressive-primary)] to-[var(--expressive-accent)] flex items-center justify-center text-white font-semibold">
-            {user?.name?.charAt(0).toUpperCase() || 'U'}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-[var(--expressive-primary)] truncate">
-              {user?.name || 'Guest'}
-            </p>
-            <p className="text-xs text-[#000] truncate">
-              {user?.email || ''}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-        <p className="px-3 text-xs font-semibold text-[#000] uppercase tracking-wider mb-3">
-          Menu
-        </p>
+      <nav className="space-y-3 flex-1">
         {navItems.map((item) => {
           const Icon = item.icon
           return (
             <Link
               key={item.to}
               to={item.to}
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#000] transition-all duration-200 hover:bg-gradient-to-r hover:from-[var(--expressive-accent)]/10 hover:to-transparent hover:text-[var(--expressive-primary)]"
+              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-[var(--expressive-text)] transition-all hover:bg-[var(--expressive-background)] hover:translate-x-1 border-2 border-transparent"
               activeProps={{
-                className: 'bg-gradient-to-r from-[var(--expressive-primary)] to-[var(--expressive-accent)] text-white shadow-md',
+                className:
+                  'bg-[var(--expressive-primary)] text-black border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:bg-[var(--expressive-primary)] hover:text-black hover:translate-x-0',
               }}
             >
               <Icon className="h-5 w-5" />
@@ -88,15 +64,28 @@ export default function CustomerSidebar({ className }: CustomerSidebarProps) {
         })}
       </nav>
 
-      {/* Logout */}
-      <div className="p-4 border-t border-slate-200">
-        <button
+      <div className="mt-auto pt-6 border-t-2 border-[var(--expressive-secondary)] space-y-3">
+        <div className="flex items-center gap-3 px-2">
+          <div className="w-10 h-10 rounded-full bg-[var(--expressive-accent)]/20 border-2 border-[var(--expressive-secondary)] shadow-[2px_2px_0_0_var(--expressive-secondary)] flex items-center justify-center">
+            <span className="font-bold text-[var(--expressive-primary)]">
+              {user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'C'}
+            </span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-[var(--expressive-primary)] truncate">
+              {user?.name || 'Customer'}
+            </p>
+            <p className="text-xs text-[var(--expressive-text)]">Guest</p>
+          </div>
+        </div>
+        <Button
+          variant="outline"
+          className="w-full justify-start border-2 border-[var(--expressive-secondary)] text-[var(--expressive-text)] hover:bg-red-500 hover:text-white hover:border-red-500 hover:shadow-[2px_2px_0_0_var(--expressive-secondary)] transition-all"
           onClick={handleLogout}
-          className="flex items-center gap-3 w-full rounded-lg px-3 py-2.5 text-sm font-medium text-[#000] transition-all duration-200 hover:bg-red-50 hover:text-[var(--expressive-primary)]"
         >
-          <LogOut className="h-5 w-5" />
-          Sign Out
-        </button>
+          <LogOut className="mr-2 h-4 w-4" />
+          Logout
+        </Button>
       </div>
     </aside>
   )

@@ -1,0 +1,121 @@
+const { query } = require('../../database/connection');
+const { createError } = require('../../utils/helpers');
+
+class ComplaintService {
+  async getAllComplaints(visitorId = null) {
+    let sql = 'SELECT * FROM COMPLAINTS';
+    const params = [];
+
+    if (visitorId) {
+      sql += ' WHERE VISITOR_visitor_id = ?';
+      params.push(visitorId);
+    }
+
+    sql += ' ORDER BY complaint_id DESC';
+
+    const complaints = await query(sql, params);
+
+    return complaints.map(c => ({
+      id: c.complaint_id.toString(),
+      description: c.description,
+      type: c.type,
+      status: c.status,
+      visitorId: c.VISITOR_visitor_id.toString()
+    }));
+  }
+
+  async getComplaintById(complaintId) {
+    const complaints = await query(
+      'SELECT * FROM COMPLAINTS WHERE complaint_id = ?',
+      [complaintId]
+    );
+
+    if (complaints.length === 0) {
+      throw createError('Complaint not found', 404);
+    }
+
+    const c = complaints[0];
+    return {
+      id: c.complaint_id.toString(),
+      description: c.description,
+      type: c.type,
+      status: c.status,
+      visitorId: c.VISITOR_visitor_id.toString()
+    };
+  }
+
+  async createComplaint(complaintData) {
+    const { description, type, visitorId } = complaintData;
+
+    if (!description || !type) {
+      throw createError('Description and type are required', 400);
+    }
+
+    const result = await query(
+      'INSERT INTO COMPLAINTS (description, type, VISITOR_visitor_id) VALUES (?, ?, ?)',
+      [description, type, visitorId]
+    );
+
+    return await this.getComplaintById(result.insertId);
+  }
+
+  async updateComplaint(complaintId, updates) {
+    const existing = await query(
+      'SELECT complaint_id FROM COMPLAINTS WHERE complaint_id = ?',
+      [complaintId]
+    );
+
+    if (existing.length === 0) {
+      throw createError('Complaint not found', 404);
+    }
+
+    const { description, type, status } = updates;
+    const fields = [];
+    const values = [];
+
+    if (description !== undefined) {
+      fields.push('description = ?');
+      values.push(description);
+    }
+    if (type !== undefined) {
+      fields.push('type = ?');
+      values.push(type);
+    }
+    if (status !== undefined) {
+      fields.push('status = ?');
+      values.push(status);
+    }
+
+    if (fields.length === 0) return await this.getComplaintById(complaintId);
+
+    values.push(complaintId);
+
+    await query(`UPDATE COMPLAINTS SET ${fields.join(', ')} WHERE complaint_id = ?`, values);
+    return await this.getComplaintById(complaintId);
+  }
+
+  async deleteComplaint(complaintId) {
+    await query('DELETE FROM COMPLAINTS WHERE complaint_id = ?', [complaintId]);
+    return { message: 'Complaint deleted successfully', complaintId };
+  }
+
+  async getStatistics() {
+    const stats = await query(`
+      SELECT
+        COUNT(*) as total,
+        SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) as open,
+        SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as inProgress,
+        SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved
+      FROM COMPLAINTS
+    `);
+
+    return {
+      total: stats[0].total,
+      open: stats[0].open || 0,
+      inProgress: stats[0].inProgress || 0,
+      resolved: stats[0].resolved || 0
+    };
+  }
+}
+
+module.exports = new ComplaintService();

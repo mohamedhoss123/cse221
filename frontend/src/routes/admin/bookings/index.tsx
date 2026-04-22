@@ -176,10 +176,10 @@ function AdminBookingsPage() {
                         </TableCell>
                         <TableCell>
                           <div className="text-sm font-semibold text-[var(--expressive-text)]">
-                            {format(new Date(booking.checkIn), 'MMM d, yy')}
+                            {booking.checkIn ? format(new Date(booking.checkIn), 'MMM d, yy') : 'N/A'}
                           </div>
                           <div className="text-xs text-[var(--expressive-text)] opacity-70">
-                            to {format(new Date(booking.checkOut), 'MMM d, yy')}
+                            to {booking.checkOut ? format(new Date(booking.checkOut), 'MMM d, yy') : 'N/A'}
                           </div>
                         </TableCell>
                         <TableCell>

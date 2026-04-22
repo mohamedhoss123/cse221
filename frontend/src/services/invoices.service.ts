@@ -1,51 +1,42 @@
-import { apiClient } from '../lib/api-client'
+import BaseService from './base.service'
 import type { Invoice } from '../types/booking.types'
 
-export async function getInvoices(): Promise<Invoice[]> {
-  try {
-    const response = await apiClient.get<Invoice[]>('/invoices')
-
-    if (!response.success || !response.data) {
-      throw new Error(response.message || 'Failed to get invoices')
-    }
-
-    return response.data
-  } catch (error: any) {
-    throw new Error(error.message || 'Failed to get invoices')
-  }
+export async function getInvoices(customerId?: string): Promise<Invoice[]> {
+  const endpoint = customerId ? `/invoices?customerId=${customerId}` : '/invoices'
+  return BaseService.get<Invoice[]>(endpoint)
 }
 
 export async function getInvoiceById(id: string): Promise<Invoice> {
-  try {
-    const response = await apiClient.get<Invoice>(`/invoices/${id}`)
-
-    if (!response.success || !response.data) {
-      throw new Error(response.message || 'Failed to get invoice')
-    }
-
-    return response.data
-  } catch (error: any) {
-    throw new Error(error.message || 'Failed to get invoice')
-  }
+  return BaseService.get<Invoice>(`/invoices/${id}`)
 }
 
 export async function createPaymentForInvoice(
   invoiceId: string,
   amount: number,
-  method: 'credit_card' | 'debit_card' | 'paypal' | 'bank_transfer'
+  method: string
 ): Promise<Invoice> {
-  try {
-    const response = await apiClient.post<Invoice>(`/invoices/${invoiceId}/payment`, {
-      amount,
-      method,
-    })
+  return BaseService.post<Invoice>(`/invoices/${invoiceId}/payment`, {
+    amount,
+    method,
+  })
+}
 
-    if (!response.success || !response.data) {
-      throw new Error(response.message || 'Failed to create payment for invoice')
-    }
+export async function updateInvoiceStatus(id: string, status: string): Promise<Invoice> {
+  return BaseService.put<Invoice>(`/invoices/${id}/status`, { status })
+}
 
-    return response.data
-  } catch (error: any) {
-    throw new Error(error.message || 'Failed to create payment for invoice')
+export async function getInvoiceSummary(): Promise<{
+  totalBilled: number
+  totalPaid: number
+  totalPending: number
+  overdueCount: number
+}> {
+  const invoices = await getInvoices()
+
+  return {
+    totalBilled: invoices.reduce((sum, inv) => sum + inv.totalAmount, 0),
+    totalPaid: invoices.reduce((sum, inv) => sum + inv.paidAmount, 0),
+    totalPending: invoices.reduce((sum, inv) => sum + inv.remainingAmount, 0),
+    overdueCount: invoices.filter((inv) => inv.status === 'overdue').length,
   }
 }

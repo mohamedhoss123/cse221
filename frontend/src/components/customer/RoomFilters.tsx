@@ -17,17 +17,6 @@ const roomTypes: { value: RoomType; label: string }[] = [
   { value: 'penthouse', label: 'Penthouse' },
 ]
 
-const availableAmenities = [
-  'WiFi',
-  'TV',
-  'Air Conditioning',
-  'Mini Bar',
-  'Ocean View',
-  'Pool Access',
-  'Balcony',
-  'Kitchenette',
-]
-
 export default function RoomFilters({ filters, onFiltersChange }: RoomFiltersProps) {
   const handleTypeChange = (type: RoomType, checked: boolean) => {
     onFiltersChange({
@@ -43,21 +32,11 @@ export default function RoomFilters({ filters, onFiltersChange }: RoomFiltersPro
     })
   }
 
-  const handleAmenityChange = (amenity: string, checked: boolean) => {
-    const currentAmenities = filters.amenities || []
-    onFiltersChange({
-      ...filters,
-      amenities: checked
-        ? [...currentAmenities, amenity]
-        : currentAmenities.filter(a => a !== amenity),
-    })
-  }
-
   const handleClearFilters = () => {
     onFiltersChange({})
   }
 
-  const hasActiveFilters = filters.type || filters.maxPrice || (filters.amenities && filters.amenities.length > 0)
+  const hasActiveFilters = filters.type || filters.maxPrice
 
   return (
     <Card className="island-shell h-fit">
@@ -104,25 +83,6 @@ export default function RoomFilters({ filters, onFiltersChange }: RoomFiltersPro
             step={50}
             className="mt-2"
           />
-        </div>
-
-        {/* Amenities */}
-        <div>
-          <Label className="mb-3 block">Amenities</Label>
-          <div className="space-y-2">
-            {availableAmenities.map((amenity) => (
-              <div key={amenity} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`amenity-${amenity}`}
-                  checked={filters.amenities?.includes(amenity)}
-                  onCheckedChange={(checked) => handleAmenityChange(amenity, checked as boolean)}
-                />
-                <Label htmlFor={`amenity-${amenity}`} className="cursor-pointer">
-                  {amenity}
-                </Label>
-              </div>
-            ))}
-          </div>
         </div>
       </CardContent>
     </Card>

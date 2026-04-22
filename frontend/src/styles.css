@@ -9,12 +9,12 @@
 
 :root {
   /* Expressive Design System Tokens */
-  --expressive-primary: #ce0031;
-  --expressive-primary-hover: #db2777;
+  --expressive-primary: #F5C518;
+  --expressive-primary-hover: #E6B015;
   --expressive-secondary: #000000;
-  --expressive-accent: #f27b89;
-  --expressive-background: #fef7f8;
-  --expressive-surface: #FFFFFF;
+  --expressive-accent: #F5C518;
+  --expressive-background: #FFFFFF;
+  --expressive-surface: #FAFAFA;
   --expressive-text: #111827;
   --expressive-text-muted: #6B7280;
   --expressive-success: #16A34A;
@@ -22,33 +22,33 @@
   --expressive-danger: #DC2626;
 
   /* shadcn/ui mapped base colors */
-  --background: 350 40% 98%; /* fef7f8 */
+  --background: 0 0% 100%; /* white */
   --foreground: 220 39% 11%;
 
-  --card: 0 0% 100%;
+  --card: 0 0% 98%; /* #FAFAFA */
   --card-foreground: 220 39% 11%;
 
   --popover: 0 0% 100%;
   --popover-foreground: 220 39% 11%;
 
-  --primary: 345 100% 40%; /* ce0031 */
-  --primary-foreground: 0 0% 100%;
+  --primary: 48 93% 58%; /* #F5C518 */
+  --primary-foreground: 0 0% 0%;
 
   --secondary: 0 0% 0%;
   --secondary-foreground: 0 0% 100%;
 
-  --muted: 350 20% 90%;
+  --muted: 0 0% 96%;
   --muted-foreground: 215 16% 47%;
 
-  --accent: 353 82% 71%; /* f27b89 */
-  --accent-foreground: 0 0% 100%;
+  --accent: 48 93% 58%; /* #F5C518 */
+  --accent-foreground: 0 0% 0%;
 
   --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 350 20% 85%;
-  --input: 350 20% 85%;
-  --ring: 345 100% 40%;
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 48 93% 58%;
 
   --radius: 0.75rem; /* slightly rounded for playful look */
 }

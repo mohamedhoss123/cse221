@@ -76,7 +76,7 @@ function AnalyticsPage() {
     value: count,
   }))
 
-  const COLORS = ['#ce0031', '#f27b89', '#000', '#fef7f8']
+  const COLORS = ['#F5C518', '#000000', '#888888', '#DDDDDD']
 
   // Monthly revenue data (mock)
   const monthlyRevenueData = [
@@ -195,8 +195,8 @@ function AnalyticsPage() {
                 <YAxis />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#fef7f8',
-                    border: '1px solid #f27b89',
+                    backgroundColor: '#FAFAFA',
+                    border: '1px solid #F5C518',
                     borderRadius: '8px',
                   }}
                   formatter={(value: number) => `$${value.toLocaleString()}`}
@@ -205,7 +205,7 @@ function AnalyticsPage() {
                 <Line
                   type="monotone"
                   dataKey="revenue"
-                  stroke="#ce0031"
+                  stroke="#F5C518"
                   strokeWidth={2}
                   name="Revenue"
                 />
@@ -227,13 +227,13 @@ function AnalyticsPage() {
                 <YAxis />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#fef7f8',
-                    border: '1px solid #f27b89',
+                    backgroundColor: '#FAFAFA',
+                    border: '1px solid #F5C518',
                     borderRadius: '8px',
                   }}
                 />
                 <Legend />
-                <Bar dataKey="bookings" fill="#ce0031" name="Bookings" />
+                <Bar dataKey="bookings" fill="#F5C518" name="Bookings" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -282,12 +282,12 @@ function AnalyticsPage() {
                 <YAxis dataKey="name" type="category" width={150} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#fef7f8',
-                    border: '1px solid #f27b89',
+                    backgroundColor: '#FAFAFA',
+                    border: '1px solid #F5C518',
                     borderRadius: '8px',
                   }}
                 />
-                <Bar dataKey="bookings" fill="#ce0031" />
+                <Bar dataKey="bookings" fill="#F5C518" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

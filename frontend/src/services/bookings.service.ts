@@ -1,79 +1,31 @@
-import { apiClient } from '../lib/api-client'
+import BaseService from './base.service'
+import { buildEndpoint } from './base.service'
 import type { Booking, BookingStatus } from '../types/booking.types'
 
-export async function getBookings(): Promise<Booking[]> {
-  try {
-    const response = await apiClient.get<Booking[]>('/bookings')
-
-    if (!response.success || !response.data) {
-      throw new Error(response.message || 'Failed to get bookings')
-    }
-
-    return response.data
-  } catch (error: any) {
-    throw new Error(error.message || 'Failed to get bookings')
-  }
+export async function getBookings(filters?: { customerId?: string; visitorId?: string }): Promise<Booking[]> {
+  const endpoint = buildEndpoint('/bookings', filters)
+  return BaseService.get<Booking[]>(endpoint)
 }
 
 export async function getBookingById(id: string): Promise<Booking> {
-  try {
-    const response = await apiClient.get<Booking>(`/bookings/${id}`)
-
-    if (!response.success || !response.data) {
-      throw new Error(response.message || 'Failed to get booking')
-    }
-
-    return response.data
-  } catch (error: any) {
-    throw new Error(error.message || 'Failed to get booking')
-  }
+  return BaseService.get<Booking>(`/bookings/${id}`)
 }
 
 export async function createBooking(
-  booking: Omit<Booking, 'id' | 'createdAt' | 'customerId'>
+  booking: Omit<Booking, 'id' | 'customerId' | 'visitorId' | 'customerName' | 'numberOfNights'>
 ): Promise<Booking> {
-  try {
-    const response = await apiClient.post<Booking>('/bookings', booking)
-
-    if (!response.success || !response.data) {
-      throw new Error(response.message || 'Failed to create booking')
-    }
-
-    return response.data
-  } catch (error: any) {
-    throw new Error(error.message || 'Failed to create booking')
-  }
+  return BaseService.post<Booking>('/bookings', booking)
 }
 
 export async function updateBookingStatus(
   id: string,
   status: BookingStatus
 ): Promise<Booking> {
-  try {
-    const response = await apiClient.put<Booking>(`/bookings/${id}/status`, { status })
-
-    if (!response.success || !response.data) {
-      throw new Error(response.message || 'Failed to update booking status')
-    }
-
-    return response.data
-  } catch (error: any) {
-    throw new Error(error.message || 'Failed to update booking status')
-  }
+  return BaseService.put<Booking>(`/bookings/${id}/status`, { status })
 }
 
-export async function cancelBooking(id: string): Promise<boolean> {
-  try {
-    const response = await apiClient.delete<{ success: boolean; message: string }>(`/bookings/${id}`)
-
-    if (!response.success) {
-      throw new Error(response.message || 'Failed to cancel booking')
-    }
-
-    return response.success
-  } catch (error: any) {
-    throw new Error(error.message || 'Failed to cancel booking')
-  }
+export async function cancelBooking(id: string): Promise<{ message: string; bookingId: string }> {
+  return BaseService.delete<{ message: string; bookingId: string }>(`/bookings/${id}`)
 }
 
 export async function checkRoomAvailability(
@@ -81,20 +33,6 @@ export async function checkRoomAvailability(
   checkIn: string,
   checkOut: string
 ): Promise<{ available: boolean; conflictingBookings: number }> {
-  try {
-    const response = await apiClient.get<{ available: boolean; conflictingBookings: number }>(
-      `/bookings/room/${roomId}/availability`,
-      {
-        params: { checkIn, checkOut }
-      }
-    )
-
-    if (!response.success || !response.data) {
-      throw new Error(response.message || 'Failed to check room availability')
-    }
-
-    return response.data
-  } catch (error: any) {
-    throw new Error(error.message || 'Failed to check room availability')
-  }
+  const endpoint = buildEndpoint(`/bookings/room/${roomId}/availability`, { checkIn, checkOut })
+  return BaseService.get<{ available: boolean; conflictingBookings: number }>(endpoint)
 }

@@ -1,9 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { getRoomById, updateRoom } from '#/services/rooms.service'
+import { getRoomById } from '#/services/rooms.service'
 import RoomForm from '#/components/admin/RoomForm'
-import { toast } from 'sonner'
 
 export const Route = createFileRoute('/admin/rooms/$id/edit')({
   component: EditRoomPage,
@@ -17,7 +16,6 @@ function EditRoomPage() {
   const { room: initialRoom } = Route.useLoaderData()
   const navigate = useNavigate()
   const [room, setRoom] = useState(initialRoom)
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     if (!initialRoom) {
@@ -26,23 +24,6 @@ function EditRoomPage() {
       setRoom(initialRoom)
     }
   }, [initialRoom, navigate])
-
-  const handleSubmit = async (data: Omit<Room, 'id'>) => {
-    if (!room) return
-
-    setIsSubmitting(true)
-    try {
-      const updated = await updateRoom(room.id || '', data)
-      if (updated) {
-        setRoom(updated)
-        toast.success('Room updated successfully')
-      }
-    } catch (error) {
-      toast.error('Failed to update room')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
 
   if (!room) {
     return null
@@ -68,10 +49,7 @@ function EditRoomPage() {
         </p>
       </div>
 
-      <RoomForm room={room} onSubmit={handleSubmit} isSubmitting={isSubmitting} />
+      <RoomForm room={room} />
     </div>
   )
 }
-
-// Import Room type
-import type { Room } from '#/types/room.types'

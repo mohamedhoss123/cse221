@@ -56,7 +56,7 @@ function RoomDetailsPage() {
               <div>
                 <Badge className="mb-2 capitalize">{room.type}</Badge>
                 <h1 className="font-light text-3xl font-bold text-[var(--expressive-primary)]">
-                  {room.type} Room
+                  {room.name || `${room.type} Room`}
                 </h1>
               </div>
               <div className="text-right">
@@ -67,6 +67,33 @@ function RoomDetailsPage() {
               </div>
             </div>
           </div>
+
+          {/* Image Gallery */}
+          {room.images && room.images.length > 0 && (
+            <div className="mb-8">
+              <div className="grid grid-cols-2 gap-4">
+                {/* Primary Image */}
+                <div className="col-span-2">
+                  <img
+                    src={`/api${room.images.find(img => img.isPrimary)?.url || room.images[0].url}`}
+                    alt={`${room.type} room`}
+                    className="w-full h-96 object-cover rounded-2xl shadow-lg"
+                  />
+                </div>
+
+                {/* Secondary Images */}
+                {room.images.slice(1).map((image) => (
+                  <div key={image.id} className="relative">
+                    <img
+                      src={`/api${image.url}`}
+                      alt={`${room.type} room`}
+                      className="w-full h-48 object-cover rounded-xl shadow-md"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <Separator className="my-8" />
 
