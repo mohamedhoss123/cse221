@@ -24,8 +24,10 @@ CREATE TABLE COMPLAINTS (
     description VARCHAR(255),
     type VARCHAR(45),
     VISITOR_visitor_id INT,
+    Status ENUM('open', 'in_progress', 'resolved', 'closed') DEFAULT 'open',
     FOREIGN KEY (VISITOR_visitor_id) REFERENCES VISITOR(visitor_id)
 );
+
 
 -- 4. Create ROOM Table
 CREATE TABLE ROOM (

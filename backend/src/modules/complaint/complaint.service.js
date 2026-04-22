@@ -19,7 +19,7 @@ class ComplaintService {
       id: c.complaint_id.toString(),
       description: c.description,
       type: c.type,
-      status: c.status,
+      status: c.Status,
       visitorId: c.VISITOR_visitor_id.toString()
     }));
   }
@@ -39,7 +39,7 @@ class ComplaintService {
       id: c.complaint_id.toString(),
       description: c.description,
       type: c.type,
-      status: c.status,
+      status: c.Status,
       visitorId: c.VISITOR_visitor_id.toString()
     };
   }
@@ -69,28 +69,25 @@ class ComplaintService {
       throw createError('Complaint not found', 404);
     }
 
-    const { description, type, status } = updates;
-    const fields = [];
-    const values = [];
+    // Only allow status updates - ignore other fields
+    const { status } = updates;
 
-    if (description !== undefined) {
-      fields.push('description = ?');
-      values.push(description);
-    }
-    if (type !== undefined) {
-      fields.push('type = ?');
-      values.push(type);
-    }
-    if (status !== undefined) {
-      fields.push('status = ?');
-      values.push(status);
+    if (status === undefined) {
+      // No status provided, just return existing complaint
+      return await this.getComplaintById(complaintId);
     }
 
-    if (fields.length === 0) return await this.getComplaintById(complaintId);
+    // Validate status is a valid enum value
+    const validStatuses = ['open', 'in_progress', 'resolved', 'closed'];
+    if (!validStatuses.includes(status)) {
+      throw createError(`Invalid status. Must be one of: ${validStatuses.join(', ')}`, 400);
+    }
 
-    values.push(complaintId);
+    await query(
+      'UPDATE COMPLAINTS SET Status = ? WHERE complaint_id = ?',
+      [status, complaintId]
+    );
 
-    await query(`UPDATE COMPLAINTS SET ${fields.join(', ')} WHERE complaint_id = ?`, values);
     return await this.getComplaintById(complaintId);
   }
 
@@ -103,9 +100,9 @@ class ComplaintService {
     const stats = await query(`
       SELECT
         COUNT(*) as total,
-        SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) as open,
-        SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as inProgress,
-        SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved
+        SUM(CASE WHEN Status = 'open' THEN 1 ELSE 0 END) as open,
+        SUM(CASE WHEN Status = 'in_progress' THEN 1 ELSE 0 END) as inProgress,
+        SUM(CASE WHEN Status = 'resolved' THEN 1 ELSE 0 END) as resolved
       FROM COMPLAINTS
     `);
 

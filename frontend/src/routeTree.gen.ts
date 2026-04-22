@@ -20,13 +20,13 @@ import { Route as CustomerBookingsRouteImport } from './routes/customer/bookings
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AdminPaymentsRouteImport } from './routes/admin/payments'
-import { Route as AdminInvoicesRouteImport } from './routes/admin/invoices'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin/analytics'
 import { Route as CustomerRoomsIndexRouteImport } from './routes/customer/rooms/index'
 import { Route as CustomerPaymentsIndexRouteImport } from './routes/customer/payments/index'
 import { Route as AdminSettingsIndexRouteImport } from './routes/admin/settings/index'
 import { Route as AdminRoomsIndexRouteImport } from './routes/admin/rooms/index'
+import { Route as AdminInvoicesIndexRouteImport } from './routes/admin/invoices/index'
 import { Route as AdminComplaintsIndexRouteImport } from './routes/admin/complaints/index'
 import { Route as AdminBookingsIndexRouteImport } from './routes/admin/bookings/index'
 import { Route as CustomerRoomsIdRouteImport } from './routes/customer/rooms/$id'
@@ -95,11 +95,6 @@ const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
   path: '/payments',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminInvoicesRoute = AdminInvoicesRouteImport.update({
-  id: '/invoices',
-  path: '/invoices',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -128,6 +123,11 @@ const AdminSettingsIndexRoute = AdminSettingsIndexRouteImport.update({
 const AdminRoomsIndexRoute = AdminRoomsIndexRouteImport.update({
   id: '/rooms/',
   path: '/rooms/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminInvoicesIndexRoute = AdminInvoicesIndexRouteImport.update({
+  id: '/invoices/',
+  path: '/invoices/',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminComplaintsIndexRoute = AdminComplaintsIndexRouteImport.update({
@@ -172,9 +172,9 @@ const AdminRoomsNewRoute = AdminRoomsNewRouteImport.update({
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminInvoicesIdRoute = AdminInvoicesIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AdminInvoicesRoute,
+  id: '/invoices/$id',
+  path: '/invoices/$id',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminComplaintsIdRoute = AdminComplaintsIdRouteImport.update({
   id: '/complaints/$id',
@@ -199,7 +199,6 @@ export interface FileRoutesByFullPath {
   '/customer': typeof CustomerRouteWithChildren
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/invoices': typeof AdminInvoicesRouteWithChildren
   '/admin/payments': typeof AdminPaymentsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
@@ -218,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/customer/rooms/$id': typeof CustomerRoomsIdRoute
   '/admin/bookings/': typeof AdminBookingsIndexRoute
   '/admin/complaints/': typeof AdminComplaintsIndexRoute
+  '/admin/invoices/': typeof AdminInvoicesIndexRoute
   '/admin/rooms/': typeof AdminRoomsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/customer/payments/': typeof CustomerPaymentsIndexRoute
@@ -230,7 +230,6 @@ export interface FileRoutesByTo {
   '/customer': typeof CustomerRouteWithChildren
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/invoices': typeof AdminInvoicesRouteWithChildren
   '/admin/payments': typeof AdminPaymentsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
@@ -249,6 +248,7 @@ export interface FileRoutesByTo {
   '/customer/rooms/$id': typeof CustomerRoomsIdRoute
   '/admin/bookings': typeof AdminBookingsIndexRoute
   '/admin/complaints': typeof AdminComplaintsIndexRoute
+  '/admin/invoices': typeof AdminInvoicesIndexRoute
   '/admin/rooms': typeof AdminRoomsIndexRoute
   '/admin/settings': typeof AdminSettingsIndexRoute
   '/customer/payments': typeof CustomerPaymentsIndexRoute
@@ -263,7 +263,6 @@ export interface FileRoutesById {
   '/customer': typeof CustomerRouteWithChildren
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/invoices': typeof AdminInvoicesRouteWithChildren
   '/admin/payments': typeof AdminPaymentsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
@@ -282,6 +281,7 @@ export interface FileRoutesById {
   '/customer/rooms/$id': typeof CustomerRoomsIdRoute
   '/admin/bookings/': typeof AdminBookingsIndexRoute
   '/admin/complaints/': typeof AdminComplaintsIndexRoute
+  '/admin/invoices/': typeof AdminInvoicesIndexRoute
   '/admin/rooms/': typeof AdminRoomsIndexRoute
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/customer/payments/': typeof CustomerPaymentsIndexRoute
@@ -297,7 +297,6 @@ export interface FileRouteTypes {
     | '/customer'
     | '/admin/analytics'
     | '/admin/dashboard'
-    | '/admin/invoices'
     | '/admin/payments'
     | '/auth/login'
     | '/auth/register'
@@ -316,6 +315,7 @@ export interface FileRouteTypes {
     | '/customer/rooms/$id'
     | '/admin/bookings/'
     | '/admin/complaints/'
+    | '/admin/invoices/'
     | '/admin/rooms/'
     | '/admin/settings/'
     | '/customer/payments/'
@@ -328,7 +328,6 @@ export interface FileRouteTypes {
     | '/customer'
     | '/admin/analytics'
     | '/admin/dashboard'
-    | '/admin/invoices'
     | '/admin/payments'
     | '/auth/login'
     | '/auth/register'
@@ -347,6 +346,7 @@ export interface FileRouteTypes {
     | '/customer/rooms/$id'
     | '/admin/bookings'
     | '/admin/complaints'
+    | '/admin/invoices'
     | '/admin/rooms'
     | '/admin/settings'
     | '/customer/payments'
@@ -360,7 +360,6 @@ export interface FileRouteTypes {
     | '/customer'
     | '/admin/analytics'
     | '/admin/dashboard'
-    | '/admin/invoices'
     | '/admin/payments'
     | '/auth/login'
     | '/auth/register'
@@ -379,6 +378,7 @@ export interface FileRouteTypes {
     | '/customer/rooms/$id'
     | '/admin/bookings/'
     | '/admin/complaints/'
+    | '/admin/invoices/'
     | '/admin/rooms/'
     | '/admin/settings/'
     | '/customer/payments/'
@@ -474,13 +474,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPaymentsRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/invoices': {
-      id: '/admin/invoices'
-      path: '/invoices'
-      fullPath: '/admin/invoices'
-      preLoaderRoute: typeof AdminInvoicesRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/dashboard': {
       id: '/admin/dashboard'
       path: '/dashboard'
@@ -521,6 +514,13 @@ declare module '@tanstack/react-router' {
       path: '/rooms'
       fullPath: '/admin/rooms/'
       preLoaderRoute: typeof AdminRoomsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/invoices/': {
+      id: '/admin/invoices/'
+      path: '/invoices'
+      fullPath: '/admin/invoices/'
+      preLoaderRoute: typeof AdminInvoicesIndexRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/complaints/': {
@@ -581,10 +581,10 @@ declare module '@tanstack/react-router' {
     }
     '/admin/invoices/$id': {
       id: '/admin/invoices/$id'
-      path: '/$id'
+      path: '/invoices/$id'
       fullPath: '/admin/invoices/$id'
       preLoaderRoute: typeof AdminInvoicesIdRouteImport
-      parentRoute: typeof AdminInvoicesRoute
+      parentRoute: typeof AdminRoute
     }
     '/admin/complaints/$id': {
       id: '/admin/complaints/$id'
@@ -610,30 +610,19 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AdminInvoicesRouteChildren {
-  AdminInvoicesIdRoute: typeof AdminInvoicesIdRoute
-}
-
-const AdminInvoicesRouteChildren: AdminInvoicesRouteChildren = {
-  AdminInvoicesIdRoute: AdminInvoicesIdRoute,
-}
-
-const AdminInvoicesRouteWithChildren = AdminInvoicesRoute._addFileChildren(
-  AdminInvoicesRouteChildren,
-)
-
 interface AdminRouteChildren {
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
-  AdminInvoicesRoute: typeof AdminInvoicesRouteWithChildren
   AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminBookingsIdRoute: typeof AdminBookingsIdRoute
   AdminComplaintsIdRoute: typeof AdminComplaintsIdRoute
+  AdminInvoicesIdRoute: typeof AdminInvoicesIdRoute
   AdminRoomsNewRoute: typeof AdminRoomsNewRoute
   AdminSettingsSecurityRoute: typeof AdminSettingsSecurityRoute
   AdminBookingsIndexRoute: typeof AdminBookingsIndexRoute
   AdminComplaintsIndexRoute: typeof AdminComplaintsIndexRoute
+  AdminInvoicesIndexRoute: typeof AdminInvoicesIndexRoute
   AdminRoomsIndexRoute: typeof AdminRoomsIndexRoute
   AdminSettingsIndexRoute: typeof AdminSettingsIndexRoute
   AdminRoomsIdEditRoute: typeof AdminRoomsIdEditRoute
@@ -642,15 +631,16 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
-  AdminInvoicesRoute: AdminInvoicesRouteWithChildren,
   AdminPaymentsRoute: AdminPaymentsRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminBookingsIdRoute: AdminBookingsIdRoute,
   AdminComplaintsIdRoute: AdminComplaintsIdRoute,
+  AdminInvoicesIdRoute: AdminInvoicesIdRoute,
   AdminRoomsNewRoute: AdminRoomsNewRoute,
   AdminSettingsSecurityRoute: AdminSettingsSecurityRoute,
   AdminBookingsIndexRoute: AdminBookingsIndexRoute,
   AdminComplaintsIndexRoute: AdminComplaintsIndexRoute,
+  AdminInvoicesIndexRoute: AdminInvoicesIndexRoute,
   AdminRoomsIndexRoute: AdminRoomsIndexRoute,
   AdminSettingsIndexRoute: AdminSettingsIndexRoute,
   AdminRoomsIdEditRoute: AdminRoomsIdEditRoute,

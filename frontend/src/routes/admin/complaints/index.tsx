@@ -37,12 +37,14 @@ function AdminComplaintsPage() {
 
   const getStatusColor = (status: typeof complaints[number]['status']) => {
     switch (status) {
-      case 'resolved':
-        return 'bg-[var(--palm)] text-white'
+      case 'closed':
+        return 'bg-gray-600 text-white'
       case 'in_progress':
         return 'bg-blue-500 text-white'
       case 'open':
         return 'bg-red-500 text-white'
+      case 'resolved':
+        return 'bg-[var(--palm)] text-white'
       default:
         return 'bg-gray-500 text-white'
     }
@@ -50,7 +52,7 @@ function AdminComplaintsPage() {
 
   const openCount = complaints.filter((c) => c.status === 'open').length
   const inProgressCount = complaints.filter((c) => c.status === 'in_progress').length
-  const resolvedCount = complaints.filter((c) => c.status === 'resolved').length
+  const closedCount = complaints.filter((c) => c.status === 'closed').length
 
   return (
     <div className="page-wrap px-4 py-8">
@@ -92,10 +94,10 @@ function AdminComplaintsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[var(--sea-ink-soft)]">Resolved</p>
-                <p className="text-2xl font-bold text-[var(--palm)]">{resolvedCount}</p>
+                <p className="text-sm text-[var(--sea-ink-soft)]">Closed</p>
+                <p className="text-2xl font-bold text-gray-600">{closedCount}</p>
               </div>
-              <MessageSquare className="h-8 w-8 text-[var(--palm)]" />
+              <MessageSquare className="h-8 w-8 text-gray-600" />
             </div>
           </CardContent>
         </Card>

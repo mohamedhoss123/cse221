@@ -5,25 +5,43 @@ import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import { Badge } from '#/components/ui/badge'
 import { Label } from '#/components/ui/label'
-import { Textarea } from '#/components/ui/textarea'
 import { Separator } from '#/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '#/components/ui/select'
-import { ArrowLeft, MessageSquare, Send } from 'lucide-react'
-import { format } from 'date-fns'
+import { ArrowLeft, MessageSquare } from 'lucide-react'
 import { toast } from 'sonner'
 
 export const Route = createFileRoute('/admin/complaints/$id')({
   component: AdminComplaintDetailsPage,
   loader: async ({ params }) => {
-    const complaint = await getComplaintById(params.id)
-    return { complaint }
+    try {
+      const complaint = await getComplaintById(params.id)
+      if (!complaint) {
+        throw new Error('Complaint not found')
+      }
+      return { complaint }
+    } catch (error) {
+      // Throw error to be caught by error boundary
+      throw error
+    }
   },
+  errorComponent: ({ error }) => (
+    <div className="page-wrap px-4 py-16 text-center">
+      <h1 className="display-title mb-4 text-3xl font-bold text-red-500">
+        Error Loading Complaint
+      </h1>
+      <p className="mb-6 text-[var(--sea-ink-soft)]">
+        {error?.message || 'An unexpected error occurred'}
+      </p>
+      <Button asChild>
+        <Link to="/admin/complaints">Back to Complaints</Link>
+      </Button>
+    </div>
+  ),
 })
 
 function AdminComplaintDetailsPage() {
   const { complaint: initialComplaint } = Route.useLoaderData()
   const [complaint, setComplaint] = useState(initialComplaint)
-  const [response, setResponse] = useState(complaint?.response || '')
   const [status, setStatus] = useState(complaint?.status || 'open')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -42,30 +60,29 @@ function AdminComplaintDetailsPage() {
 
   const getStatusColor = (status: typeof complaint['status']) => {
     switch (status) {
-      case 'resolved':
-        return 'bg-[var(--palm)] text-white'
+      case 'closed':
+        return 'bg-gray-600 text-white'
       case 'in_progress':
         return 'bg-blue-500 text-white'
       case 'open':
         return 'bg-red-500 text-white'
+      case 'resolved':
+        return 'bg-[var(--palm)] text-white'
       default:
         return 'bg-gray-500 text-white'
     }
   }
 
-  const handleSubmitResponse = async () => {
+  const handleUpdateStatus = async () => {
     setIsSubmitting(true)
     try {
-      const updated = await updateComplaint(complaint.id, {
-        response,
-        status,
-      })
+      const updated = await updateComplaint(complaint.id, { status })
       if (updated) {
         setComplaint(updated)
-        toast.success('Response submitted successfully')
+        toast.success('Status updated successfully')
       }
     } catch (error) {
-      toast.error('Failed to submit response')
+      toast.error('Failed to update status')
     } finally {
       setIsSubmitting(false)
     }
@@ -89,8 +106,8 @@ function AdminComplaintDetailsPage() {
           </h1>
           <p className="text-[var(--sea-ink-soft)]">Complaint ID: {complaint.id}</p>
         </div>
-        <Badge className={getStatusColor(complaint.status)} variant="secondary">
-          {complaint.status.replace('_', ' ')}
+        <Badge className={getStatusColor(complaint.status || 'open')} variant="secondary">
+          {(complaint.status || 'open').replace('_', ' ')}
         </Badge>
       </div>
 
@@ -106,67 +123,34 @@ function AdminComplaintDetailsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-sm text-[var(--sea-ink-soft)]">Subject</p>
+                <p className="text-sm text-[var(--sea-ink-soft)]">Type</p>
                 <h3 className="text-lg font-semibold text-[var(--sea-ink)]">
-                  {complaint.subject}
+                  {complaint.type}
                 </h3>
               </div>
 
               <Separator />
 
               <div>
-                <p className="text-sm text-[var(--sea-ink-soft)]">Message</p>
-                <p className="text-[var(--sea-ink)]">{complaint.message}</p>
+                <p className="text-sm text-[var(--sea-ink-soft)]">Description</p>
+                <p className="text-[var(--sea-ink)]">{complaint.description}</p>
               </div>
 
               <Separator />
 
               <div>
                 <p className="text-sm text-[var(--sea-ink-soft)]">Customer ID</p>
-                <p className="text-[var(--sea-ink)]">{complaint.customerId}</p>
+                <p className="text-[var(--sea-ink)]">{complaint.visitorId}</p>
               </div>
-
-              {complaint.bookingId && (
-                <>
-                  <Separator />
-                  <div>
-                    <p className="text-sm text-[var(--sea-ink-soft)]">Related Booking</p>
-                    <p className="text-[var(--sea-ink)]">{complaint.bookingId}</p>
-                  </div>
-                </>
-              )}
-
-              <Separator />
-
-              <div>
-                <p className="text-sm text-[var(--sea-ink-soft)]">Submitted</p>
-                <p className="text-[var(--sea-ink)]">
-                  {format(new Date(complaint.createdAt), 'MMM d, yyyy • h:mm a')}
-                </p>
-              </div>
-
-              {complaint.response && (
-                <>
-                  <Separator />
-                  <div className="rounded-lg bg-[var(--foam)] p-4">
-                    <p className="mb-2 text-sm font-semibold text-[var(--sea-ink)]">
-                      Previous Response
-                    </p>
-                    <p className="text-sm text-[var(--sea-ink-soft)]">
-                      {complaint.response}
-                    </p>
-                  </div>
-                </>
-              )}
             </CardContent>
           </Card>
         </div>
 
-        {/* Response Form */}
+        {/* Status Update Form */}
         <div className="lg:col-span-1">
           <Card className="island-shell sticky top-24">
             <CardHeader>
-              <CardTitle>Respond to Complaint</CardTitle>
+              <CardTitle>Update Complaint Status</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -176,33 +160,21 @@ function AdminComplaintDetailsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="open">Open</SelectItem>
                     <SelectItem value="in_progress">In Progress</SelectItem>
                     <SelectItem value="resolved">Resolved</SelectItem>
+                    <SelectItem value="closed">Closed</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="response">Response</Label>
-                <Textarea
-                  id="response"
-                  value={response}
-                  onChange={(e) => setResponse(e.target.value)}
-                  placeholder="Type your response..."
-                  rows={6}
-                />
               </div>
 
               <Separator />
 
               <Button
                 className="w-full"
-                onClick={handleSubmitResponse}
-                disabled={isSubmitting || !response.trim()}
+                onClick={handleUpdateStatus}
+                disabled={isSubmitting}
               >
-                <Send className="mr-2 h-4 w-4" />
-                {isSubmitting ? 'Submitting...' : 'Submit Response'}
+                {isSubmitting ? 'Updating...' : 'Update Status'}
               </Button>
             </CardContent>
           </Card>

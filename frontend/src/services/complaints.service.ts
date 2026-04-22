@@ -21,7 +21,25 @@ export async function getComplaints(customerId?: string): Promise<Complaint[]> {
 }
 
 export async function getComplaintById(id: string): Promise<Complaint> {
-  return BaseService.get<Complaint>(`/complaints/${id}`)
+  const response = await BaseService.get<any>(`/complaints/${id}`)
+
+  // Add validation: throw error if response is null/undefined
+  if (!response) {
+    throw new Error('Complaint not found')
+  }
+
+  // Transform backend response to match frontend types
+  return {
+    ...response,
+    // Map for backward compatibility
+    customerId: response.visitorId,
+    subject: response.type,
+    message: response.description,
+    // Add default values for missing fields
+    status: response.status || 'open',
+    response: response.response || '',
+    createdAt: response.createdAt || new Date().toISOString()
+  }
 }
 
 export async function createComplaint(

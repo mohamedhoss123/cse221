@@ -9,7 +9,7 @@ import { FileText, DollarSign, Clock, AlertCircle, CheckCircle } from 'lucide-re
 import { format } from 'date-fns'
 import type { Invoice } from '#/types/booking.types'
 
-export const Route = createFileRoute('/admin/invoices')({
+export const Route = createFileRoute('/admin/invoices/')({
   component: AdminInvoicesPage,
 })
 
