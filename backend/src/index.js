@@ -13,6 +13,7 @@ const bookingRoutes = require('./modules/booking/booking.routes');
 const invoiceRoutes = require('./modules/invoice/invoice.routes');
 const paymentRoutes = require('./modules/payment/payment.routes');
 const complaintRoutes = require('./modules/complaint/complaint.routes');
+const analyticsRoutes = require('./modules/analytics/analyticsRoutes');
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/complaints', complaintRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
