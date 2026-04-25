@@ -1,5 +1,5 @@
 {
-  "include": ["**/*.ts", "**/*.tsx", "src/routes/admin/bookings/id.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "src/routes/admin/bookings/$id.tsx"],
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "react-jsx",

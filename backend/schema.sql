@@ -75,10 +75,10 @@ CREATE TABLE INVOICE (
     notes TEXT NULL,
     VISITOR_visitor_id INT,
     ROOM_room_id INT,
-    RESERVATION_reservation_id INT,
+    RESERVATION_reservation_id INT UNIQUE,
     FOREIGN KEY (VISITOR_visitor_id) REFERENCES VISITOR(visitor_id),
     FOREIGN KEY (ROOM_room_id) REFERENCES ROOM(room_id),
-    FOREIGN KEY (RESERVATION_reservation_id) REFERENCES RESERVATION(reservation_id)
+    FOREIGN KEY (RESERVATION_reservation_id) REFERENCES RESERVATION(reservation_id) ON DELETE CASCADE
 );
 
 -- 7. Create PAYMENT Table
@@ -88,7 +88,7 @@ CREATE TABLE PAYMENT (
     amount DECIMAL(10, 2),
     date DATE,
     INVOICE_invoice_id INT,
-    FOREIGN KEY (INVOICE_invoice_id) REFERENCES INVOICE(invoice_id)
+    FOREIGN KEY (INVOICE_invoice_id) REFERENCES INVOICE(invoice_id) ON DELETE CASCADE
 );
 
 -- 8. Create Indexes for Performance

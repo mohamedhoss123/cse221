@@ -37,7 +37,7 @@ import { Route as AdminSettingsSecurityRouteImport } from './routes/admin/settin
 import { Route as AdminRoomsNewRouteImport } from './routes/admin/rooms/new'
 import { Route as AdminInvoicesIdRouteImport } from './routes/admin/invoices/$id'
 import { Route as AdminComplaintsIdRouteImport } from './routes/admin/complaints/$id'
-import { Route as AdminBookingsIdRouteImport } from './routes/admin/bookings/id'
+import { Route as AdminBookingsIdRouteImport } from './routes/admin/bookings/$id'
 import { Route as AdminRoomsIdEditRouteImport } from './routes/admin/rooms/$id.edit'
 
 const CustomerRoute = CustomerRouteImport.update({
@@ -182,8 +182,8 @@ const AdminComplaintsIdRoute = AdminComplaintsIdRouteImport.update({
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminBookingsIdRoute = AdminBookingsIdRouteImport.update({
-  id: '/bookings/id',
-  path: '/bookings/id',
+  id: '/bookings/$id',
+  path: '/bookings/$id',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminRoomsIdEditRoute = AdminRoomsIdEditRouteImport.update({
@@ -206,7 +206,7 @@ export interface FileRoutesByFullPath {
   '/customer/complaints': typeof CustomerComplaintsRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/admin/': typeof AdminIndexRoute
-  '/admin/bookings/id': typeof AdminBookingsIdRoute
+  '/admin/bookings/$id': typeof AdminBookingsIdRoute
   '/admin/complaints/$id': typeof AdminComplaintsIdRoute
   '/admin/invoices/$id': typeof AdminInvoicesIdRoute
   '/admin/rooms/new': typeof AdminRoomsNewRoute
@@ -237,7 +237,7 @@ export interface FileRoutesByTo {
   '/customer/complaints': typeof CustomerComplaintsRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/admin': typeof AdminIndexRoute
-  '/admin/bookings/id': typeof AdminBookingsIdRoute
+  '/admin/bookings/$id': typeof AdminBookingsIdRoute
   '/admin/complaints/$id': typeof AdminComplaintsIdRoute
   '/admin/invoices/$id': typeof AdminInvoicesIdRoute
   '/admin/rooms/new': typeof AdminRoomsNewRoute
@@ -270,7 +270,7 @@ export interface FileRoutesById {
   '/customer/complaints': typeof CustomerComplaintsRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/admin/': typeof AdminIndexRoute
-  '/admin/bookings/id': typeof AdminBookingsIdRoute
+  '/admin/bookings/$id': typeof AdminBookingsIdRoute
   '/admin/complaints/$id': typeof AdminComplaintsIdRoute
   '/admin/invoices/$id': typeof AdminInvoicesIdRoute
   '/admin/rooms/new': typeof AdminRoomsNewRoute
@@ -304,7 +304,7 @@ export interface FileRouteTypes {
     | '/customer/complaints'
     | '/customer/profile'
     | '/admin/'
-    | '/admin/bookings/id'
+    | '/admin/bookings/$id'
     | '/admin/complaints/$id'
     | '/admin/invoices/$id'
     | '/admin/rooms/new'
@@ -335,7 +335,7 @@ export interface FileRouteTypes {
     | '/customer/complaints'
     | '/customer/profile'
     | '/admin'
-    | '/admin/bookings/id'
+    | '/admin/bookings/$id'
     | '/admin/complaints/$id'
     | '/admin/invoices/$id'
     | '/admin/rooms/new'
@@ -367,7 +367,7 @@ export interface FileRouteTypes {
     | '/customer/complaints'
     | '/customer/profile'
     | '/admin/'
-    | '/admin/bookings/id'
+    | '/admin/bookings/$id'
     | '/admin/complaints/$id'
     | '/admin/invoices/$id'
     | '/admin/rooms/new'
@@ -593,10 +593,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminComplaintsIdRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/bookings/id': {
-      id: '/admin/bookings/id'
-      path: '/bookings/id'
-      fullPath: '/admin/bookings/id'
+    '/admin/bookings/$id': {
+      id: '/admin/bookings/$id'
+      path: '/bookings/$id'
+      fullPath: '/admin/bookings/$id'
       preLoaderRoute: typeof AdminBookingsIdRouteImport
       parentRoute: typeof AdminRoute
     }

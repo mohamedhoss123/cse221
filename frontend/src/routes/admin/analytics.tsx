@@ -19,7 +19,7 @@ import {
   Pie,
   Cell,
 } from 'recharts'
-import { TrendingUp, DollarSign, Users, Calendar } from 'lucide-react'
+import { DollarSign, Users, Calendar } from 'lucide-react'
 
 export const Route = createFileRoute('/admin/analytics')({
   component: AnalyticsPage,
@@ -56,7 +56,6 @@ function AnalyticsPage() {
 
   const totalRevenue = stats.totalRevenue
   const totalBookings = stats.totalBookings
-  const completionRate = parseFloat(stats.completionRate)
   const avgGuestsPerBooking = parseFloat(stats.avgGuestsPerBooking)
 
   const COLORS = ['#F5C518', '#000000', '#888888', '#DDDDDD']
@@ -81,7 +80,7 @@ function AnalyticsPage() {
       </div>
 
       {/* Key Metrics */}
-      <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Card className="island-shell">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -104,20 +103,6 @@ function AnalyticsPage() {
                 <p className="text-2xl font-bold text-[var(--expressive-primary)]">{totalBookings}</p>
               </div>
               <Calendar className="h-8 w-8 text-[var(--expressive-accent)]" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="island-shell">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-[#000]">Completion Rate</p>
-                <p className="text-2xl font-bold text-[var(--expressive-primary)]">
-                  {completionRate.toFixed(1)}%
-                </p>
-              </div>
-              <TrendingUp className="h-8 w-8 text-[#000]" />
             </div>
           </CardContent>
         </Card>

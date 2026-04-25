@@ -111,7 +111,7 @@ function PaymentsPage() {
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div>
               <p className="text-xs text-[#000] mb-1">Total</p>
-              <p className="text-sm font-semibold text-[var(--expressive-primary)]">${invoice.totalAmount}</p>
+              <p className="text-sm font-semibold text-[var(--expressive-primary)]">${invoice.amount}</p>
             </div>
             <div>
               <p className="text-xs text-[#000] mb-1">Paid</p>
