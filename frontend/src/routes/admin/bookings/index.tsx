@@ -5,7 +5,7 @@ import { getRooms } from '#/services/rooms.service'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent } from '#/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '#/components/ui/table'
-import { Calendar, Search, Eye } from 'lucide-react'
+import { Calendar, Search, Eye, DollarSign, Mail, Phone } from 'lucide-react'
 import { format } from 'date-fns'
 import type { Booking } from '#/types/booking.types'
 import type { Room } from '#/types/room.types'
@@ -117,6 +117,7 @@ function AdminBookingsPage() {
                     <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Booking ID</TableHead>
                     <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Room</TableHead>
                     <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Customer Name</TableHead>
+                    <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Amount</TableHead>
                     <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Dates</TableHead>
                     <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Status</TableHead>
                     <TableHead className="text-[var(--expressive-primary)] font-bold py-4 text-right">Actions</TableHead>
@@ -139,9 +140,34 @@ function AdminBookingsPage() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <span className="font-semibold text-[var(--expressive-text)]">
+                          <div className="font-semibold text-[var(--expressive-text)]">
                             {booking.customerName || booking.customerId}
-                          </span>
+                          </div>
+                          <div className="mt-1 space-y-1 text-xs text-[var(--expressive-text)] opacity-80">
+                            {booking.customerEmail ? (
+                              <div className="flex items-center gap-1">
+                                <Mail className="h-3 w-3" />
+                                <span>{booking.customerEmail}</span>
+                              </div>
+                            ) : null}
+                            {booking.customerPhone ? (
+                              <div className="flex items-center gap-1">
+                                <Phone className="h-3 w-3" />
+                                <span>{booking.customerPhone}</span>
+                              </div>
+                            ) : null}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2 font-bold text-[var(--expressive-primary)]">
+                            <DollarSign className="h-4 w-4" />
+                            <span>
+                              {new Intl.NumberFormat('en-US', {
+                                style: 'currency',
+                                currency: 'USD'
+                              }).format(booking.totalAmount || 0)}
+                            </span>
+                          </div>
                         </TableCell>
                         <TableCell>
                           <div className="text-sm font-semibold text-[var(--expressive-text)]">

@@ -6,7 +6,7 @@ import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import { Badge } from '#/components/ui/badge'
 import { Separator } from '#/components/ui/separator'
-import { ArrowLeft, Calendar, Users, DollarSign } from 'lucide-react'
+import { ArrowLeft, Calendar, Users, DollarSign, Mail, Phone, MapPin, User } from 'lucide-react'
 import { format } from 'date-fns'
 
 export const Route = createFileRoute('/admin/bookings/$id')({
@@ -72,7 +72,7 @@ function AdminBookingDetailsPage() {
         </Badge>
       </div>
 
-      <div className="lg:max-w-2xl">
+      <div className="grid gap-6 lg:grid-cols-2">
         {/* Main Details */}
         <Card className="island-shell">
           <CardHeader>
@@ -125,7 +125,10 @@ function AdminBookingDetailsPage() {
               <div className="flex items-center gap-1">
                 <DollarSign className="h-5 w-5 text-[var(--lagoon-deep)]" />
                 <p className="text-2xl font-bold text-[var(--lagoon-deep)]">
-                  {booking.totalAmount}
+                  {new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                  }).format(booking.totalAmount || 0)}
                 </p>
               </div>
             </div>
@@ -135,6 +138,56 @@ function AdminBookingDetailsPage() {
             <div>
               <p className="text-sm text-[var(--sea-ink-soft)]">Payment Status</p>
               <Badge variant="secondary">{booking.paymentStatus}</Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="island-shell">
+          <CardHeader>
+            <CardTitle>Visitor Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <p className="text-sm text-[var(--sea-ink-soft)]">Name</p>
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4 text-[var(--sea-ink)]" />
+                <p className="font-medium text-[var(--sea-ink)]">{booking.customerName}</p>
+              </div>
+            </div>
+
+            <Separator />
+
+            <div className="space-y-3 text-sm text-[var(--sea-ink)]">
+              {booking.customerEmail ? (
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-[var(--sea-ink-soft)]" />
+                  <span>{booking.customerEmail}</span>
+                </div>
+              ) : null}
+              {booking.customerPhone ? (
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-[var(--sea-ink-soft)]" />
+                  <span>{booking.customerPhone}</span>
+                </div>
+              ) : null}
+              {booking.visitorAddress ? (
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-[var(--sea-ink-soft)]" />
+                  <span>{booking.visitorAddress}</span>
+                </div>
+              ) : null}
+              {booking.visitorGender ? (
+                <div>
+                  <span className="text-[var(--sea-ink-soft)]">Gender: </span>
+                  <span className="capitalize">{booking.visitorGender}</span>
+                </div>
+              ) : null}
+              {booking.visitorBirthdate ? (
+                <div>
+                  <span className="text-[var(--sea-ink-soft)]">Birthdate: </span>
+                  <span>{format(new Date(booking.visitorBirthdate), 'MMM d, yyyy')}</span>
+                </div>
+              ) : null}
             </div>
           </CardContent>
         </Card>

@@ -32,11 +32,19 @@ class BookingService {
       SELECT
         r.*,
         v.visitor_id,
+        v.address AS visitorAddress,
+        v.gender AS visitorGender,
+        v.birthdate AS visitorBirthdate,
         u.user_id AS customerId,
-        u.name AS customerName
+        u.name AS customerName,
+        u.email AS customerEmail,
+        u.phone AS customerPhone,
+        i.invoice_id AS invoiceId,
+        i.amount AS totalAmount
       FROM RESERVATION r
       LEFT JOIN VISITOR v ON r.VISITOR_visitor_id = v.visitor_id
       LEFT JOIN USER u ON v.USER_user_id = u.user_id
+      LEFT JOIN INVOICE i ON i.RESERVATION_reservation_id = r.reservation_id
     `;
     const params = [];
 
@@ -55,10 +63,18 @@ class BookingService {
       visitorId: b.VISITOR_visitor_id.toString(),
       customerId: b.customerId?.toString() || b.visitor_id?.toString() || b.VISITOR_visitor_id.toString(),
       customerName: b.customerName || 'Unknown Customer',
+      customerEmail: b.customerEmail || null,
+      customerPhone: b.customerPhone || null,
+      visitorAddress: b.visitorAddress || null,
+      visitorGender: b.visitorGender || null,
+      visitorBirthdate: b.visitorBirthdate || null,
+      invoiceId: b.invoiceId?.toString() || null,
       checkIn: b.start_date,
       checkOut: b.end_date,
       guests: b.guests || 2,
-      status: b.status || 'confirmed'
+      status: b.status || 'confirmed',
+      totalAmount: b.totalAmount !== null && b.totalAmount !== undefined ? parseFloat(b.totalAmount) : 0,
+      specialRequests: b.special_requests || null
     }));
   }
 
@@ -68,11 +84,19 @@ class BookingService {
         SELECT
           r.*,
           v.visitor_id,
+          v.address AS visitorAddress,
+          v.gender AS visitorGender,
+          v.birthdate AS visitorBirthdate,
           u.user_id AS customerId,
-          u.name AS customerName
+          u.name AS customerName,
+          u.email AS customerEmail,
+          u.phone AS customerPhone,
+          i.invoice_id AS invoiceId,
+          i.amount AS totalAmount
         FROM RESERVATION r
         LEFT JOIN VISITOR v ON r.VISITOR_visitor_id = v.visitor_id
         LEFT JOIN USER u ON v.USER_user_id = u.user_id
+        LEFT JOIN INVOICE i ON i.RESERVATION_reservation_id = r.reservation_id
         WHERE r.reservation_id = ?
       `,
       [bookingId]
@@ -90,10 +114,18 @@ class BookingService {
       visitorId: booking.VISITOR_visitor_id.toString(),
       customerId: booking.customerId?.toString() || booking.visitor_id?.toString() || booking.VISITOR_visitor_id.toString(),
       customerName: booking.customerName || 'Unknown Customer',
+      customerEmail: booking.customerEmail || null,
+      customerPhone: booking.customerPhone || null,
+      visitorAddress: booking.visitorAddress || null,
+      visitorGender: booking.visitorGender || null,
+      visitorBirthdate: booking.visitorBirthdate || null,
+      invoiceId: booking.invoiceId?.toString() || null,
       checkIn: booking.start_date,
       checkOut: booking.end_date,
       guests: booking.guests || 2,
-      status: booking.status || 'confirmed'
+      status: booking.status || 'confirmed',
+      totalAmount: booking.totalAmount !== null && booking.totalAmount !== undefined ? parseFloat(booking.totalAmount) : 0,
+      specialRequests: booking.special_requests || null
     };
   }
 

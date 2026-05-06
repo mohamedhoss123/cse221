@@ -10,9 +10,15 @@ export interface Booking {
   customerId: string
   visitorId: string
   customerName: string
+  customerEmail?: string | null
+  customerPhone?: string | null
+  visitorAddress?: string | null
+  visitorGender?: string | null
+  visitorBirthdate?: string | null
   checkIn: string
   checkOut: string
   status: BookingStatus
+  paymentStatus?: 'pending' | 'paid' | 'refunded'
   guests?: number
   totalAmount: number
   invoiceId?: string | null
