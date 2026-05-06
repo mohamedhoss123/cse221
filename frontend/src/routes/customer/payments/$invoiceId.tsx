@@ -29,7 +29,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Plus,
-  Download,
   ChevronRight,
   ArrowLeft,
 } from 'lucide-react'
@@ -192,14 +191,6 @@ function InvoicePage() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button
-            variant="outline"
-            className="bg-[var(--expressive-surface)] text-[var(--expressive-text)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
-            onClick={() => toast.info('Downloading receipt...')}
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Download PDF
-          </Button>
           {currentInvoice.status !== 'paid' && (
             <Button
               className="bg-[var(--expressive-primary)] text-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all"

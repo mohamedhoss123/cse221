@@ -12,7 +12,6 @@ import {
   User,
   Bed,
   ArrowLeft,
-  Printer,
   CreditCard,
   Clock,
   CheckCircle,
@@ -98,14 +97,10 @@ function AdminInvoiceDetailPage() {
     }
   }
 
-  const handlePrint = () => {
-    window.print()
-  }
-
   return (
     <div className="page-wrap px-4 py-8">
       {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-8">
         <div>
           <Link to="/admin/invoices">
             <Button variant="ghost" className="mb-2">
@@ -119,12 +114,6 @@ function AdminInvoiceDetailPage() {
           <p className="text-[var(--expressive-text-muted)]">
             Created on {invoice.createdAt ? format(new Date(invoice.createdAt), 'MMMM d, yyyy') : 'N/A'}
           </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handlePrint}>
-            <Printer className="mr-2 h-4 w-4" />
-            Print
-          </Button>
         </div>
       </div>
 

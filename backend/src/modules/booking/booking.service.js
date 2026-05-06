@@ -28,15 +28,24 @@ class BookingService {
   }
 
   async getAllBookings(visitorId = null) {
-    let sql = 'SELECT * FROM RESERVATION';
+    let sql = `
+      SELECT
+        r.*,
+        v.visitor_id,
+        u.user_id AS customerId,
+        u.name AS customerName
+      FROM RESERVATION r
+      LEFT JOIN VISITOR v ON r.VISITOR_visitor_id = v.visitor_id
+      LEFT JOIN USER u ON v.USER_user_id = u.user_id
+    `;
     const params = [];
 
     if (visitorId) {
-      sql += ' WHERE VISITOR_visitor_id = ?';
+      sql += ' WHERE r.VISITOR_visitor_id = ?';
       params.push(visitorId);
     }
 
-    sql += ' ORDER BY start_date DESC';
+    sql += ' ORDER BY r.start_date DESC';
 
     const bookings = await query(sql, params);
 
@@ -44,6 +53,8 @@ class BookingService {
       id: b.reservation_id.toString(),
       roomId: b.ROOM_room_id.toString(),
       visitorId: b.VISITOR_visitor_id.toString(),
+      customerId: b.customerId?.toString() || b.visitor_id?.toString() || b.VISITOR_visitor_id.toString(),
+      customerName: b.customerName || 'Unknown Customer',
       checkIn: b.start_date,
       checkOut: b.end_date,
       guests: b.guests || 2,
@@ -52,7 +63,20 @@ class BookingService {
   }
 
   async getBookingById(bookingId) {
-    const bookings = await query('SELECT * FROM RESERVATION WHERE reservation_id = ?', [bookingId]);
+    const bookings = await query(
+      `
+        SELECT
+          r.*,
+          v.visitor_id,
+          u.user_id AS customerId,
+          u.name AS customerName
+        FROM RESERVATION r
+        LEFT JOIN VISITOR v ON r.VISITOR_visitor_id = v.visitor_id
+        LEFT JOIN USER u ON v.USER_user_id = u.user_id
+        WHERE r.reservation_id = ?
+      `,
+      [bookingId]
+    );
 
     if (bookings.length === 0) {
       throw createError('Booking not found', 404);
@@ -64,6 +88,8 @@ class BookingService {
       id: booking.reservation_id.toString(),
       roomId: booking.ROOM_room_id.toString(),
       visitorId: booking.VISITOR_visitor_id.toString(),
+      customerId: booking.customerId?.toString() || booking.visitor_id?.toString() || booking.VISITOR_visitor_id.toString(),
+      customerName: booking.customerName || 'Unknown Customer',
       checkIn: booking.start_date,
       checkOut: booking.end_date,
       guests: booking.guests || 2,

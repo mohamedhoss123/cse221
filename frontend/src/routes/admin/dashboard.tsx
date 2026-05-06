@@ -4,7 +4,6 @@ import ProtectedRoute from '#/components/ProtectedRoute'
 import { getBookings } from '#/services/bookings.service'
 import { getComplaints } from '#/services/complaints.service'
 import DashboardStats from '#/components/admin/DashboardStats'
-import RevenueChart from '#/components/admin/RevenueChart'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import {
   DollarSign,
@@ -65,16 +64,6 @@ function DashboardPage() {
 
   const occupancyRate = 75 // Mock percentage
 
-  // Mock revenue data for the chart
-  const revenueData = [
-    { month: 'Jan', revenue: 15000 },
-    { month: 'Feb', revenue: 18500 },
-    { month: 'Mar', revenue: 22000 },
-    { month: 'Apr', revenue: 19800 },
-    { month: 'May', revenue: 25600 },
-    { month: 'Jun', revenue: 28900 },
-  ]
-
   return (
     <ProtectedRoute requireAdmin>
       <div className="page-wrap px-4 py-8">
@@ -115,15 +104,8 @@ function DashboardPage() {
         />
       </div>
 
-      <div className="gap-6 lg:grid lg:grid-cols-3">
-        {/* Revenue Chart */}
-        <div className="lg:col-span-2">
-          <RevenueChart data={revenueData} />
-        </div>
-
-        {/* Alerts */}
-        <div className="lg:col-span-1">
-          <Card className="island-shell">
+      {/* Alerts */}
+      <Card className="island-shell">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <AlertCircle className="h-5 w-5 text-yellow-500" />
@@ -142,27 +124,18 @@ function DashboardPage() {
                 </div>
               )}
 
-              <div className="rounded-lg bg-[var(--expressive-background)] p-3">
-                <p className="font-semibold text-[var(--expressive-primary)]">
-                  Room Maintenance
-                </p>
-                <p className="text-sm text-[#000]">
-                  2 rooms need cleaning
-                </p>
-              </div>
-
-              <div className="rounded-lg bg-[var(--expressive-background)] p-3">
-                <p className="font-semibold text-[var(--expressive-primary)]">
-                  Today's Check-outs
-                </p>
-                <p className="text-sm text-[#000]">
-                  5 rooms to prepare
-                </p>
-              </div>
+              {openComplaints === 0 && (
+                <div className="rounded-lg bg-green-50 p-3">
+                  <p className="font-semibold text-green-700">
+                    No Active Alerts
+                  </p>
+                  <p className="text-sm text-green-600">
+                    Everything is running smoothly
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
-        </div>
-      </div>
 
       {/* Recent Activity */}
       <Card className="island-shell mt-6">

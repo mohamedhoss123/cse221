@@ -80,35 +80,6 @@ function AdminBookingsPage() {
     }
   }
 
-  const getPaymentStatusBadge = (status: Booking['paymentStatus']) => {
-    switch (status) {
-      case 'paid':
-        return (
-          <span className="inline-flex px-2.5 py-1 rounded-lg text-xs font-bold bg-green-100 text-green-700 capitalize border-2 border-green-200 shadow-[2px_2px_0_0_#bbf7d0]">
-            {status}
-          </span>
-        )
-      case 'pending':
-        return (
-          <span className="inline-flex px-2.5 py-1 rounded-lg text-xs font-bold bg-yellow-100 text-yellow-700 capitalize border-2 border-yellow-200 shadow-[2px_2px_0_0_#fef08a]">
-            {status}
-          </span>
-        )
-      case 'refunded':
-        return (
-          <span className="inline-flex px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-100 text-blue-700 capitalize border-2 border-blue-200 shadow-[2px_2px_0_0_#bfdbfe]">
-            {status}
-          </span>
-        )
-      default:
-        return (
-          <span className="inline-flex px-2.5 py-1 rounded-lg text-xs font-bold bg-[var(--expressive-background)] text-[var(--expressive-text)] capitalize border-2 border-[var(--expressive-secondary)] shadow-[2px_2px_0_0_var(--expressive-secondary)]">
-            {status}
-          </span>
-        )
-    }
-  }
-
   return (
     <div className="p-8">
       {/* Header */}
@@ -145,11 +116,9 @@ function AdminBookingsPage() {
                   <TableRow className="border-none hover:bg-[var(--expressive-background)]">
                     <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Booking ID</TableHead>
                     <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Room</TableHead>
-                    <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Customer</TableHead>
+                    <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Customer Name</TableHead>
                     <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Dates</TableHead>
-                    <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Amount</TableHead>
                     <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Status</TableHead>
-                    <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Payment</TableHead>
                     <TableHead className="text-[var(--expressive-primary)] font-bold py-4 text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -171,7 +140,7 @@ function AdminBookingsPage() {
                         </TableCell>
                         <TableCell>
                           <span className="font-semibold text-[var(--expressive-text)]">
-                            {booking.customerId}
+                            {booking.customerName || booking.customerId}
                           </span>
                         </TableCell>
                         <TableCell>
@@ -183,15 +152,7 @@ function AdminBookingsPage() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <span className="font-bold text-[var(--expressive-primary)] text-lg">
-                            ${booking.totalAmount}
-                          </span>
-                        </TableCell>
-                        <TableCell>
                           {getStatusBadge(booking.status)}
-                        </TableCell>
-                        <TableCell>
-                          {getPaymentStatusBadge(booking.paymentStatus)}
                         </TableCell>
                         <TableCell className="text-right">
                           <Button variant="outline" size="sm" asChild className="border-2 border-[var(--expressive-secondary)] shadow-[2px_2px_0_0_var(--expressive-secondary)] hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_var(--expressive-secondary)] transition-all bg-[var(--expressive-surface)] text-[var(--expressive-text)] hover:text-[var(--expressive-primary)] font-bold">
@@ -214,5 +175,3 @@ function AdminBookingsPage() {
     </div>
   )
 }
-
-
