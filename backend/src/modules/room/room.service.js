@@ -2,6 +2,29 @@ const { query } = require('../../database/connection');
 const { createError } = require('../../utils/helpers');
 
 class RoomService {
+  async getRoomRating(roomId) {
+    const result = await query(
+      `SELECT 
+        AVG(rating) as average_rating,
+        COUNT(review_id) as total_reviews
+       FROM REVIEW 
+       WHERE ROOM_room_id = ?`,
+      [roomId]
+    );
+
+    if (result[0].total_reviews === 0) {
+      return {
+        averageRating: 0,
+        totalReviews: 0
+      };
+    }
+
+    return {
+      averageRating: parseFloat(result[0].average_rating).toFixed(1),
+      totalReviews: result[0].total_reviews
+    };
+  }
+
   async getAllRooms(filters = {}) {
     let sql = 'SELECT * FROM ROOM';
     const params = [];
@@ -39,12 +62,14 @@ class RoomService {
 
     const rooms = await query(sql, params);
 
-    // Get images for each room
+    // Get images and ratings for each room
     const result = await Promise.all(rooms.map(async (room) => {
       const images = await query(
         'SELECT * FROM ROOM_IMAGES WHERE room_id = ? ORDER BY display_order',
         [room.room_id]
       );
+
+      const rating = await this.getRoomRating(room.room_id);
 
       return {
         id: room.room_id.toString(),
@@ -53,6 +78,10 @@ class RoomService {
         price: parseFloat(room.price),
         capacity: room.capacity,
         status: room.status,
+        rating: {
+          average: parseFloat(rating.averageRating),
+          total: rating.totalReviews
+        },
         images: images.map(img => ({
           id: img.image_id.toString(),
           url: img.image_url,
@@ -81,6 +110,9 @@ class RoomService {
       [roomId]
     );
 
+    // Get rating
+    const rating = await this.getRoomRating(roomId);
+
     return {
       id: room.room_id.toString(),
       name: room.name,
@@ -88,6 +120,10 @@ class RoomService {
       price: parseFloat(room.price),
       capacity: room.capacity,
       status: room.status,
+      rating: {
+        average: parseFloat(rating.averageRating),
+        total: rating.totalReviews
+      },
       images: images.map(img => ({
         id: img.image_id.toString(),
         url: img.image_url,

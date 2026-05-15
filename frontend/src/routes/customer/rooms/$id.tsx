@@ -2,10 +2,15 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { getRoomById } from '#/services/rooms.service'
+import { createReview } from '#/services/reviews.service'
+import { useAuth } from '#/hooks/useAuth'
 import { Button } from '#/components/ui/button'
 import { Badge } from '#/components/ui/badge'
 import { Separator } from '#/components/ui/separator'
 import { BookingModal } from '#/components/customer/BookingModal'
+import { RoomReviews } from '#/components/customer/RoomReviews'
+import { WriteReviewDialog } from '#/components/customer/WriteReviewDialog'
+import { AlertCircle, CheckCircle } from 'lucide-react'
 
 export const Route = createFileRoute('/customer/rooms/$id')({
   component: RoomDetailsPage,
@@ -18,7 +23,11 @@ export const Route = createFileRoute('/customer/rooms/$id')({
 function RoomDetailsPage() {
   const { room } = Route.useLoaderData()
   const navigate = useNavigate()
+  const { isAuthenticated, user } = useAuth()
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
+  const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false)
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false)
+  const [reviewMessage, setReviewMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   if (!room) {
     return (
@@ -35,6 +44,36 @@ function RoomDetailsPage() {
 
   const handleBookNow = () => {
     setIsBookingModalOpen(true)
+  }
+
+  const handleWriteReview = () => {
+    if (!isAuthenticated) {
+      navigate({ to: '/auth/login', search: { redirect: `/customer/rooms/${room.id}` } })
+      return
+    }
+    if (user?.role !== 'visitor') {
+      setReviewMessage({ type: 'error', text: 'Only guests can write reviews' })
+      return
+    }
+    setIsReviewDialogOpen(true)
+  }
+
+  const handleSubmitReview = async (data: { rating: number; description: string }) => {
+    try {
+      setIsSubmittingReview(true)
+      await createReview(room.id, data)
+      setReviewMessage({ type: 'success', text: 'Review posted successfully!' })
+      setIsReviewDialogOpen(false)
+      // Reset message after 3 seconds
+      setTimeout(() => setReviewMessage(null), 3000)
+    } catch (error: any) {
+      setReviewMessage({
+        type: 'error',
+        text: error.response?.data?.message || 'Failed to post review'
+      })
+    } finally {
+      setIsSubmittingReview(false)
+    }
   }
 
   return (
@@ -103,6 +142,16 @@ function RoomDetailsPage() {
             </h2>
             <p className="text-[var(--expressive-text)]">{room.type}</p>
           </div>
+
+          <Separator className="my-8" />
+
+          {/* Reviews Section */}
+          <div>
+            <RoomReviews
+              roomId={room.id}
+              onWriteReview={handleWriteReview}
+            />
+          </div>
         </div>
 
         {/* Booking Card */}
@@ -136,11 +185,38 @@ function RoomDetailsPage() {
         </div>
       </div>
 
+      {/* Messages */}
+      {reviewMessage && (
+        <div className={`fixed bottom-4 right-4 flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg ${
+          reviewMessage.type === 'success'
+            ? 'bg-green-50 border-2 border-green-200'
+            : 'bg-red-50 border-2 border-red-200'
+        }`}>
+          {reviewMessage.type === 'success' ? (
+            <CheckCircle className="w-5 h-5 text-green-600" />
+          ) : (
+            <AlertCircle className="w-5 h-5 text-red-600" />
+          )}
+          <span className={reviewMessage.type === 'success' ? 'text-green-800' : 'text-red-800'}>
+            {reviewMessage.text}
+          </span>
+        </div>
+      )}
+
       {/* Booking Modal */}
       <BookingModal
         room={room}
         open={isBookingModalOpen}
         onOpenChange={setIsBookingModalOpen}
+      />
+
+      {/* Write Review Dialog */}
+      <WriteReviewDialog
+        open={isReviewDialogOpen}
+        onOpenChange={setIsReviewDialogOpen}
+        roomName={room.name || `${room.type} Room`}
+        onSubmit={handleSubmitReview}
+        isLoading={isSubmittingReview}
       />
     </div>
   )

@@ -54,10 +54,18 @@ export default function RoomCard({ room }: RoomCardProps) {
               <span className="font-medium">{room.capacity} guests</span>
             </div>
           )}
-          <div className="flex items-center gap-1.5 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-100 text-amber-700">
-            <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-            <span className="font-semibold">4.8</span>
-          </div>
+          {room.rating ? (
+            <div className="flex items-center gap-1.5 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-100 text-amber-700">
+              <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+              <span className="font-semibold">{room.rating.average}</span>
+              <span className="text-xs">({room.rating.total})</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100 text-slate-600">
+              <Star className="h-4 w-4 text-slate-300" />
+              <span className="text-xs">No reviews yet</span>
+            </div>
+          )}
         </div>
         <div className="flex items-end gap-1">
           <span className="text-2xl font-bold text-[var(--expressive-primary)]">

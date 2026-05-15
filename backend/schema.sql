@@ -91,10 +91,27 @@ CREATE TABLE PAYMENT (
     FOREIGN KEY (INVOICE_invoice_id) REFERENCES INVOICE(invoice_id) ON DELETE CASCADE
 );
 
--- 8. Create Indexes for Performance
+-- 8. Create REVIEW Table
+CREATE TABLE REVIEW (
+    review_id INT AUTO_INCREMENT PRIMARY KEY,
+    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    description TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    VISITOR_visitor_id INT NOT NULL,
+    ROOM_room_id INT NOT NULL,
+    FOREIGN KEY (VISITOR_visitor_id) REFERENCES VISITOR(visitor_id) ON DELETE CASCADE,
+    FOREIGN KEY (ROOM_room_id) REFERENCES ROOM(room_id) ON DELETE CASCADE,
+    UNIQUE KEY unique_visitor_room_review (VISITOR_visitor_id, ROOM_room_id)
+);
+
+-- 9. Create Indexes for Performance
 CREATE INDEX idx_reservation_visitor ON RESERVATION(VISITOR_visitor_id);
 CREATE INDEX idx_reservation_room ON RESERVATION(ROOM_room_id);
 CREATE INDEX idx_invoice_reservation ON INVOICE(RESERVATION_reservation_id);
 CREATE INDEX idx_payment_invoice ON PAYMENT(INVOICE_invoice_id);
 CREATE INDEX idx_room_status ON ROOM(status);
 CREATE INDEX idx_reservation_status ON RESERVATION(status);
+CREATE INDEX idx_review_room ON REVIEW(ROOM_room_id);
+CREATE INDEX idx_review_visitor ON REVIEW(VISITOR_visitor_id);
+CREATE INDEX idx_review_created ON REVIEW(created_at);

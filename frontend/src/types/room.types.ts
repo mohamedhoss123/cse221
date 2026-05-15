@@ -1,6 +1,11 @@
 export type RoomType = 'standard' | 'deluxe' | 'suite' | 'penthouse'
 export type RoomStatus = 'available' | 'unavailable' | 'maintenance'
 
+export interface RoomRating {
+  average: number
+  total: number
+}
+
 export interface Room {
   id: string
   type: RoomType
@@ -8,6 +13,7 @@ export interface Room {
   capacity?: number
   status?: RoomStatus
   name?: string
+  rating?: RoomRating
   images?: RoomImage[]
 }
 
