@@ -98,7 +98,7 @@ function InvoicePage() {
       pending: {
         icon: Clock,
         label: 'Pending',
-        className: 'bg-yellow-100 text-[var(--expressive-text)] border-yellow-200',
+        className: 'bg-amber-100 text-[var(--expressive-text)] border-amber-200',
       },
       partial: {
         icon: AlertCircle,

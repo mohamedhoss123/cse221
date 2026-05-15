@@ -13,7 +13,7 @@ interface RoomCardProps {
 export default function RoomCard({ room }: RoomCardProps) {
   return (
     <Card className="overflow-hidden border border-slate-200 rounded-2xl hover:shadow-lg transition-all duration-300 bg-white">
-      <div className="relative h-56 overflow-hidden">
+      <div className="relative aspect-video overflow-hidden bg-slate-100">
         {room.images && room.images.length > 0 ? (
           <img
             src={`/api${room.images.find(img => img.isPrimary)?.url || room.images[0].url}`}

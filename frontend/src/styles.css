@@ -8,49 +8,50 @@
 }
 
 :root {
-  /* Expressive Design System Tokens */
-  --expressive-primary: #F5C518;
-  --expressive-primary-hover: #E6B015;
+  /* Enhanced Design System Tokens - Replaced Yellow with Professional Accent */
+  --expressive-primary: #3B82F6;
+  --expressive-primary-hover: #2563EB;
   --expressive-secondary: #000000;
-  --expressive-accent: #F5C518;
+  --expressive-accent: #06B6D4;
   --expressive-background: #FFFFFF;
-  --expressive-surface: #FAFAFA;
-  --expressive-text: #111827;
-  --expressive-text-muted: #6B7280;
-  --expressive-success: #16A34A;
-  --expressive-warning: #D97706;
-  --expressive-danger: #DC2626;
+  --expressive-surface: #F8FAFC;
+  --expressive-text: #0F172A;
+  --expressive-text-muted: #64748B;
+  --expressive-success: #10B981;
+  --expressive-warning: #F59E0B;
+  --expressive-danger: #EF4444;
+  --expressive-info: #06B6D4;
 
   /* shadcn/ui mapped base colors */
   --background: 0 0% 100%; /* white */
-  --foreground: 220 39% 11%;
+  --foreground: 215 28% 17%; /* slate-900 */
 
-  --card: 0 0% 98%; /* #FAFAFA */
-  --card-foreground: 220 39% 11%;
+  --card: 0 0% 98%; /* #F8FAFC */
+  --card-foreground: 215 28% 17%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 220 39% 11%;
+  --popover-foreground: 215 28% 17%;
 
-  --primary: 48 93% 58%; /* #F5C518 */
-  --primary-foreground: 0 0% 0%;
+  --primary: 217 91% 60%; /* #3B82F6 */
+  --primary-foreground: 0 0% 100%;
 
   --secondary: 0 0% 0%;
   --secondary-foreground: 0 0% 100%;
 
-  --muted: 0 0% 96%;
-  --muted-foreground: 215 16% 47%;
+  --muted: 215 16% 96%;
+  --muted-foreground: 215 12% 43%;
 
-  --accent: 48 93% 58%; /* #F5C518 */
-  --accent-foreground: 0 0% 0%;
+  --accent: 185 96% 52%; /* #06B6D4 */
+  --accent-foreground: 0 0% 100%;
 
-  --destructive: 0 72% 51%;
-  --destructive-foreground: 0 0% 98%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
 
-  --border: 0 0% 90%;
-  --input: 0 0% 90%;
-  --ring: 48 93% 58%;
+  --border: 215 14% 89%;
+  --input: 215 13% 95%;
+  --ring: 217 91% 60%;
 
-  --radius: 0.75rem; /* slightly rounded for playful look */
+  --radius: 0.75rem; /* rounded corners */
 }
 
 @layer base {

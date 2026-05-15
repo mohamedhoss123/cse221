@@ -37,7 +37,7 @@ class RoomImageService {
 
     const result = await query(
       'INSERT INTO ROOM_IMAGES (room_id, image_url, caption, is_primary, display_order) VALUES (?, ?, ?, ?, ?)',
-      [roomId, url, caption, isPrimary ? 1 : 0, orderResult[0].next_order]
+      [roomId, url, caption || null, isPrimary ? 1 : 0, orderResult[0].next_order]
     );
 
     const images = await query(

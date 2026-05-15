@@ -108,7 +108,7 @@ function DashboardPage() {
       <Card className="island-shell">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-yellow-500" />
+                <AlertCircle className="h-5 w-5 text-amber-500" />
                 Alerts & Actions
               </CardTitle>
             </CardHeader>
@@ -165,7 +165,7 @@ function DashboardPage() {
                     className={`text-sm ${
                       booking.status === 'confirmed'
                         ? 'text-[#000]'
-                        : 'text-yellow-600'
+                        : 'text-amber-600'
                     }`}
                   >
                     {booking.status}

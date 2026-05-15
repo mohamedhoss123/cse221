@@ -44,9 +44,9 @@ function AdminInvoicesPage() {
       case 'partial':
         return 'bg-blue-500 text-white'
       case 'pending':
-        return 'bg-yellow-500 text-white'
+        return 'bg-amber-500 text-white'
       default:
-        return 'bg-gray-500 text-white'
+        return 'bg-slate-500 text-white'
     }
   }
 
@@ -119,11 +119,11 @@ function AdminInvoicesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-[var(--expressive-text-muted)]">Amount Pending</p>
-                <p className="text-2xl font-bold text-yellow-600">
+                <p className="text-2xl font-bold text-amber-600">
                   ${totalPending.toLocaleString()}
                 </p>
               </div>
-              <Clock className="h-8 w-8 text-yellow-600" />
+              <Clock className="h-8 w-8 text-amber-600" />
             </div>
           </CardContent>
         </Card>

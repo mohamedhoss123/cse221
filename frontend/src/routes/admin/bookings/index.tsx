@@ -55,7 +55,7 @@ function AdminBookingsPage() {
         )
       case 'pending':
         return (
-          <span className="inline-flex px-2.5 py-1 rounded-lg text-xs font-bold bg-yellow-100 text-yellow-700 capitalize border-2 border-yellow-200 shadow-[2px_2px_0_0_#fef08a]">
+          <span className="inline-flex px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 text-amber-700 capitalize border-2 border-amber-200 shadow-[2px_2px_0_0_#fcd34d]">
             {status}
           </span>
         )

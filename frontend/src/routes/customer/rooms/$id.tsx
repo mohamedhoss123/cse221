@@ -68,32 +68,32 @@ function RoomDetailsPage() {
             </div>
           </div>
 
-          {/* Image Gallery */}
-          {room.images && room.images.length > 0 && (
-            <div className="mb-8">
-              <div className="grid grid-cols-2 gap-4">
-                {/* Primary Image */}
-                <div className="col-span-2">
-                  <img
-                    src={`/api${room.images.find(img => img.isPrimary)?.url || room.images[0].url}`}
-                    alt={`${room.type} room`}
-                    className="w-full h-96 object-cover rounded-2xl shadow-lg"
-                  />
-                </div>
+           {/* Image Gallery */}
+           {room.images && room.images.length > 0 && (
+             <div className="mb-8">
+               <div className="grid grid-cols-2 gap-4">
+                 {/* Primary Image */}
+                 <div className="col-span-2 aspect-video overflow-hidden rounded-2xl shadow-lg">
+                   <img
+                     src={`/api${room.images.find(img => img.isPrimary)?.url || room.images[0].url}`}
+                     alt={`${room.type} room`}
+                     className="w-full h-full object-cover rounded-2xl"
+                   />
+                 </div>
 
-                {/* Secondary Images */}
-                {room.images.slice(1).map((image) => (
-                  <div key={image.id} className="relative">
-                    <img
-                      src={`/api${image.url}`}
-                      alt={`${room.type} room`}
-                      className="w-full h-48 object-cover rounded-xl shadow-md"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+                 {/* Secondary Images */}
+                 {room.images.slice(1).map((image) => (
+                   <div key={image.id} className="relative aspect-square overflow-hidden rounded-xl shadow-md">
+                     <img
+                       src={`/api${image.url}`}
+                       alt={`${room.type} room`}
+                       className="w-full h-full object-cover rounded-xl"
+                     />
+                   </div>
+                 ))}
+               </div>
+             </div>
+           )}
 
           <Separator className="my-8" />
 

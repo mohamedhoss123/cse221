@@ -59,11 +59,11 @@ function AdminInvoiceDetailPage() {
       case 'partial':
         return 'bg-blue-500 text-white'
       case 'pending':
-        return 'bg-yellow-500 text-white'
+        return 'bg-amber-500 text-white'
       case 'overdue':
         return 'bg-red-500 text-white'
       default:
-        return 'bg-gray-500 text-white'
+        return 'bg-slate-500 text-white'
     }
   }
 

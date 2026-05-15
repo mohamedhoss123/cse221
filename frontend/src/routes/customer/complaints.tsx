@@ -69,7 +69,7 @@ function ComplaintsPage() {
       case 'resolved':
         return <CheckCircle className="h-5 w-5 text-green-500" />
       case 'in_progress':
-        return <Clock className="h-5 w-5 text-yellow-500" />
+        return <Clock className="h-5 w-5 text-amber-500" />
       case 'open':
         return <AlertCircle className="h-5 w-5 text-red-500" />
     }

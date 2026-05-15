@@ -47,7 +47,7 @@ function PaymentsPage() {
       pending: {
         icon: Clock,
         label: 'Pending',
-        className: 'bg-yellow-100 text-[#000] border-yellow-200',
+        className: 'bg-amber-100 text-[#000] border-amber-200',
       },
       partial: {
         icon: AlertCircle,
