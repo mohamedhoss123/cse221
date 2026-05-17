@@ -7,6 +7,14 @@ import { useAuth } from '#/hooks/useAuth'
 import { Button } from '#/components/ui/button'
 import { Badge } from '#/components/ui/badge'
 import { Separator } from '#/components/ui/separator'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '#/components/ui/dialog'
 import { BookingModal } from '#/components/customer/BookingModal'
 import { RoomReviews } from '#/components/customer/RoomReviews'
 import { WriteReviewDialog } from '#/components/customer/WriteReviewDialog'
@@ -28,6 +36,7 @@ function RoomDetailsPage() {
   const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false)
   const [isSubmittingReview, setIsSubmittingReview] = useState(false)
   const [reviewMessage, setReviewMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [reviewErrorModal, setReviewErrorModal] = useState<{ open: boolean; title: string; message: string } | null>(null)
 
   if (!room) {
     return (
@@ -67,10 +76,33 @@ function RoomDetailsPage() {
       // Reset message after 3 seconds
       setTimeout(() => setReviewMessage(null), 3000)
     } catch (error: any) {
-      setReviewMessage({
-        type: 'error',
-        text: error.response?.data?.message || 'Failed to post review'
-      })
+      console.log('Error posting review:', error.message  )
+      const errorMessage = error.message || 'Failed to post review'
+      setIsReviewDialogOpen(false)
+
+      // Check if this is the "already reviewed" error
+      if (errorMessage.toLowerCase().includes('already reviewed')) {
+        setReviewErrorModal({
+          open: true,
+          title: 'Already Reviewed',
+          message: 'You have already reviewed this room. Each room can only be reviewed once per guest.'
+        })
+      }
+      // Check if this is the "not completed stay" error
+      else if (errorMessage.toLowerCase().includes('review rooms you have booked and completed y')) {
+        setReviewErrorModal({
+          open: true,
+          title: 'Cannot Review Yet',
+          message: 'You can only review rooms after you have completed your stay. Please complete your booking first.'
+        })
+      }
+      // Other errors
+      else {
+        setReviewMessage({
+          type: 'error',
+          text: errorMessage
+        })
+      }
     } finally {
       setIsSubmittingReview(false)
     }
@@ -107,32 +139,32 @@ function RoomDetailsPage() {
             </div>
           </div>
 
-           {/* Image Gallery */}
-           {room.images && room.images.length > 0 && (
-             <div className="mb-8">
-               <div className="grid grid-cols-2 gap-4">
-                 {/* Primary Image */}
-                 <div className="col-span-2 aspect-video overflow-hidden rounded-2xl shadow-lg">
-                   <img
-                     src={`/api${room.images.find(img => img.isPrimary)?.url || room.images[0].url}`}
-                     alt={`${room.type} room`}
-                     className="w-full h-full object-cover rounded-2xl"
-                   />
-                 </div>
+          {/* Image Gallery */}
+          {room.images && room.images.length > 0 && (
+            <div className="mb-8">
+              <div className="grid grid-cols-2 gap-4">
+                {/* Primary Image */}
+                <div className="col-span-2 aspect-video overflow-hidden rounded-2xl shadow-lg">
+                  <img
+                    src={`/api${room.images.find(img => img.isPrimary)?.url || room.images[0].url}`}
+                    alt={`${room.type} room`}
+                    className="w-full h-full object-cover rounded-2xl"
+                  />
+                </div>
 
-                 {/* Secondary Images */}
-                 {room.images.slice(1).map((image) => (
-                   <div key={image.id} className="relative aspect-square overflow-hidden rounded-xl shadow-md">
-                     <img
-                       src={`/api${image.url}`}
-                       alt={`${room.type} room`}
-                       className="w-full h-full object-cover rounded-xl"
-                     />
-                   </div>
-                 ))}
-               </div>
-             </div>
-           )}
+                {/* Secondary Images */}
+                {room.images.slice(1).map((image) => (
+                  <div key={image.id} className="relative aspect-square overflow-hidden rounded-xl shadow-md">
+                    <img
+                      src={`/api${image.url}`}
+                      alt={`${room.type} room`}
+                      className="w-full h-full object-cover rounded-xl"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <Separator className="my-8" />
 
@@ -187,11 +219,10 @@ function RoomDetailsPage() {
 
       {/* Messages */}
       {reviewMessage && (
-        <div className={`fixed bottom-4 right-4 flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg ${
-          reviewMessage.type === 'success'
-            ? 'bg-green-50 border-2 border-green-200'
-            : 'bg-red-50 border-2 border-red-200'
-        }`}>
+        <div className={`fixed bottom-4 right-4 flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg ${reviewMessage.type === 'success'
+          ? 'bg-green-50 border-2 border-green-200'
+          : 'bg-red-50 border-2 border-red-200'
+          }`}>
           {reviewMessage.type === 'success' ? (
             <CheckCircle className="w-5 h-5 text-green-600" />
           ) : (
@@ -218,6 +249,33 @@ function RoomDetailsPage() {
         onSubmit={handleSubmitReview}
         isLoading={isSubmittingReview}
       />
+
+      {/* Review Error Modal */}
+      {reviewErrorModal && (
+        <Dialog open={reviewErrorModal.open} onOpenChange={(open) => !open && setReviewErrorModal(null)}>
+          <DialogContent className="sm:max-w-md bg-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-2xl z-50">
+            <DialogHeader>
+              <DialogTitle className="text-[var(--expressive-primary)]">{reviewErrorModal.title}</DialogTitle>
+              <DialogDescription>
+                {reviewErrorModal.message}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex items-center justify-center py-6">
+              <div className="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center">
+                <AlertCircle className="w-8 h-8 text-amber-600" />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                onClick={() => setReviewErrorModal(null)}
+                className="w-full bg-[var(--expressive-primary)] text-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
+              >
+                Got it
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   )
 }

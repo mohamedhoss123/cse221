@@ -50,6 +50,7 @@ class ComplaintService {
     if (!description || !type) {
       throw createError('Description and type are required', 400);
     }
+    console.log('Creating complaint with data:', { description, type, visitorId });
 
     const result = await query(
       'INSERT INTO COMPLAINTS (description, type, VISITOR_visitor_id) VALUES (?, ?, ?)',
