@@ -5,11 +5,11 @@ class PaymentService {
   async createPaymentForInvoice(paymentData) {
     const { invoiceId, amount, method } = paymentData;
 
-    // Verify invoice exists and get details
-    const invoices = await query(
-      'SELECT invoice_id, amount, status FROM INVOICE WHERE invoice_id = ?',
-      [invoiceId]
-    );
+     // Verify invoice exists and get details
+     const invoices = await query(
+       'SELECT invoice_id, amount, status, RESERVATION_reservation_id as reservationId FROM INVOICE WHERE invoice_id = ?',
+       [invoiceId]
+     );
 
     if (invoices.length === 0) {
       throw createError('Invoice not found', 404);
@@ -49,13 +49,21 @@ class PaymentService {
 
     const paymentId = result.insertId;
 
-    // Calculate and update invoice status based on new paid amount
-    const newStatus = calculateInvoiceStatus(invoice.amount, newPaidAmount);
+     // Calculate and update invoice status based on new paid amount
+     const newStatus = calculateInvoiceStatus(invoice.amount, newPaidAmount);
 
-    await query(
-      'UPDATE INVOICE SET status = ? WHERE invoice_id = ?',
-      [newStatus, invoiceId]
-    );
+     await query(
+       'UPDATE INVOICE SET status = ? WHERE invoice_id = ?',
+       [newStatus, invoiceId]
+     );
+
+      // If invoice is now fully paid, confirm the associated booking
+      if (newStatus === 'paid') {
+        await query(
+          'UPDATE RESERVATION SET status = ? WHERE reservation_id = ?',
+          ['confirmed', invoice.reservationId]
+        );
+      }
 
     // Get all payments for the updated invoice
     const updatedPayments = await query(

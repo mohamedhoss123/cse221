@@ -13,12 +13,6 @@ import {
 } from 'lucide-react'
 import { Button } from '#/components/ui/button'
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '#/components/ui/tabs'
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -40,12 +34,6 @@ function MyBookingsPage() {
   const [bookings, setBookings] = useState(initialBookings)
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
   const [bookingToCancel, setBookingToCancel] = useState<string | null>(null)
-
-  const upcomingBookings = bookings.filter(
-    (b) => b.status === 'pending' || b.status === 'confirmed'
-  )
-  const completedBookings = bookings.filter((b) => b.status === 'completed')
-  const cancelledBookings = bookings.filter((b) => b.status === 'cancelled')
 
   const handleCancelClick = (bookingId: string) => {
     setBookingToCancel(bookingId)
@@ -193,125 +181,36 @@ function MyBookingsPage() {
         </p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-6 mb-8">
-        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 border border-green-200">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-green-500 flex items-center justify-center">
-              <CheckCircle2 className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-[var(--expressive-text)]">{upcomingBookings.length}</p>
-              <p className="text-sm text-[var(--expressive-text)]">Upcoming</p>
-            </div>
+
+
+      {/* All Bookings */}
+      {bookings.length === 0 ? (
+        <div className="bg-[var(--expressive-surface)] rounded-2xl p-12 text-center border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)]">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
+            <Calendar className="w-8 h-8 text-[var(--expressive-text)]" />
           </div>
+          <h3 className="text-xl font-semibold text-[var(--expressive-primary)] mb-2">No bookings yet</h3>
+          <p className="text-[var(--expressive-text)] mb-6">
+            Start exploring rooms and book your next stay
+          </p>
+          <Button
+            className="bg-[var(--expressive-primary)] text-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
+            onClick={() => window.location.href = '/customer/rooms'}
+          >
+            Browse Rooms
+          </Button>
         </div>
-
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 border border-blue-200">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-[var(--expressive-text)]">{completedBookings.length}</p>
-              <p className="text-sm text-[var(--expressive-text)]">Completed</p>
-            </div>
-          </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {bookings.map((booking) => (
+            <BookingCard 
+              key={booking.id} 
+              booking={booking} 
+              showActions={booking.status === 'pending' || booking.status === 'confirmed'}
+            />
+          ))}
         </div>
-
-        <div className="bg-gradient-to-br from-[var(--expressive-background)] to-white rounded-2xl p-6 border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)]">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-[var(--expressive-background)] flex items-center justify-center">
-              <XCircle className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-[var(--expressive-text)]">{cancelledBookings.length}</p>
-              <p className="text-sm text-[var(--expressive-text)]">Cancelled</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <Tabs defaultValue="upcoming" className="space-y-6">
-        <TabsList className="bg-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] p-1">
-          <TabsTrigger value="upcoming" className="data-[state=active]:bg-[var(--expressive-primary)] data-[state=active]:text-white">
-            Upcoming ({upcomingBookings.length})
-          </TabsTrigger>
-          <TabsTrigger value="completed" className="data-[state=active]:bg-[var(--expressive-primary)] data-[state=active]:text-white">
-            Completed ({completedBookings.length})
-          </TabsTrigger>
-          <TabsTrigger value="cancelled" className="data-[state=active]:bg-[var(--expressive-primary)] data-[state=active]:text-white">
-            Cancelled ({cancelledBookings.length})
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="upcoming" className="space-y-4">
-          {upcomingBookings.length === 0 ? (
-            <div className="bg-[var(--expressive-surface)] rounded-2xl p-12 text-center border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)]">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
-                <Calendar className="w-8 h-8 text-[var(--expressive-text)]" />
-              </div>
-              <h3 className="text-xl font-semibold text-[var(--expressive-primary)] mb-2">No upcoming bookings</h3>
-              <p className="text-[var(--expressive-text)] mb-6">
-                Start exploring rooms and book your next stay
-              </p>
-              <Button
-                className="bg-[var(--expressive-primary)] text-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
-                onClick={() => window.location.href = '/customer/rooms'}
-              >
-                Browse Rooms
-              </Button>
-            </div>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {upcomingBookings.map((booking) => (
-                <BookingCard key={booking.id} booking={booking} showActions />
-              ))}
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="completed" className="space-y-4">
-          {completedBookings.length === 0 ? (
-            <div className="bg-[var(--expressive-surface)] rounded-2xl p-12 text-center border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)]">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
-                <CheckCircle2 className="w-8 h-8 text-[var(--expressive-text)]" />
-              </div>
-              <h3 className="text-xl font-semibold text-[var(--expressive-primary)] mb-2">No completed bookings</h3>
-              <p className="text-[var(--expressive-text)]">
-                Your completed bookings will appear here
-              </p>
-            </div>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {completedBookings.map((booking) => (
-                <BookingCard key={booking.id} booking={booking} showActions={false} />
-              ))}
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="cancelled" className="space-y-4">
-          {cancelledBookings.length === 0 ? (
-            <div className="bg-[var(--expressive-surface)] rounded-2xl p-12 text-center border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)]">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
-                <XCircle className="w-8 h-8 text-[var(--expressive-text)]" />
-              </div>
-              <h3 className="text-xl font-semibold text-[var(--expressive-primary)] mb-2">No cancelled bookings</h3>
-              <p className="text-[var(--expressive-text)]">
-                Cancelled bookings will appear here
-              </p>
-            </div>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {cancelledBookings.map((booking) => (
-                <BookingCard key={booking.id} booking={booking} showActions={false} />
-              ))}
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
+      )}
 
       {/* Cancel Confirmation Dialog */}
       <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>

@@ -142,7 +142,7 @@ class BookingService {
     // Create booking
     const result = await query(
       'INSERT INTO RESERVATION (start_date, end_date, guests, status, ROOM_room_id, VISITOR_visitor_id) VALUES (?, ?, ?, ?, ?, ?)',
-      [checkIn, checkOut, guests, 'confirmed', roomId, visitorId]
+      [checkIn, checkOut, guests, 'pending', roomId, visitorId]
     );
 
     // Get room price
