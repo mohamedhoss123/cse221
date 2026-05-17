@@ -170,14 +170,6 @@ function MyBookingsPage() {
           <Button
             variant="outline"
             size="sm"
-            className="flex-1 bg-[var(--expressive-surface)] text-[var(--expressive-text)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
-            onClick={() => window.location.href = `/customer/bookings/${booking.id}`}
-          >
-            View Details
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
             className="flex-1 bg-[var(--expressive-surface)] border-2 border-[var(--expressive-primary)] text-[var(--expressive-primary)] shadow-[4px_4px_0_0_var(--expressive-primary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-primary)] transition-all font-semibold hover:bg-[var(--expressive-background)]"
             onClick={() => handleCancelClick(booking.id)}
           >
