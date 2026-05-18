@@ -102,7 +102,7 @@ function AdminRoomsPage() {
                           </div>
                           <div>
                             <p className="font-bold text-[var(--expressive-primary)]">
-                              {room.type}
+                              {room.name}
                             </p>
                             <p className="text-xs text-[var(--expressive-text)] mt-0.5 font-medium">
                               ID: {room.id || 'N/A'}

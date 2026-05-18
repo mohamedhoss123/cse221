@@ -136,7 +136,7 @@ class ReviewService {
     // Check if visitor has a completed booking for this room
     const bookingCheck = await query(
       `SELECT reservation_id FROM RESERVATION 
-       WHERE VISITOR_visitor_id = ? AND ROOM_room_id = ? AND status = 'completed'`,
+       WHERE VISITOR_visitor_id = ? AND ROOM_room_id = ? AND status = 'Confirmed'`,
       [parseInt(visitorId), parseInt(roomId)]
     );
 

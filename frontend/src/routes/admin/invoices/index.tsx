@@ -6,7 +6,6 @@ import { Card, CardContent } from '#/components/ui/card'
 import { Badge } from '#/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '#/components/ui/table'
 import { FileText, DollarSign, Clock, AlertCircle, CheckCircle } from 'lucide-react'
-import { format } from 'date-fns'
 import type { Invoice } from '#/types/booking.types'
 
 export const Route = createFileRoute('/admin/invoices/')({
@@ -177,8 +176,6 @@ function AdminInvoicesPage() {
                   <TableRow>
                     <TableHead>Invoice ID</TableHead>
                     <TableHead>Customer</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Due Date</TableHead>
                     <TableHead>Amount</TableHead>
                     <TableHead>Paid</TableHead>
                     <TableHead>Remaining</TableHead>
@@ -193,12 +190,6 @@ function AdminInvoicesPage() {
                       <TableRow key={invoice.id}>
                         <TableCell className="font-medium">{invoice.id}</TableCell>
                         <TableCell>{invoice.customerName || invoice.customerId}</TableCell>
-                        <TableCell>
-                          {invoice.createdAt ? format(new Date(invoice.createdAt), 'MMM d, yyyy') : 'N/A'}
-                        </TableCell>
-                        <TableCell>
-                          {invoice.dueDate ? format(new Date(invoice.dueDate), 'MMM d, yyyy') : 'N/A'}
-                        </TableCell>
                         <TableCell className="font-semibold">
                           ${invoice.totalAmount ? invoice.totalAmount.toFixed(2) : '0.00'}
                         </TableCell>

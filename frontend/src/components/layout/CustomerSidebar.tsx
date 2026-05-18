@@ -24,7 +24,7 @@ export default function CustomerSidebar({ className }: CustomerSidebarProps) {
     { to: '/customer/bookings', icon: Calendar, label: 'Bookings' },
     { to: '/customer/payments', icon: CreditCard, label: 'Payments' },
     { to: '/customer/complaints', icon: MessageSquare, label: 'Support' },
-    { to: '/customer/profile', icon: User, label: 'Profile' },
+    // { to: '/customer/profile', icon: User, label: 'Profile' },
   ]
 
   const handleLogout = () => {

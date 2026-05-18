@@ -111,9 +111,6 @@ function AdminInvoiceDetailPage() {
           <h1 className="text-3xl font-bold text-[var(--expressive-primary)]">
             Invoice {invoice.id}
           </h1>
-          <p className="text-[var(--expressive-text-muted)]">
-            Created on {invoice.createdAt ? format(new Date(invoice.createdAt), 'MMMM d, yyyy') : 'N/A'}
-          </p>
         </div>
       </div>
 
