@@ -32,7 +32,7 @@ class InvoiceService {
       params.push(visitorId);
     }
 
-    sql += ' ORDER BY i.date DESC';
+    sql += ' ORDER BY i.invoice_id DESC';
 
     const invoices = await query(sql, params);
 

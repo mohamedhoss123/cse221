@@ -53,7 +53,7 @@ class BookingService {
       params.push(visitorId);
     }
 
-    sql += ' ORDER BY r.start_date DESC';
+    sql += ' ORDER BY r.reservation_id DESC';
 
     const bookings = await query(sql, params);
 
@@ -97,7 +97,7 @@ class BookingService {
         LEFT JOIN VISITOR v ON r.VISITOR_visitor_id = v.visitor_id
         LEFT JOIN USER u ON v.USER_user_id = u.user_id
         LEFT JOIN INVOICE i ON i.RESERVATION_reservation_id = r.reservation_id
-        WHERE r.reservation_id = ?
+        WHERE r.reservation_id = ? 
       `,
       [bookingId]
     );
