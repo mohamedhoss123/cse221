@@ -30,12 +30,12 @@ function AdminBookingsPage() {
         getBookings(),
         getRooms()
       ])
-      
+
       const roomsMap = roomsData.reduce((acc, room) => {
         acc[room.id] = room
         return acc
       }, {} as Record<string, Room>)
-      
+
       setBookings(bookingsData)
       setRooms(roomsMap)
     } catch (error) {
@@ -49,31 +49,35 @@ function AdminBookingsPage() {
     switch (status) {
       case 'confirmed':
         return (
-          <span className="inline-flex px-2.5 py-1 rounded-lg text-xs font-bold bg-green-100 text-green-700 capitalize border-2 border-green-200 shadow-[2px_2px_0_0_#bbf7d0]">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-green-50 text-green-600 border-2 border-green-200 shadow-[2px_2px_0_0_#bbf7d0]">
+            <span className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5 animate-pulse" />
             {status}
           </span>
         )
       case 'pending':
         return (
-          <span className="inline-flex px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 text-amber-700 capitalize border-2 border-amber-200 shadow-[2px_2px_0_0_#fcd34d]">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-amber-50 text-amber-600 border-2 border-amber-200 shadow-[2px_2px_0_0_#fcd34d]">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-500 mr-1.5" />
             {status}
           </span>
         )
       case 'cancelled':
         return (
-          <span className="inline-flex px-2.5 py-1 rounded-lg text-xs font-bold bg-red-100 text-[var(--expressive-primary)] capitalize border-2 border-red-200 shadow-[2px_2px_0_0_#fecaca]">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-red-50 text-red-600 border-2 border-red-200 shadow-[2px_2px_0_0_#fecaca]">
+            <span className="h-1.5 w-1.5 rounded-full bg-red-500 mr-1.5" />
             {status}
           </span>
         )
       case 'completed':
         return (
-          <span className="inline-flex px-2.5 py-1 rounded-lg text-xs font-bold bg-gray-100 text-gray-700 capitalize border-2 border-gray-200 shadow-[2px_2px_0_0_#e5e7eb]">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-blue-50 text-blue-600 border-2 border-blue-200 shadow-[2px_2px_0_0_#bfdbfe]">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-500 mr-1.5" />
             {status}
           </span>
         )
       default:
         return (
-          <span className="inline-flex px-2.5 py-1 rounded-lg text-xs font-bold bg-[var(--expressive-background)] text-[var(--expressive-text)] capitalize border-2 border-[var(--expressive-secondary)] shadow-[2px_2px_0_0_var(--expressive-secondary)]">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-gray-50 text-gray-600 border-2 border-gray-200 shadow-[2px_2px_0_0_#e5e7eb]">
             {status}
           </span>
         )
@@ -81,111 +85,118 @@ function AdminBookingsPage() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-light text-[var(--expressive-primary)] mb-2">
-          Booking <span className="font-semibold text-[var(--expressive-primary)]">Management</span>
+      <div className="mb-10">
+        <h1 className="text-4xl font-light text-[var(--expressive-primary)] mb-2">
+          Reservation <span className="font-semibold text-[var(--expressive-primary)]">Center</span>
         </h1>
-        <p className="text-[var(--expressive-text)]">
-          View and manage all hotel bookings
+        <p className="text-[var(--expressive-text-muted)] text-lg">
+          Track, manage and authorize hotel reservations in real-time.
         </p>
       </div>
 
       <Card className="bg-[var(--expressive-surface)] rounded-2xl border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] overflow-hidden">
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="py-20 text-center">
-              <Search className="mx-auto mb-4 h-8 w-8 text-[var(--expressive-text)] animate-spin" />
-              <p className="text-[var(--expressive-text)] font-semibold">Loading bookings...</p>
+            <div className="py-32 text-center">
+              <div className="inline-flex items-center justify-center p-4 rounded-full bg-[var(--expressive-background)] border-2 border-[var(--expressive-secondary)] mb-4">
+                <Search className="h-10 w-10 text-[var(--expressive-primary)] animate-pulse" />
+              </div>
+              <p className="text-[var(--expressive-text-muted)] font-bold text-xl">Accessing reservation logs...</p>
             </div>
           ) : bookings.length === 0 ? (
-            <div className="py-20 text-center">
-              <Calendar className="mx-auto mb-4 h-12 w-12 text-[var(--expressive-text)] opacity-50" />
-              <p className="text-lg font-bold text-[var(--expressive-primary)] mb-1">
-                No bookings found
+            <div className="py-32 text-center">
+              <div className="inline-flex items-center justify-center p-6 rounded-full bg-[var(--expressive-background)] border-2 border-[var(--expressive-secondary)] mb-6">
+                <Calendar className="h-16 w-16 text-[var(--expressive-text-muted)] opacity-30" />
+              </div>
+              <p className="text-2xl font-bold text-[var(--expressive-primary)] mb-2">
+                No active reservations
               </p>
-              <p className="text-sm text-[var(--expressive-text)] font-medium">
-                New bookings will appear here
+              <p className="text-[var(--expressive-text-muted)]">
+                Incoming bookings will be listed here.
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader className="bg-[var(--expressive-background)] border-b-2 border-[var(--expressive-secondary)]">
-                  <TableRow className="border-none hover:bg-[var(--expressive-background)]">
-                    <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Booking ID</TableHead>
-                    <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Room</TableHead>
-                    <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Customer Name</TableHead>
-                    <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Amount</TableHead>
-                    <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Dates</TableHead>
-                    <TableHead className="text-[var(--expressive-primary)] font-bold py-4">Status</TableHead>
-                    <TableHead className="text-[var(--expressive-primary)] font-bold py-4 text-right">Actions</TableHead>
+                  <TableRow className="border-none hover:bg-transparent">
+                    <TableHead className="text-[var(--expressive-primary)] font-black uppercase tracking-wider text-xs py-5 px-6">ID & Date</TableHead>
+                    <TableHead className="text-[var(--expressive-primary)] font-black uppercase tracking-wider text-xs py-5 px-6">Room Configuration</TableHead>
+                    <TableHead className="text-[var(--expressive-primary)] font-black uppercase tracking-wider text-xs py-5 px-6">Guest Info</TableHead>
+                    <TableHead className="text-[var(--expressive-primary)] font-black uppercase tracking-wider text-xs py-5 px-6">Billing</TableHead>
+                    <TableHead className="text-[var(--expressive-primary)] font-black uppercase tracking-wider text-xs py-5 px-6">Stay Period</TableHead>
+                    <TableHead className="text-[var(--expressive-primary)] font-black uppercase tracking-wider text-xs py-5 px-6">Status</TableHead>
+                    <TableHead className="text-[var(--expressive-primary)] font-black uppercase tracking-wider text-xs py-5 px-6 text-right">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {bookings.map((booking) => {
                     const room = rooms[booking.roomId]
                     return (
-                      <TableRow key={booking.id} className="border-b border-[var(--expressive-secondary)]/30 hover:bg-[var(--expressive-background)]/50 transition-colors">
-                        <TableCell className="py-4 font-bold text-[var(--expressive-primary)]">
-                          {booking.id.substring(0, 8)}...
-                        </TableCell>
-                        <TableCell>
-                          <div className="font-bold text-[var(--expressive-primary)]">
-                            {room?.name || `Room ${booking.roomId}`}
-                          </div>
-                          <div className="text-xs text-[var(--expressive-text)] font-medium">
-                            {booking.guests} Guests
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="font-semibold text-[var(--expressive-text)]">
-                            {booking.customerName || booking.customerId}
-                          </div>
-                          <div className="mt-1 space-y-1 text-xs text-[var(--expressive-text)] opacity-80">
-                            {booking.customerEmail ? (
-                              <div className="flex items-center gap-1">
-                                <Mail className="h-3 w-3" />
-                                <span>{booking.customerEmail}</span>
-                              </div>
-                            ) : null}
-                            {booking.customerPhone ? (
-                              <div className="flex items-center gap-1">
-                                <Phone className="h-3 w-3" />
-                                <span>{booking.customerPhone}</span>
-                              </div>
-                            ) : null}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2 font-bold text-[var(--expressive-primary)]">
-                            <DollarSign className="h-4 w-4" />
-                            <span>
-                              {new Intl.NumberFormat('en-US', {
-                                style: 'currency',
-                                currency: 'USD'
-                              }).format(booking.totalAmount || 0)}
+                      <TableRow key={booking.id} className="border-b border-[var(--expressive-secondary)]/5 hover:bg-[var(--expressive-background)]/60 transition-colors">
+                        <TableCell className="py-6 px-6">
+                          <div className="flex flex-col">
+                            <span className="font-black text-[var(--expressive-primary)] text-sm mb-1">
+                              #{booking.id.substring(0, 8)}
+                            </span>
+                            <span className="text-[10px] font-bold text-[var(--expressive-text-muted)] uppercase">
+                              Placed {booking.createdAt ? format(new Date(booking.createdAt), 'MMM d, p') : 'N/A'}
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell>
-                          <div className="text-sm font-semibold text-[var(--expressive-text)]">
-                            {booking.checkIn ? format(new Date(booking.checkIn), 'MMM d, yy') : 'N/A'}
+                        <TableCell className="px-6">
+                          <div className="font-black text-[var(--expressive-text)]">
+                            {room?.name || `Room ${booking.roomId}`}
                           </div>
-                          <div className="text-xs text-[var(--expressive-text)] opacity-70">
-                            to {booking.checkOut ? format(new Date(booking.checkOut), 'MMM d, yy') : 'N/A'}
+                          <div className="text-[10px] font-bold text-[var(--expressive-primary)] uppercase tracking-tighter mt-1 bg-[var(--expressive-background)] inline-block px-1.5 py-0.5 rounded border border-[var(--expressive-secondary)]/10">
+                            {booking.guests} Guests
                           </div>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="px-6">
+                          <div className="font-bold text-[var(--expressive-text)] text-sm">
+                            {booking.customerName || booking.customerId}
+                          </div>
+                          <div className="mt-1 flex flex-col gap-0.5 text-[10px] font-bold text-[var(--expressive-text-muted)]">
+                            {booking.customerEmail && (
+                              <div className="flex items-center gap-1.5">
+                                <Mail className="h-3 w-3" />
+                                <span>{booking.customerEmail}</span>
+                              </div>
+                            )}
+                            {booking.customerPhone && (
+                              <div className="flex items-center gap-1.5">
+                                <Phone className="h-3 w-3" />
+                                <span>{booking.customerPhone}</span>
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="px-6">
+                          <div className="font-black text-[var(--expressive-primary)] text-lg">
+                            ${booking.totalAmount?.toLocaleString()}
+                          </div>
+                          <div className="text-[10px] font-bold text-green-600 uppercase tracking-widest">
+                            {booking.paymentStatus || 'UNPAID'}
+                          </div>
+                        </TableCell>
+                        <TableCell className="px-6">
+                          <div className="text-xs font-black text-[var(--expressive-text)]">
+                            {booking.checkIn && !isNaN(new Date(booking.checkIn).getTime()) ? format(new Date(booking.checkIn), 'MMM d') : 'N/A'} - {booking.checkOut && !isNaN(new Date(booking.checkOut).getTime()) ? format(new Date(booking.checkOut), 'MMM d') : 'N/A'}
+                          </div>
+                          <div className="text-[10px] font-bold text-[var(--expressive-text-muted)] uppercase tracking-tighter">
+                            {booking.checkIn && booking.checkOut && !isNaN(new Date(booking.checkIn).getTime()) && !isNaN(new Date(booking.checkOut).getTime()) ? `${Math.ceil((new Date(booking.checkOut).getTime() - new Date(booking.checkIn).getTime()) / (1000 * 3600 * 24))} Nights` : ''}
+                          </div>
+                        </TableCell>
+                        <TableCell className="px-6">
                           {getStatusBadge(booking.status)}
                         </TableCell>
-                        <TableCell className="text-right">
-                          <Button variant="outline" size="sm" asChild className="border-2 border-[var(--expressive-secondary)] shadow-[2px_2px_0_0_var(--expressive-secondary)] hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_var(--expressive-secondary)] transition-all bg-[var(--expressive-surface)] text-[var(--expressive-text)] hover:text-[var(--expressive-primary)] font-bold">
-                            {/* @ts-ignore - The route exists in the system but TypeScript might not know about it dynamically */}
+                        <TableCell className="px-6 text-right">
+                          <Button variant="outline" size="sm" asChild className="h-9 px-4 border-2 border-[var(--expressive-secondary)] shadow-[2px_2px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[4px_4px_0_0_var(--expressive-secondary)] transition-all bg-white text-[var(--expressive-text)] hover:text-[var(--expressive-primary)] font-black text-[10px] uppercase tracking-widest">
+                            {/* @ts-ignore */}
                             <Link to={`/admin/bookings/${booking.id}`}>
-                              <Eye className="w-4 h-4 mr-2" />
-                              View
+                              View File
                             </Link>
                           </Button>
                         </TableCell>
@@ -200,4 +211,5 @@ function AdminBookingsPage() {
       </Card>
     </div>
   )
+
 }
