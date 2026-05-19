@@ -18,83 +18,84 @@ export default function Header() {
   const { user, isAuthenticated, logout } = useAuth()
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--header-bg)] px-4 backdrop-blur-lg">
-      <nav className="page-wrap flex flex-wrap items-center gap-x-3 gap-y-2 py-3 sm:py-4">
-        <h2 className="m-0 flex-shrink-0 text-base font-semibold tracking-tight">
+    <header className="sticky top-0 z-50 border-b-4 border-black bg-white/80 backdrop-blur-md px-6">
+      <nav className="max-w-7xl mx-auto flex items-center justify-between py-4">
+        <div className="flex items-center gap-12">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 rounded-full border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 py-1.5 text-sm text-[var(--sea-ink)] no-underline shadow-[0_8px_24px_rgba(30,90,72,0.08)] sm:px-4 sm:py-2"
+            className="flex items-center gap-3 group no-underline"
           >
-            <span className="h-2 w-2 rounded-full bg-[linear-gradient(90deg,#56c6be,#7ed3bf)]" />
-            LuxeStay Hotel
+            <div className="w-8 h-8 bg-black flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform">
+               <div className="w-3 h-3 bg-[#ce0031]" />
+            </div>
+            <span className="text-xl font-black uppercase tracking-tighter text-black">
+              LUXE<span className="text-[#ce0031]">STAY</span>
+            </span>
           </Link>
-        </h2>
 
-        <div className="ml-auto flex items-center gap-1.5 sm:ml-0 sm:gap-2">
-          <ThemeToggle />
+          <div className="hidden lg:flex items-center gap-8">
+            {[
+              { to: '/', label: 'HOME' },
+              { to: '/customer/rooms', label: 'INVENTORY' },
+              { to: '/customer/bookings', label: 'MANIFEST' },
+              { to: '/admin/dashboard', label: 'COMMAND_CENTER' },
+            ].map(link => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="text-[10px] font-black uppercase tracking-[0.2em] text-black/60 hover:text-black hover:translate-y-[-1px] transition-all"
+                activeProps={{ className: 'text-black border-b-2 border-[#ce0031]' }}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
 
+        <div className="flex items-center gap-4">
           {isAuthenticated && user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <User className="h-4 w-4" />
-                  <span className="hidden sm:inline">{user.name}</span>
-                </Button>
+                <button className="flex items-center gap-3 px-4 py-2 border-2 border-black bg-white shadow-[4px_4px_0_0_#000] hover:shadow-[2px_2px_0_0_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all focus:outline-none">
+                  <div className="w-6 h-6 bg-black flex items-center justify-center">
+                    <User className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">{user.name}</span>
+                </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <CustomerNav />
-                <DropdownMenuSeparator />
-                <AdminNav />
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout} className="cursor-pointer">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
+              <DropdownMenuContent align="end" className="rounded-none border-4 border-black p-0 bg-white shadow-[8px_8px_0_0_#000]">
+                <DropdownMenuLabel className="p-4 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-none">
+                  OPERATOR_IDENTITY
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-black/10" />
+                <div className="p-2 space-y-1">
+                  <CustomerNav />
+                  <DropdownMenuSeparator className="bg-black/10" />
+                  <AdminNav />
+                </div>
+                <DropdownMenuSeparator className="bg-black/10" />
+                <DropdownMenuItem onClick={logout} className="p-4 cursor-pointer text-[10px] font-black uppercase tracking-widest hover:bg-[#ce0031] hover:text-white rounded-none transition-colors">
+                  <LogOut className="mr-3 h-4 w-4" />
+                  DEAUTHORIZE_SESSION
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="flex gap-2">
-              <Button variant="ghost" size="sm" asChild>
-                <Link to="/auth/login">Login</Link>
-              </Button>
-              <Button size="sm" asChild>
-                <Link to="/auth/register">Register</Link>
-              </Button>
+            <div className="flex gap-4">
+              <Link 
+                to="/auth/login" 
+                className="text-[10px] font-black uppercase tracking-widest text-black/60 hover:text-black px-4 py-2"
+              >
+                LOG_IN
+              </Link>
+              <Link 
+                to="/auth/register"
+                className="px-6 py-2 bg-black text-white text-[10px] font-black uppercase tracking-widest border-2 border-black hover:bg-white hover:text-black transition-all"
+              >
+                REGISTER
+              </Link>
             </div>
           )}
-        </div>
-
-        <div className="order-3 flex w-full flex-wrap items-center gap-x-4 gap-y-1 pb-1 text-sm font-semibold sm:order-2 sm:w-auto sm:flex-nowrap sm:pb-0">
-          <Link
-            to="/"
-            className="nav-link"
-            activeProps={{ className: 'nav-link is-active' }}
-          >
-            Home
-          </Link>
-          <Link
-            to="/customer/rooms"
-            className="nav-link"
-            activeProps={{ className: 'nav-link is-active' }}
-          >
-            Rooms
-          </Link>
-          <Link
-            to="/customer/bookings"
-            className="nav-link"
-            activeProps={{ className: 'nav-link is-active' }}
-          >
-            My Bookings
-          </Link>
-          <Link
-            to="/admin/dashboard"
-            className="nav-link"
-            activeProps={{ className: 'nav-link is-active' }}
-          >
-            Admin Dashboard
-          </Link>
         </div>
       </nav>
     </header>

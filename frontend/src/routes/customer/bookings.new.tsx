@@ -25,23 +25,29 @@ function NewBookingPage() {
   }
 
   return (
-    <div className="p-8">
-      <div className="mb-6">
+    <div className="p-8 max-w-7xl mx-auto">
+      <div className="mb-12 border-l-8 border-black pl-8">
         <button
           onClick={() => navigate({ to: '/customer/rooms' })}
-          className="text-sm text-[var(--expressive-primary)] hover:underline"
+          className="group mb-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-black/40 hover:text-black transition-colors"
         >
-          ← Back to Rooms
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+          ABORT_INITIALIZATION
         </button>
-      </div>
-
-      <div className="mb-6">
-        <h1 className="font-light text-3xl font-bold text-[var(--expressive-primary)]">
-          Book Your Stay
+        <h1 className="text-6xl font-black text-black mb-4 uppercase tracking-tighter leading-none">
+          RESERVATION <span className="text-[#ce0031]">INITIALIZATION</span>
         </h1>
-        <p className="text-[#000]">
-          Complete the form below to reserve your room
-        </p>
+        <div className="flex items-center gap-4">
+          <p className="text-sm font-bold text-black/60 uppercase tracking-[0.2em]">
+            Protocol 44.B: Secure Asset Acquisition
+          </p>
+          <div className="h-0.5 flex-1 bg-black/10" />
+          <div className="flex gap-1">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="w-2 h-2 bg-[#ce0031]" />
+            ))}
+          </div>
+        </div>
       </div>
 
       <BookingForm room={room} />
@@ -49,5 +55,6 @@ function NewBookingPage() {
   )
 }
 
-// Import useState and useEffect
+// Import components
 import { useState, useEffect } from 'react'
+import { ArrowLeft } from 'lucide-react'

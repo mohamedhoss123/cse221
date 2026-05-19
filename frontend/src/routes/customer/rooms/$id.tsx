@@ -18,7 +18,6 @@ import {
 import { BookingModal } from '#/components/customer/BookingModal'
 import { RoomReviews } from '#/components/customer/RoomReviews'
 import { WriteReviewDialog } from '#/components/customer/WriteReviewDialog'
-import { AlertCircle, CheckCircle } from 'lucide-react'
 
 export const Route = createFileRoute('/customer/rooms/$id')({
   component: RoomDetailsPage,
@@ -27,6 +26,8 @@ export const Route = createFileRoute('/customer/rooms/$id')({
     return { room }
   },
 })
+
+import { AlertCircle, CheckCircle, ArrowLeft, Star, MapPin, Zap, ShieldCheck, FileText } from 'lucide-react'
 
 function RoomDetailsPage() {
   const { room } = Route.useLoaderData()
@@ -40,13 +41,18 @@ function RoomDetailsPage() {
 
   if (!room) {
     return (
-      <div className="p-8 py-16 text-center">
-        <h1 className="font-light mb-4 text-3xl font-bold text-[var(--expressive-primary)]">
-          Room Not Found
-        </h1>
-        <Button onClick={() => navigate({ to: '/customer/rooms' })}>
-          Back to Rooms
-        </Button>
+      <div className="min-h-screen flex items-center justify-center p-8 bg-[var(--expressive-background)]">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center p-6 rounded-full bg-white border-2 border-[var(--expressive-secondary)] mb-6 shadow-[4px_4px_0_0_var(--expressive-secondary)]">
+            <AlertCircle className="h-12 w-12 text-red-500" />
+          </div>
+          <h1 className="text-3xl font-black text-[var(--expressive-primary)] mb-4 uppercase tracking-tighter">
+            Asset Not Found
+          </h1>
+          <Button onClick={() => navigate({ to: '/customer/rooms' })} className="h-12 px-8 bg-[var(--expressive-secondary)] text-white font-black uppercase tracking-widest border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_#000000] hover:-translate-y-1 transition-all">
+            Return to Library
+          </Button>
+        </div>
       </div>
     )
   }
@@ -61,7 +67,7 @@ function RoomDetailsPage() {
       return
     }
     if (user?.role !== 'visitor') {
-      setReviewMessage({ type: 'error', text: 'Only guests can write reviews' })
+      setReviewMessage({ type: 'error', text: 'Only verified guests can transmit feedback' })
       return
     }
     setIsReviewDialogOpen(true)
@@ -71,37 +77,29 @@ function RoomDetailsPage() {
     try {
       setIsSubmittingReview(true)
       await createReview(room.id, data)
-      setReviewMessage({ type: 'success', text: 'Review posted successfully!' })
+      setReviewMessage({ type: 'success', text: 'Telemetry feedback synchronized' })
       setIsReviewDialogOpen(false)
-      // Reset message after 3 seconds
       setTimeout(() => setReviewMessage(null), 3000)
     } catch (error: any) {
-      console.log('Error posting review:', error.message  )
-      const errorMessage = error.message || 'Failed to post review'
+      const errorMessage = error.message || 'Transmission failure'
       setIsReviewDialogOpen(false)
 
-      // Check if this is the "already reviewed" error
       if (errorMessage.toLowerCase().includes('already reviewed')) {
         setReviewErrorModal({
           open: true,
-          title: 'Already Reviewed',
-          message: 'You have already reviewed this room. Each room can only be reviewed once per guest.'
+          title: 'Feedback Redundancy',
+          message: 'This asset has already been evaluated by your profile. Redundant feedback is prohibited by protocol.'
         })
       }
-      // Check if this is the "not completed stay" error
       else if (errorMessage.toLowerCase().includes('review rooms you have booked and completed y')) {
         setReviewErrorModal({
           open: true,
-          title: 'Cannot Review Yet',
-          message: 'You can only review rooms after you have completed your stay. Please complete your booking first.'
+          title: 'Evaluation Denied',
+          message: 'Operational feedback is only authorized after manifest fulfillment. Complete your stay to unlock feedback transmission.'
         })
       }
-      // Other errors
       else {
-        setReviewMessage({
-          type: 'error',
-          text: errorMessage
-        })
+        setReviewMessage({ type: 'error', text: errorMessage })
       }
     } finally {
       setIsSubmittingReview(false)
@@ -109,56 +107,70 @@ function RoomDetailsPage() {
   }
 
   return (
-    <div className="p-8">
-      <div className="mb-6">
-        <button
+    <div className="p-8 max-w-7xl mx-auto space-y-10">
+      {/* Navigation Header */}
+      <div className="flex items-center justify-between pb-6 border-b-4 border-[var(--expressive-secondary)]">
+        <Button
+          variant="outline"
           onClick={() => navigate({ to: '/customer/rooms' })}
-          className="text-sm text-[var(--expressive-primary)] hover:underline"
+          className="h-10 px-4 border-2 border-[var(--expressive-secondary)] shadow-[2px_2px_0_0_var(--expressive-secondary)] hover:-translate-y-0.5 transition-all text-[10px] font-black uppercase tracking-widest bg-white"
         >
-          ← Back to Rooms
-        </button>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Inventory
+        </Button>
+        <div className="text-right">
+          <p className="text-[10px] font-black text-[var(--expressive-text-muted)] uppercase tracking-widest mb-1">Asset Reference</p>
+          <p className="text-xl font-black text-[var(--expressive-primary)] tracking-tighter">#{room.id.substring(0, 12).toUpperCase()}</p>
+        </div>
       </div>
 
-      <div className="gap-8 lg:grid lg:grid-cols-3">
-        {/* Main Content */}
-        <div className="lg:col-span-2">
-          <div className="mb-6">
-            <div className="mb-4 flex items-start justify-between">
-              <div>
-                <Badge className="mb-2 capitalize">{room.type}</Badge>
-                <h1 className="font-light text-3xl font-bold text-[var(--expressive-primary)]">
-                  {room.name || `${room.type} Room`}
-                </h1>
+      <div className="flex flex-col lg:flex-row gap-10 items-start">
+        {/* Left Column: Asset Intelligence */}
+        <div className="flex-1 space-y-10 w-full">
+          {/* Hero Identity */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--expressive-primary)] text-white text-[10px] font-black uppercase tracking-widest mb-3">
+                <ShieldCheck className="h-3 w-3" />
+                Verified Asset
               </div>
-              <div className="text-right">
-                <p className="text-3xl font-bold text-[var(--expressive-primary)]">
-                  ${room.price}
-                </p>
-                <p className="text-sm text-[var(--expressive-text)]">per night</p>
+              <h1 className="text-5xl font-black text-[var(--expressive-text)] tracking-tighter uppercase leading-none">
+                {room.name || `${room.type} Unit`}
+              </h1>
+              <div className="flex items-center gap-4 mt-4">
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-white border-2 border-[var(--expressive-secondary)] rounded-lg text-[10px] font-black uppercase tracking-widest">
+                  <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
+                  4.9 Rating
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-white border-2 border-[var(--expressive-secondary)] rounded-lg text-[10px] font-black uppercase tracking-widest">
+                  <MapPin className="h-3 w-3 text-[var(--expressive-primary)]" />
+                  Primary Sector
+                </div>
               </div>
+            </div>
+            <div className="p-6 bg-white border-4 border-[var(--expressive-secondary)] shadow-[6px_6px_0_0_#ce0031] rounded-2xl text-center min-w-40">
+              <p className="text-[10px] font-black text-[var(--expressive-text-muted)] uppercase tracking-widest mb-1">Nightly Yield</p>
+              <p className="text-4xl font-black text-[var(--expressive-primary)] tracking-tighter">${room.price}</p>
             </div>
           </div>
 
-          {/* Image Gallery */}
+          {/* Visual Data Stream (Images) */}
           {room.images && room.images.length > 0 && (
-            <div className="mb-8">
-              <div className="grid grid-cols-2 gap-4">
-                {/* Primary Image */}
-                <div className="col-span-2 aspect-video overflow-hidden rounded-2xl shadow-lg">
-                  <img
-                    src={`/api${room.images.find(img => img.isPrimary)?.url || room.images[0].url}`}
-                    alt={`${room.type} room`}
-                    className="w-full h-full object-cover rounded-2xl"
-                  />
-                </div>
-
-                {/* Secondary Images */}
-                {room.images.slice(1).map((image) => (
-                  <div key={image.id} className="relative aspect-square overflow-hidden rounded-xl shadow-md">
+            <div className="grid grid-cols-4 gap-4">
+              <div className="col-span-4 md:col-span-3 aspect-video bg-white border-4 border-[var(--expressive-secondary)] shadow-[8px_8px_0_0_var(--expressive-secondary)] rounded-3xl overflow-hidden group">
+                <img
+                  src={`/api${room.images.find(img => img.isPrimary)?.url || room.images[0].url}`}
+                  alt="Asset primary view"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+              <div className="col-span-4 md:col-span-1 grid grid-cols-2 md:grid-cols-1 gap-4">
+                {room.images.slice(1, 3).map((image) => (
+                  <div key={image.id} className="aspect-square bg-white border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-2xl overflow-hidden group">
                     <img
                       src={`/api${image.url}`}
-                      alt={`${room.type} room`}
-                      className="w-full h-full object-cover rounded-xl"
+                      alt="Asset secondary view"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                   </div>
                 ))}
@@ -166,80 +178,143 @@ function RoomDetailsPage() {
             </div>
           )}
 
-          <Separator className="my-8" />
+          <Separator className="h-1 bg-[var(--expressive-secondary)]/5" />
 
-          <div>
-            <h2 className="mb-4 text-xl font-semibold text-[var(--expressive-primary)]">
-              Room Type
-            </h2>
-            <p className="text-[var(--expressive-text)]">{room.type}</p>
-          </div>
-
-          <Separator className="my-8" />
-
-          {/* Reviews Section */}
-          <div>
-            <RoomReviews
-              roomId={room.id}
-              onWriteReview={handleWriteReview}
-            />
-          </div>
-        </div>
-
-        {/* Booking Card */}
-        <div className="lg:col-span-1">
-          <div className="bg-[var(--expressive-surface)] rounded-2xl border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] sticky top-24 rounded-2xl p-6">
-            <div className="mb-4">
-              <p className="text-2xl font-bold text-[var(--expressive-primary)]">
-                ${room.price}
-              </p>
-              <p className="text-sm text-[var(--expressive-text)]">per night</p>
+          {/* Specification Manifest */}
+          <section className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-lg bg-[var(--expressive-secondary)] flex items-center justify-center text-white">
+                  <FileText className="h-4 w-4" />
+                </div>
+                <h2 className="text-xl font-black uppercase tracking-tighter">Unit Specs</h2>
+              </div>
+              <Card className="bg-[var(--expressive-background)] border-2 border-[var(--expressive-secondary)]/10 rounded-2xl p-6 space-y-4">
+                <div className="flex justify-between items-center border-b border-[var(--expressive-secondary)]/5 pb-2">
+                  <span className="text-[10px] font-black uppercase text-[var(--expressive-text-muted)]">Category</span>
+                  <span className="text-xs font-black uppercase text-[var(--expressive-primary)]">{room.type}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-[var(--expressive-secondary)]/5 pb-2">
+                  <span className="text-[10px] font-black uppercase text-[var(--expressive-text-muted)]">Capacity</span>
+                  <span className="text-xs font-black uppercase">{room.capacity || 2} Units</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-black uppercase text-[var(--expressive-text-muted)]">Status</span>
+                  <span className="text-[9px] font-black uppercase px-2 py-0.5 bg-green-100 text-green-600 rounded">Available</span>
+                </div>
+              </Card>
             </div>
 
-            <Separator className="my-4" />
-
-            <div className="mb-6 space-y-3">
-              <div>
-                <p className="text-[var(--expressive-text)] font-medium">
-                  {room.type} Room
-                </p>
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-lg bg-[var(--expressive-primary)] flex items-center justify-center text-white">
+                  <Zap className="h-4 w-4" />
+                </div>
+                <h2 className="text-xl font-black uppercase tracking-tighter">Amenities</h2>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {['Hyper-Speed Wi-Fi', 'Environmental Control', 'Security Protocol', 'Privacy Shield', 'Digital Key'].map(tag => (
+                  <span key={tag} className="px-3 py-1 bg-white border-2 border-[var(--expressive-secondary)] rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[2px_2px_0_0_var(--expressive-secondary)]">
+                    {tag}
+                  </span>
+                ))}
               </div>
             </div>
+          </section>
 
-            <Button
-              className="w-full bg-[var(--expressive-primary)] text-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
-              size="lg"
-              onClick={handleBookNow}
-            >
-              Book Now
-            </Button>
-          </div>
+          <Separator className="h-1 bg-[var(--expressive-secondary)]/5" />
+
+          {/* Feedback Stream */}
+          <section className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-black uppercase tracking-tighter">Evaluations</h2>
+              <Button
+                variant="outline"
+                onClick={handleWriteReview}
+                className="h-10 px-4 border-2 border-[var(--expressive-primary)] shadow-[2px_2px_0_0_#ce0031] hover:-translate-y-0.5 transition-all text-[10px] font-black uppercase tracking-widest bg-white text-[var(--expressive-primary)]"
+              >
+                Transmit Feedback
+              </Button>
+            </div>
+            <RoomReviews roomId={room.id} onWriteReview={handleWriteReview} />
+          </section>
         </div>
+
+        {/* Right Column: Reservation Terminal */}
+        <aside className="w-full lg:w-96 shrink-0">
+          <div className="sticky top-8">
+            <Card className="bg-white border-4 border-[var(--expressive-secondary)] shadow-[10px_10px_0_0_var(--expressive-secondary)] rounded-3xl overflow-hidden">
+              <CardHeader className="bg-[var(--expressive-secondary)] p-6 text-white">
+                <h3 className="text-xl font-black uppercase tracking-tighter">Reservation Hub</h3>
+                <p className="text-[9px] font-black text-white/50 uppercase tracking-widest mt-1">Live Deployment Terminal</p>
+              </CardHeader>
+              <CardContent className="p-8 space-y-8">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] font-black text-[var(--expressive-text-muted)] uppercase tracking-widest">Base Rate</p>
+                    <p className="text-4xl font-black text-[var(--expressive-primary)] tracking-tighter">${room.price}</p>
+                  </div>
+                  <div className="h-14 w-14 rounded-2xl bg-[var(--expressive-background)] flex items-center justify-center border-2 border-[var(--expressive-secondary)]/10 shadow-inner">
+                    <Star className="h-6 w-6 text-amber-500 fill-amber-500" />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="p-4 bg-[var(--expressive-background)] border-2 border-[var(--expressive-secondary)]/5 rounded-2xl">
+                    <p className="text-[9px] font-black text-[var(--expressive-text-muted)] uppercase tracking-widest mb-1">Selected Configuration</p>
+                    <p className="text-sm font-black uppercase">{room.type} OPERATIONAL BASE</p>
+                  </div>
+                  <div className="p-4 bg-[var(--expressive-background)] border-2 border-[var(--expressive-secondary)]/5 rounded-2xl">
+                    <p className="text-[9px] font-black text-[var(--expressive-text-muted)] uppercase tracking-widest mb-1">Inventory Status</p>
+                    <p className="text-sm font-black text-green-600 uppercase">SYNCHRONIZED & READY</p>
+                  </div>
+                </div>
+
+                <Button
+                  className="w-full h-16 bg-[var(--expressive-secondary)] text-white font-black uppercase tracking-widest text-sm border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_#ce0031] hover:-translate-y-1 hover:shadow-[8px_8px_0_0_#ce0031] active:translate-y-0.5 transition-all"
+                  size="lg"
+                  onClick={handleBookNow}
+                >
+                  Confirm Reservation
+                </Button>
+
+                <p className="text-[9px] font-black text-center text-[var(--expressive-text-muted)] uppercase tracking-widest italic">
+                  * Fiscal finalization occurs at check-out
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Tactical Briefing */}
+            <div className="mt-8 p-6 bg-[var(--expressive-primary)]/5 border-2 border-dashed border-[var(--expressive-primary)]/30 rounded-2xl">
+              <p className="text-[10px] font-black text-[var(--expressive-primary)] uppercase tracking-widest mb-2">Tactical Note</p>
+              <p className="text-xs font-bold text-[var(--expressive-text-muted)] italic leading-relaxed">
+                "This asset is high-demand. Securing this manifest now guarantees sector availability for your operational window."
+              </p>
+            </div>
+          </div>
+        </aside>
       </div>
 
-      {/* Messages */}
+      {/* Sync Notification */}
       {reviewMessage && (
-        <div className={`fixed bottom-4 right-4 flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg ${reviewMessage.type === 'success'
-          ? 'bg-green-50 border-2 border-green-200'
-          : 'bg-red-50 border-2 border-red-200'
+        <div className={`fixed bottom-8 right-8 flex items-center gap-4 px-6 py-4 rounded-2xl border-4 shadow-[8px_8px_0_0_#000000] z-50 ${reviewMessage.type === 'success' ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'
           }`}>
-          {reviewMessage.type === 'success' ? (
-            <CheckCircle className="w-5 h-5 text-green-600" />
-          ) : (
-            <AlertCircle className="w-5 h-5 text-red-600" />
-          )}
-          <span className={reviewMessage.type === 'success' ? 'text-green-800' : 'text-red-800'}>
-            {reviewMessage.text}
-          </span>
+          <div className={`h-10 w-10 rounded-xl flex items-center justify-center text-white ${reviewMessage.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            }`}>
+            {reviewMessage.type === 'success' ? <CheckCircle className="h-6 w-6" /> : <AlertCircle className="h-6 w-6" />}
+          </div>
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest opacity-50 leading-none mb-1">System Message</p>
+            <p className={`text-sm font-black uppercase tracking-tight ${reviewMessage.type === 'success' ? 'text-green-900' : 'text-red-900'
+              }`}>
+              {reviewMessage.text}
+            </p>
+          </div>
         </div>
       )}
 
       {/* Booking Modal */}
-      <BookingModal
-        room={room}
-        open={isBookingModalOpen}
-        onOpenChange={setIsBookingModalOpen}
-      />
+      <BookingModal room={room} open={isBookingModalOpen} onOpenChange={setIsBookingModalOpen} />
 
       {/* Write Review Dialog */}
       <WriteReviewDialog
@@ -250,27 +325,25 @@ function RoomDetailsPage() {
         isLoading={isSubmittingReview}
       />
 
-      {/* Review Error Modal */}
+      {/* Protocol Alert Modal */}
       {reviewErrorModal && (
         <Dialog open={reviewErrorModal.open} onOpenChange={(open) => !open && setReviewErrorModal(null)}>
-          <DialogContent className="sm:max-w-md bg-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-2xl z-50">
-            <DialogHeader>
-              <DialogTitle className="text-[var(--expressive-primary)]">{reviewErrorModal.title}</DialogTitle>
-              <DialogDescription>
+          <DialogContent className="sm:max-w-md bg-white border-4 border-[var(--expressive-secondary)] shadow-[8px_8px_0_0_#000000] rounded-3xl z-50">
+            <DialogHeader className="space-y-4">
+              <div className="h-16 w-16 rounded-3xl bg-amber-50 border-2 border-amber-200 flex items-center justify-center text-amber-600 mx-auto">
+                <AlertCircle className="h-8 w-8" />
+              </div>
+              <DialogTitle className="text-2xl font-black text-center uppercase tracking-tighter">{reviewErrorModal.title}</DialogTitle>
+              <DialogDescription className="text-center font-bold text-[var(--expressive-text-muted)]">
                 {reviewErrorModal.message}
               </DialogDescription>
             </DialogHeader>
-            <div className="flex items-center justify-center py-6">
-              <div className="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center">
-                <AlertCircle className="w-8 h-8 text-amber-600" />
-              </div>
-            </div>
-            <DialogFooter>
+            <DialogFooter className="mt-6">
               <Button
                 onClick={() => setReviewErrorModal(null)}
-                className="w-full bg-[var(--expressive-primary)] text-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_var(--expressive-secondary)] transition-all font-semibold"
+                className="w-full h-12 bg-[var(--expressive-secondary)] text-white font-black uppercase tracking-widest text-xs border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_#ce0031] hover:-translate-y-1 transition-all"
               >
-                Got it
+                Acknowledge Protocol
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -279,3 +352,4 @@ function RoomDetailsPage() {
     </div>
   )
 }
+
