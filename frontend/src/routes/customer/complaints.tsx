@@ -42,11 +42,11 @@ function ComplaintsPage() {
     if (!user) return
 
     try {
-      const newComplaint = await createComplaint({
+      await createComplaint({
         type: formData.subject,
         description: formData.message
       })
-      setComplaints((prev) => [newComplaint, ...prev])
+      await loadComplaints()
       setFormData({ subject: '', message: '' })
       toast.success('Incident report successfully dispatched')
     } catch (error) {
@@ -174,7 +174,7 @@ function ComplaintsPage() {
                           {complaint.subject}
                         </h4>
                         <p className="text-[9px] font-black text-[var(--expressive-text-muted)] uppercase tracking-tighter mt-1">
-                          {format(new Date(complaint.createdAt), 'MMM d, p')}
+                          {complaint.createdAt ? format(new Date(complaint.createdAt), 'MMM d, p') : 'RECENT'}
                         </p>
                       </div>
                       {getStatusBadge(complaint.status)}
@@ -226,7 +226,7 @@ function ComplaintCard({
               {complaint.subject}
             </h4>
             <p className="text-sm text-[var(--expressive-text)]">
-              {format(new Date(complaint.createdAt), 'MMM d, yyyy • h:mm a')}
+              {complaint.createdAt ? format(new Date(complaint.createdAt), 'MMM d, yyyy • h:mm a') : 'RECENT'}
             </p>
           </div>
           <Badge variant="secondary" className="capitalize">

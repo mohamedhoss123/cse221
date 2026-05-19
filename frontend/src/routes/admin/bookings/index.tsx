@@ -177,9 +177,7 @@ function AdminBookingsPage() {
                           <div className="font-black text-[var(--expressive-primary)] text-lg">
                             ${booking.totalAmount?.toLocaleString()}
                           </div>
-                          <div className="text-[10px] font-bold text-green-600 uppercase tracking-widest">
-                            {booking.paymentStatus || 'UNPAID'}
-                          </div>
+
                         </TableCell>
                         <TableCell className="px-6">
                           <div className="text-xs font-black text-[var(--expressive-text)]">

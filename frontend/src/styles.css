@@ -11,7 +11,7 @@
   /* Enhanced Design System Tokens - Replaced Yellow with Professional Accent */
   --expressive-primary: #3B82F6;
   --expressive-primary-hover: #2563EB;
-  --expressive-secondary: #000000;
+  --expressive-secondary: #4b7aa2;
   --expressive-accent: #06B6D4;
   --expressive-background: #FFFFFF;
   --expressive-surface: #F8FAFC;
@@ -23,16 +23,20 @@
   --expressive-info: #06B6D4;
 
   /* shadcn/ui mapped base colors */
-  --background: 0 0% 100%; /* white */
-  --foreground: 215 28% 17%; /* slate-900 */
+  --background: 0 0% 100%;
+  /* white */
+  --foreground: 215 28% 17%;
+  /* slate-900 */
 
-  --card: 0 0% 98%; /* #F8FAFC */
+  --card: 0 0% 98%;
+  /* #F8FAFC */
   --card-foreground: 215 28% 17%;
 
   --popover: 0 0% 100%;
   --popover-foreground: 215 28% 17%;
 
-  --primary: 217 91% 60%; /* #3B82F6 */
+  --primary: 217 91% 60%;
+  /* #3B82F6 */
   --primary-foreground: 0 0% 100%;
 
   --secondary: 0 0% 0%;
@@ -41,7 +45,8 @@
   --muted: 215 16% 96%;
   --muted-foreground: 215 12% 43%;
 
-  --accent: 185 96% 52%; /* #06B6D4 */
+  --accent: 185 96% 52%;
+  /* #06B6D4 */
   --accent-foreground: 0 0% 100%;
 
   --destructive: 0 84% 60%;
@@ -51,13 +56,15 @@
   --input: 215 13% 95%;
   --ring: 217 91% 60%;
 
-  --radius: 0.75rem; /* rounded corners */
+  --radius: 0.75rem;
+  /* rounded corners */
 }
 
 @layer base {
   * {
     border-color: hsl(var(--border));
   }
+
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));

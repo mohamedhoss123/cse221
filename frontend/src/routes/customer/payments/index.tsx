@@ -77,17 +77,17 @@ function PaymentsPage() {
 
     return (
       <Link to="/customer/payments/$invoiceId" params={{ invoiceId: invoice.id }}>
-        <div className="bg-white rounded-none p-6 border-4 border-black hover:shadow-[8px_8px_0_0_#000] transition-all duration-200 cursor-pointer h-full group">
+        <div className="bg-white rounded-none p-6 border-4 border-[var(--expressive-secondary)] hover:shadow-[8px_8px_0_0_var(--expressive-secondary)] transition-all duration-200 cursor-pointer h-full group">
           {/* Header */}
           <div className="flex items-start justify-between mb-6">
             <div className="flex-1">
               <div className="flex items-center gap-4 mb-3">
-                <h3 className="text-xl font-black text-black uppercase tracking-tighter group-hover:text-[#ce0031] transition-colors">
+                <h3 className="text-xl font-black text-[var(--expressive-text)] uppercase tracking-tighter group-hover:text-[var(--expressive-primary)] transition-colors">
                   {invoice.booking?.roomName || invoice.roomName || `UNIT_ASSET_${invoice.roomId}`}
                 </h3>
                 {getStatusBadge(invoice.status)}
               </div>
-              <p className="text-xs font-bold text-black/60 uppercase tracking-widest">
+              <p className="text-xs font-bold text-[var(--expressive-text-muted)] uppercase tracking-widest">
                 MFST_REF: {invoice.id} // BKG_ID: {invoice.booking?.id || invoice.reservationId}
               </p>
             </div>
@@ -96,12 +96,12 @@ function PaymentsPage() {
           {/* Payment Progress */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-black uppercase tracking-widest text-black/40">Fiscal Saturation</span>
-              <span className="text-xs font-black text-[#ce0031]">{progressPercentage.toFixed(0)}%</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-[var(--expressive-text-muted)]">Fiscal Saturation</span>
+              <span className="text-xs font-black text-[var(--expressive-primary)]">{progressPercentage.toFixed(0)}%</span>
             </div>
-            <div className="w-full bg-black/10 rounded-none h-4 border-2 border-black overflow-hidden p-0.5">
+            <div className="w-full bg-black/10 rounded-none h-4 border-2 border-[var(--expressive-secondary)] overflow-hidden p-0.5">
               <div
-                className="bg-[#ce0031] h-full transition-all duration-700 ease-out border-r-2 border-black"
+                className="bg-[var(--expressive-primary)] h-full transition-all duration-700 ease-out border-r-2 border-black"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
@@ -109,30 +109,30 @@ function PaymentsPage() {
 
           {/* Details */}
           <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="bg-black/5 p-3 border-2 border-black/10">
-              <p className="text-[10px] font-black text-black/40 uppercase mb-1">Gross Yield</p>
-              <p className="text-lg font-black text-black">${invoice.amount}</p>
+            <div className="bg-black/5 p-3 border-2 border-[var(--expressive-secondary)]/10">
+              <p className="text-[10px] font-black text-[var(--expressive-text-muted)] uppercase mb-1">Gross Yield</p>
+              <p className="text-lg font-black text-[var(--expressive-text)]">${invoice.amount}</p>
             </div>
-            <div className="bg-black/5 p-3 border-2 border-black/10">
-              <p className="text-[10px] font-black text-black/40 uppercase mb-1">Liquidated</p>
-              <p className="text-lg font-black text-black">${invoice.paidAmount}</p>
+            <div className="bg-black/5 p-3 border-2 border-[var(--expressive-secondary)]/10">
+              <p className="text-[10px] font-black text-[var(--expressive-text-muted)] uppercase mb-1">Liquidated</p>
+              <p className="text-lg font-black text-[var(--expressive-text)]">${invoice.paidAmount}</p>
             </div>
-            <div className="bg-[#ce0031]/10 p-3 border-2 border-[#ce0031]/20">
-              <p className="text-[10px] font-black text-[#ce0031]/60 uppercase mb-1">Outstanding</p>
-              <p className="text-lg font-black text-[#ce0031]">${invoice.remainingAmount}</p>
+            <div className="bg-[var(--expressive-primary)]/10 p-3 border-2 border-[var(--expressive-primary)]/20">
+              <p className="text-[10px] font-black text-[var(--expressive-primary)]/60 uppercase mb-1">Outstanding</p>
+              <p className="text-lg font-black text-[var(--expressive-primary)]">${invoice.remainingAmount}</p>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between pt-6 border-t-2 border-black border-dashed">
-            <div className="flex items-center gap-2 text-[10px] font-black text-black uppercase tracking-widest">
-              <Calendar className="w-4 h-4 text-[#ce0031]" />
+          <div className="flex items-center justify-between pt-6 border-t-2 border-[var(--expressive-secondary)] border-dashed">
+            <div className="flex items-center gap-2 text-[10px] font-black text-[var(--expressive-text)] uppercase tracking-widest">
+              <Calendar className="w-4 h-4 text-[var(--expressive-primary)]" />
               <span>Horizon: {format(new Date(invoice.dueDate), 'yyyy.MM.dd')}</span>
             </div>
             <Button
               variant="outline"
               size="sm"
-              className="rounded-none border-2 border-black font-black text-[10px] uppercase tracking-widest hover:bg-black hover:text-white shadow-[4px_4px_0_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
+              className="rounded-none border-2 border-[var(--expressive-secondary)] font-black text-[10px] uppercase tracking-widest hover:bg-[var(--expressive-secondary)] hover:text-white shadow-[4px_4px_0_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
             >
               <FileText className="w-4 h-4 mr-2" />
               Manifest Intelligence
@@ -147,18 +147,18 @@ function PaymentsPage() {
   return (
     <div className="p-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="mb-12 border-l-8 border-black pl-8">
-        <h1 className="text-6xl font-black text-black mb-4 uppercase tracking-tighter leading-none">
-          FISCAL <span className="text-[#ce0031]">LEDGER</span>
+      <div className="mb-12 border-l-8 border-[var(--expressive-secondary)] pl-8">
+        <h1 className="text-6xl font-black text-[var(--expressive-text)] mb-4 uppercase tracking-tighter leading-none">
+          FISCAL <span className="text-[var(--expressive-primary)]">LEDGER</span>
         </h1>
         <div className="flex items-center gap-4">
-          <p className="text-sm font-bold text-black/60 uppercase tracking-[0.2em]">
+          <p className="text-sm font-bold text-[var(--expressive-text-muted)] uppercase tracking-[0.2em]">
             Operational Liquidity Management Terminal
           </p>
           <div className="h-0.5 flex-1 bg-black/10" />
           <div className="flex gap-1">
             {[1, 2, 3].map(i => (
-              <div key={i} className="w-2 h-2 bg-[#ce0031]" />
+              <div key={i} className="w-2 h-2 bg-[var(--expressive-primary)]" />
             ))}
           </div>
         </div>
@@ -166,20 +166,20 @@ function PaymentsPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-        <div className="bg-white border-4 border-black p-6 shadow-[8px_8px_0_0_#000]">
+        <div className="bg-white border-4 border-[var(--expressive-secondary)] p-6 shadow-[8px_8px_0_0_var(--expressive-secondary)]">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-black text-white">
+            <div className="p-3 bg-[var(--expressive-secondary)] text-white">
               <DollarSign className="w-6 h-6" />
             </div>
-            <span className="text-[10px] font-black text-black/40 uppercase tracking-widest">Type: Liquid</span>
+            <span className="text-[10px] font-black text-[var(--expressive-text-muted)] uppercase tracking-widest">Type: Liquid</span>
           </div>
-          <p className="text-4xl font-black text-black mb-1">${totalPaid}</p>
-          <p className="text-xs font-bold text-black/60 uppercase tracking-widest">Total Liquidated Assets</p>
+          <p className="text-4xl font-black text-[var(--expressive-text)] mb-1">${totalPaid}</p>
+          <p className="text-xs font-bold text-[var(--expressive-text-muted)] uppercase tracking-widest">Total Liquidated Assets</p>
         </div>
 
-        <div className="bg-[#ce0031] border-4 border-black p-6 shadow-[8px_8px_0_0_#000]">
+        <div className="bg-[var(--expressive-primary)] border-4 border-[var(--expressive-secondary)] p-6 shadow-[8px_8px_0_0_var(--expressive-secondary)]">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-black text-white">
+            <div className="p-3 bg-[var(--expressive-secondary)] text-white">
               <Clock className="w-6 h-6" />
             </div>
             <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">Type: Liability</span>
@@ -188,15 +188,15 @@ function PaymentsPage() {
           <p className="text-xs font-bold text-white/80 uppercase tracking-widest">Outstanding Fiscal Debt</p>
         </div>
 
-        <div className="bg-white border-4 border-black p-6 shadow-[8px_8px_0_0_#000]">
+        <div className="bg-white border-4 border-[var(--expressive-secondary)] p-6 shadow-[8px_8px_0_0_var(--expressive-secondary)]">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-black text-white">
+            <div className="p-3 bg-[var(--expressive-secondary)] text-white">
               <FileText className="w-6 h-6" />
             </div>
-            <span className="text-[10px] font-black text-black/40 uppercase tracking-widest">Type: Operational</span>
+            <span className="text-[10px] font-black text-[var(--expressive-text-muted)] uppercase tracking-widest">Type: Operational</span>
           </div>
-          <p className="text-4xl font-black text-black mb-1">{totalPending}</p>
-          <p className="text-xs font-bold text-black/60 uppercase tracking-widest">Pending Manifests</p>
+          <p className="text-4xl font-black text-[var(--expressive-text)] mb-1">{totalPending}</p>
+          <p className="text-xs font-bold text-[var(--expressive-text-muted)] uppercase tracking-widest">Pending Manifests</p>
         </div>
       </div>
 
@@ -210,10 +210,10 @@ function PaymentsPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`px-8 py-4 border-4 border-black font-black text-xs uppercase tracking-widest transition-all ${
+            className={`px-8 py-4 border-4 border-[var(--expressive-secondary)] font-black text-xs uppercase tracking-widest transition-all ${
               activeTab === tab.id
-                ? 'bg-black text-white shadow-[4px_4px_0_0_#ce0031] -translate-x-1 -translate-y-1'
-                : 'bg-white text-black hover:bg-black/5'
+                ? 'bg-[var(--expressive-secondary)] text-white shadow-[4px_4px_0_0_var(--expressive-primary)] -translate-x-1 -translate-y-1'
+                : 'bg-white text-[var(--expressive-text)] hover:bg-black/5'
             }`}
           >
             {tab.label} [{tab.count}]
@@ -223,12 +223,12 @@ function PaymentsPage() {
 
       {/* Invoices Grid */}
       {filteredInvoices.length === 0 ? (
-        <div className="bg-white border-4 border-black border-dashed p-20 text-center">
-          <div className="w-24 h-24 border-4 border-black flex items-center justify-center mx-auto mb-6 bg-black/5">
-            <FileText className="w-12 h-12 text-black/20" />
+        <div className="bg-white border-4 border-[var(--expressive-secondary)] border-dashed p-20 text-center">
+          <div className="w-24 h-24 border-4 border-[var(--expressive-secondary)] flex items-center justify-center mx-auto mb-6 bg-black/5">
+            <FileText className="w-12 h-12 text-[var(--expressive-text-muted)]/20" />
           </div>
-          <h3 className="text-2xl font-black text-black mb-2 uppercase tracking-tighter">No Ledger Entries Detected</h3>
-          <p className="text-sm font-bold text-black/60 uppercase tracking-widest">
+          <h3 className="text-2xl font-black text-[var(--expressive-text)] mb-2 uppercase tracking-tighter">No Ledger Entries Detected</h3>
+          <p className="text-sm font-bold text-[var(--expressive-text-muted)] uppercase tracking-widest">
             {activeTab === 'paid'
               ? "Zero settled transactions in current terminal cycle"
               : activeTab === 'pending'
