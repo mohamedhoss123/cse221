@@ -18,7 +18,7 @@ import {
 import { BookingModal } from '#/components/customer/BookingModal'
 import { RoomReviews } from '#/components/customer/RoomReviews'
 import { WriteReviewDialog } from '#/components/customer/WriteReviewDialog'
-
+import { Card, CardHeader, CardContent } from '#/components/ui/card'
 export const Route = createFileRoute('/customer/rooms/$id')({
   component: RoomDetailsPage,
   loader: async ({ params }) => {
@@ -180,49 +180,7 @@ function RoomDetailsPage() {
 
           <Separator className="h-1 bg-[var(--expressive-secondary)]/5" />
 
-          {/* Specification Manifest */}
-          <section className="grid md:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-lg bg-[var(--expressive-secondary)] flex items-center justify-center text-white">
-                  <FileText className="h-4 w-4" />
-                </div>
-                <h2 className="text-xl font-black uppercase tracking-tighter">Unit Specs</h2>
-              </div>
-              <Card className="bg-[var(--expressive-background)] border-2 border-[var(--expressive-secondary)]/10 rounded-2xl p-6 space-y-4">
-                <div className="flex justify-between items-center border-b border-[var(--expressive-secondary)]/5 pb-2">
-                  <span className="text-[10px] font-black uppercase text-[var(--expressive-text-muted)]">Category</span>
-                  <span className="text-xs font-black uppercase text-[var(--expressive-primary)]">{room.type}</span>
-                </div>
-                <div className="flex justify-between items-center border-b border-[var(--expressive-secondary)]/5 pb-2">
-                  <span className="text-[10px] font-black uppercase text-[var(--expressive-text-muted)]">Capacity</span>
-                  <span className="text-xs font-black uppercase">{room.capacity || 2} Units</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-black uppercase text-[var(--expressive-text-muted)]">Status</span>
-                  <span className="text-[9px] font-black uppercase px-2 py-0.5 bg-green-100 text-green-600 rounded">Available</span>
-                </div>
-              </Card>
-            </div>
 
-            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-lg bg-[var(--expressive-primary)] flex items-center justify-center text-white">
-                  <Zap className="h-4 w-4" />
-                </div>
-                <h2 className="text-xl font-black uppercase tracking-tighter">Amenities</h2>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {['Hyper-Speed Wi-Fi', 'Environmental Control', 'Security Protocol', 'Privacy Shield', 'Digital Key'].map(tag => (
-                  <span key={tag} className="px-3 py-1 bg-white border-2 border-[var(--expressive-secondary)] rounded-lg text-[9px] font-black uppercase tracking-widest shadow-[2px_2px_0_0_var(--expressive-secondary)]">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <Separator className="h-1 bg-[var(--expressive-secondary)]/5" />
 
           {/* Feedback Stream */}
           <section className="space-y-6">

@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { getInvoiceById } from '#/services/invoices.service'
 import { createPaymentForInvoice } from '#/services/invoices.service'
@@ -31,6 +31,8 @@ import {
   Plus,
   DollarSign,
   ArrowLeft,
+  ChevronRight,
+  ShieldCheck,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
@@ -56,11 +58,68 @@ function InvoicePage() {
   const [paymentAmount, setPaymentAmount] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
+  
+  // Credit Card State for 3D View
+  const [cardNumber, setCardNumber] = useState('')
+  const [cardName, setCardName] = useState('')
+  const [expiry, setExpiry] = useState('')
+  const [cvc, setCvc] = useState('')
+  const [isFlipped, setIsFlipped] = useState(false)
+
+  const formatCardNumber = (value: string) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '')
+    const matches = v.match(/\d{4,16}/g)
+    const match = (matches && matches[0]) || ''
+    const parts = []
+
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4))
+    }
+
+    if (parts.length) {
+      return parts.join(' ')
+    } else {
+      return value
+    }
+  }
+
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCardNumber(e.target.value)
+    if (formatted.replace(/\s/g, '').length <= 16) {
+      setCardNumber(formatted)
+    }
+  }
+
+  const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, '')
+    if (value.length > 4) value = value.slice(0, 4)
+    
+    if (value.length >= 3) {
+      setExpiry(`${value.slice(0, 2)}/${value.slice(2)}`)
+    } else {
+      setExpiry(value)
+    }
+  }
+
+  const validateExpiry = (value: string) => {
+    if (!/^\d{2}\/\d{2}$/.test(value)) return false
+    const [month, year] = value.split('/').map(Number)
+    if (month < 1 || month > 12) return false
+    
+    const now = new Date()
+    const currentYear = now.getFullYear() % 100
+    const currentMonth = now.getMonth() + 1
+    
+    if (year < currentYear) return false
+    if (year === currentYear && month < currentMonth) return false
+    
+    return true
+  }
+
   const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(
     invoice ? { ...invoice, payments: invoice.payments || [] } : null
   )
 
-  // Safe date formatting helper
   const safeFormatDate = (dateValue: string | null | undefined, formatString: string) => {
     if (!dateValue) return 'N/A'
     const date = new Date(dateValue)
@@ -75,16 +134,16 @@ function InvoicePage() {
   if (error || !invoice) {
     return (
       <div className="p-8">
-        <div className="bg-white rounded-2xl p-12 text-center border border-slate-200">
-          <FileText className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-semibold text-slate-900 mb-2">Invoice Not Found</h1>
-          <p className="text-slate-600 mb-6">The invoice you're looking for doesn't exist or you don't have permission to view it.</p>
+        <div className="bg-white border-4 border-black p-12 text-center shadow-[8px_8px_0_0_#000]">
+          <FileText className="w-16 h-16 text-black/20 mx-auto mb-4" />
+          <h1 className="text-2xl font-black text-black uppercase tracking-tighter mb-2">Invoice Not Found</h1>
+          <p className="text-black/60 font-bold uppercase text-xs tracking-widest mb-6">Manifest missing from terminal records.</p>
           <Button
             onClick={() => navigate({ to: '/customer/payments' })}
-            className="bg-[var(--expressive-primary)] text-white"
+            className="h-12 bg-black text-white font-black uppercase tracking-widest border-2 border-black shadow-[4px_4px_0_0_#000] hover:-translate-y-1 transition-all"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Payments
+            Return to Ledger
           </Button>
         </div>
       </div>
@@ -132,19 +191,37 @@ function InvoicePage() {
     const amount = parseFloat(paymentAmount)
     const remainingAmount = currentInvoice!.remainingAmount || currentInvoice!.amount || 0
 
+    // Validation
     if (!amount || amount <= 0) {
       toast.error('LIQUIDATION_ERROR: INVALID_AMOUNT')
       return
     }
-
     if (amount > remainingAmount) {
       toast.error(`LIQUIDATION_ERROR: AMOUNT_EXCEEDS_LIABILITY ($${remainingAmount})`)
       return
     }
-
     if (!paymentMethod) {
       toast.error('LIQUIDATION_ERROR: METHOD_UNDEFINED')
       return
+    }
+
+    if (paymentMethod === 'credit_card' || paymentMethod === 'debit_card') {
+      if (cardNumber.replace(/\s/g, '').length !== 16) {
+        toast.error('VALIDATION_ERROR: INVALID_CARD_NUMBER (16 DIGITS REQUIRED)')
+        return
+      }
+      if (!cardName || cardName.length < 3) {
+        toast.error('VALIDATION_ERROR: VALID_CARDHOLDER_NAME_REQUIRED')
+        return
+      }
+      if (!validateExpiry(expiry)) {
+        toast.error('VALIDATION_ERROR: INVALID_OR_EXPIRED_DATE (MM/YY)')
+        return
+      }
+      if (cvc.length < 3) {
+        toast.error('VALIDATION_ERROR: INVALID_CVC')
+        return
+      }
     }
 
     setIsProcessing(true)
@@ -153,7 +230,7 @@ function InvoicePage() {
       const updatedInvoice = await createPaymentForInvoice(
         invoiceId,
         amount,
-        paymentMethod as 'credit_card' | 'debit_card' | 'paypal' | 'bank_transfer'
+        paymentMethod as 'credit_card' | 'debit_card' | 'bank_transfer'
       )
 
       setCurrentInvoice(updatedInvoice)
@@ -182,7 +259,7 @@ function InvoicePage() {
           </button>
           <div className="flex items-center gap-6 mb-4">
             <h1 className="text-5xl font-black text-black uppercase tracking-tighter leading-none">
-              FISCAL_MFST <span className="text-[#ce0031]">#{currentInvoice.id}</span>
+              FISCAL_MFST <span className="text-[var(--expressive-secondary)]">#{currentInvoice.id}</span>
             </h1>
             {getStatusBadge()}
           </div>
@@ -193,7 +270,7 @@ function InvoicePage() {
         <div className="mt-8 md:mt-0">
           {currentInvoice.status !== 'paid' && (
             <Button
-              className="rounded-none h-14 px-8 border-4 border-black bg-[#ce0031] text-white font-black uppercase tracking-widest shadow-[6px_6px_0_0_#000] hover:-translate-y-1 hover:shadow-[8px_8px_0_0_#000] active:translate-y-0 active:shadow-none transition-all"
+              className="rounded-none h-14 px-8 border-4 border-black bg-[var(--expressive-secondary)] text-white font-black uppercase tracking-widest shadow-[6px_6px_0_0_#000] hover:-translate-y-1 hover:shadow-[8px_8px_0_0_#000] active:translate-y-0 active:shadow-none transition-all"
               onClick={() => setShowPaymentDialog(true)}
             >
               <Plus className="w-5 h-5 mr-3" strokeWidth={3} />
@@ -204,9 +281,8 @@ function InvoicePage() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-12">
-        {/* Left Column - Invoice Details */}
+        {/* Left Column */}
         <div className="lg:col-span-2 space-y-12">
-          {/* Booking Details Card */}
           <div className="bg-white border-4 border-black p-8 shadow-[8px_8px_0_0_#000] relative overflow-hidden">
             <div className="absolute top-0 right-0 p-2 bg-black text-white text-[8px] font-black uppercase tracking-widest">
               SECURE_INTEL_FEED
@@ -233,10 +309,6 @@ function InvoicePage() {
                   <p className="text-[10px] font-black text-black/40 uppercase mb-1">Reservation Key</p>
                   <p className="text-lg font-black text-black">{currentInvoice.reservationId || 'NULL'}</p>
                 </div>
-                <div className="border-l-4 border-black/10 pl-4">
-                  <p className="text-[10px] font-black text-black/40 uppercase mb-1">Hardware ID</p>
-                  <p className="text-lg font-black text-black">{currentInvoice.roomId || 'NULL'}</p>
-                </div>
               </div>
 
               <div className="space-y-6">
@@ -247,21 +319,16 @@ function InvoicePage() {
                 <div className="border-l-4 border-black/10 pl-4">
                   <p className="text-[10px] font-black text-black/40 uppercase mb-1">Manifest Genesis</p>
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-[#ce0031]" />
+                    <Calendar className="w-4 h-4 text-[var(--expressive-secondary)]" />
                     <p className="text-lg font-black text-black">
                       {safeFormatDate(currentInvoice.date, 'yyyy.MM.dd')}
                     </p>
                   </div>
                 </div>
-                <div className="border-l-4 border-black/10 pl-4">
-                  <p className="text-[10px] font-black text-black/40 uppercase mb-1">Gross Liability</p>
-                  <p className="text-lg font-black text-[#ce0031]">${currentInvoice.amount || 0}</p>
-                </div>
               </div>
             </div>
           </div>
 
-          {/* Payment History */}
           <div className="bg-white border-4 border-black p-8 shadow-[8px_8px_0_0_#000]">
             <div className="flex items-center justify-between mb-8 border-b-2 border-black border-dashed pb-6">
               <div className="flex items-center gap-4">
@@ -297,16 +364,13 @@ function InvoicePage() {
                         <p className="text-xs font-black text-black uppercase tracking-widest mb-1">
                           {payment.method?.replace('_', ' ').toUpperCase()}
                         </p>
-                        <p className="text-[10px] font-bold text-black/40 uppercase tracking-widest">
+                        <p className="text-[10px] font-bold text-black/40 uppercase tracking-widest italic">
                           T_STAMP: {safeFormatDate(payment.date, 'yyyy.MM.dd // HH:mm')}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-black text-black group-hover:text-[#ce0031] transition-colors">${payment.amount}</p>
-                      <p className="text-[8px] font-black text-black/30 uppercase tracking-[0.2em]">
-                        Transition {index + 1} OF {currentInvoice.payments.length}
-                      </p>
+                      <p className="text-2xl font-black text-black group-hover:text-[var(--expressive-secondary)] transition-colors">${payment.amount}</p>
                     </div>
                   </div>
                 ))}
@@ -315,12 +379,10 @@ function InvoicePage() {
           </div>
         </div>
 
-        {/* Right Column - Payment Summary */}
+        {/* Right Column */}
         <div className="space-y-8">
-          {/* Payment Progress Card */}
-          <div className="bg-black border-4 border-black p-8 shadow-[8px_8px_0_0_#ce0031] text-white">
+          <div className="bg-black border-4 border-black p-8 shadow-[8px_8px_0_0_var(--expressive-secondary)] text-white">
             <h3 className="text-lg font-black uppercase tracking-widest mb-8 border-b border-white/20 pb-4 italic">Fiscal Status Report</h3>
-
             <div className="mb-10">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">Liquidity Absorbed</span>
@@ -328,50 +390,30 @@ function InvoicePage() {
               </div>
               <div className="w-full bg-white/10 h-6 border-2 border-white/20 p-1 mb-4">
                 <div
-                  className="bg-[#ce0031] h-full transition-all duration-1000 ease-out border-r-2 border-black"
+                  className="bg-[var(--expressive-secondary)] h-full transition-all duration-1000 ease-out border-r-2 border-black"
                   style={{ width: `${progressPercentage}%` }}
                 />
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">System Saturation</span>
-                <span className="text-xl font-black text-[#ce0031]">
-                  {progressPercentage.toFixed(1)}%
-                </span>
-              </div>
             </div>
-
-            <div className="space-y-4 pt-6 border-t border-white/20">
+            <div className="space-y-4 pt-6 border-t-2 border-white border-dashed">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black text-white/40 uppercase">Total Liability</span>
-                <span className="text-sm font-black">${currentInvoice.amount || currentInvoice.totalAmount || 0}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black text-white/40 uppercase">Total Liquidated</span>
-                <span className="text-sm font-black text-green-400">${currentInvoice.paidAmount || 0}</span>
-              </div>
-              <div className="flex items-center justify-between pt-6 border-t-2 border-white border-dashed">
                 <span className="text-sm font-black uppercase tracking-[0.2em]">Residual</span>
-                <span className="text-3xl font-black text-[#ce0031] tracking-tighter">
+                <span className="text-3xl font-black text-[var(--expressive-secondary)] tracking-tighter">
                   ${currentInvoice.remainingAmount || currentInvoice.amount || 0}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Payment Methods Info */}
           <div className="bg-white border-4 border-black p-6">
-            <h3 className="text-xs font-black text-black uppercase tracking-widest mb-6 border-l-4 border-[#ce0031] pl-3">Sanctioned Channels</h3>
+            <h3 className="text-xs font-black text-black uppercase tracking-widest mb-6 border-l-4 border-[var(--expressive-secondary)] pl-3">Security Protocols</h3>
             <div className="space-y-4">
-              {[
-                'CREDIT_DEBIT_DIRECT',
-                'PAYPAL_OPERATIONAL',
-                'WIRE_TRANSFER_BUREAU'
-              ].map(method => (
-                <div key={method} className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-black" />
-                  <span className="text-[10px] font-black text-black uppercase tracking-[0.1em]">{method}</span>
-                </div>
-              ))}
+              <div className="flex items-start gap-3">
+                <ShieldCheck className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <p className="text-[9px] font-black text-black/60 uppercase tracking-widest leading-relaxed">
+                  Encryption: AES-256-GCM. All fiscal transitions are routed through secure administrative channels.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -379,84 +421,169 @@ function InvoicePage() {
 
       {/* Payment Dialog */}
       <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
-        <DialogContent className="sm:max-w-md bg-white border-8 border-black rounded-none shadow-none p-0 overflow-hidden">
+        <DialogContent className="sm:max-w-xl bg-white border-8 border-black rounded-none shadow-none p-0 overflow-hidden">
           <div className="bg-black text-white p-6">
             <DialogHeader>
-              <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic">LIQUIDATION_INITIALIZE</DialogTitle>
+              <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic">LIQUIDATION_TERMINAL</DialogTitle>
               <DialogDescription className="text-white/60 font-bold uppercase text-[10px] tracking-widest">
-                Authorize fiscal resource transfer to central vault
+                Resource Transfer Authorization Interface
               </DialogDescription>
             </DialogHeader>
           </div>
 
           <div className="p-8 space-y-8">
-            <div className="space-y-3">
-              <Label htmlFor="amount" className="text-xs font-black uppercase tracking-widest text-black">Resource Quantum ($)</Label>
-              <div className="relative group">
-                <Input
-                  id="amount"
-                  type="number"
-                  placeholder="0.00"
-                  value={paymentAmount}
-                  onChange={(e) => setPaymentAmount(e.target.value)}
-                  className="h-16 bg-black/5 border-4 border-black rounded-none text-2xl font-black focus-visible:ring-0 focus-visible:bg-white transition-all pl-12"
-                  min="1"
-                  max={currentInvoice.remainingAmount || currentInvoice.amount || 0}
-                  step="0.01"
-                />
-                <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-black group-focus-within:text-[#ce0031] transition-colors" />
+            {/* 3D Card Display */}
+            {(paymentMethod === 'credit_card' || paymentMethod === 'debit_card') && (
+              <div className="perspective-1000 h-56 w-full max-w-md mx-auto mb-10 cursor-pointer" onClick={() => setIsFlipped(!isFlipped)}>
+                <div className={`relative h-full w-full transition-transform duration-700 preserve-3d shadow-2xl ${isFlipped ? 'rotate-y-180' : ''}`}>
+                  {/* Front */}
+                  <div className="absolute inset-0 h-full w-full rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-black p-8 backface-hidden border-2 border-white/20 flex flex-col justify-between shadow-inner">
+                    <div className="flex justify-between items-start">
+                      <div className="w-14 h-10 bg-gradient-to-br from-amber-300 to-amber-500 rounded-lg shadow-inner flex items-center justify-center overflow-hidden">
+                        <div className="w-full h-0.5 bg-black/10 rotate-45 translate-y-2" />
+                        <div className="w-full h-0.5 bg-black/10 rotate-45" />
+                        <div className="w-full h-0.5 bg-black/10 rotate-45 -translate-y-2" />
+                      </div>
+                      <div className="text-right">
+                        <div className="text-[10px] font-black text-white/40 tracking-[0.3em] mb-1">SECURE_CHIP</div>
+                        <CreditCard className="w-10 h-10 text-[var(--expressive-secondary)] opacity-80" />
+                      </div>
+                    </div>
+                    
+                    <div className="text-white font-mono text-xl tracking-[0.1em] mb-4 text-center bg-black/20 py-3 rounded whitespace-nowrap overflow-hidden">
+                      {cardNumber || '•••• •••• •••• ••••'}
+                    </div>
+                    
+                    <div className="flex justify-between items-end gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-white/40 text-[9px] font-black uppercase tracking-widest mb-1">OPERATOR_ID</div>
+                        <div className="text-white font-black uppercase text-base tracking-tighter truncate">
+                          {cardName || 'IDENT_UNAVAILABLE'}
+                        </div>
+                      </div>
+                      <div className="flex-shrink-0 text-right">
+                        <div className="text-white/40 text-[9px] font-black uppercase tracking-widest mb-1">VALID_THRU</div>
+                        <div className="text-white font-black text-base tracking-widest">
+                          {expiry || 'MM/YY'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Back */}
+                  <div className="absolute inset-0 h-full w-full rounded-2xl bg-gradient-to-br from-slate-800 to-slate-950 p-8 rotate-y-180 backface-hidden border-2 border-white/10 flex flex-col justify-center">
+                    <div className="absolute top-8 left-0 h-12 w-full bg-black/90 shadow-lg" />
+                    <div className="mt-8">
+                      <div className="text-white/40 text-[9px] font-black uppercase tracking-widest mb-2 text-right px-2">AUTH_TOKEN (CVC)</div>
+                      <div className="bg-white/90 h-12 flex items-center justify-end px-6 rounded shadow-inner">
+                        <span className="text-black font-mono text-xl font-bold tracking-[0.3em] italic">{cvc || '•••'}</span>
+                      </div>
+                      <div className="mt-4 flex gap-1 justify-end opacity-20">
+                         {[1,2,3,4].map(i => <div key={i} className="w-8 h-1 bg-white" />)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p className="text-[10px] font-bold text-black/40 uppercase tracking-widest">
-                AVAILABLE_RESIDUAL: <span className="text-black font-black">${currentInvoice.remainingAmount || currentInvoice.amount || 0}</span>
-              </p>
+            )}
+
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <Label className="text-[10px] font-black uppercase tracking-widest">Fiscal Quantum</Label>
+                <div className="relative group">
+                  <Input
+                    type="number"
+                    value={paymentAmount}
+                    onChange={(e) => setPaymentAmount(e.target.value)}
+                    className="h-14 bg-black/5 border-4 border-black rounded-none font-black text-xl pl-12 focus:bg-white"
+                  />
+                  <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <Label className="text-[10px] font-black uppercase tracking-widest">Transfer Channel</Label>
+                <Select value={paymentMethod} onValueChange={setPaymentMethod}>
+                  <SelectTrigger className="h-14 bg-black/5 border-4 border-black rounded-none font-black uppercase tracking-widest">
+                    <SelectValue placeholder="CHOOSE_METHOD" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-4 border-black rounded-none">
+                    <SelectItem value="credit_card" className="font-black uppercase tracking-widest p-4">CREDIT_CARD</SelectItem>
+                    <SelectItem value="debit_card" className="font-black uppercase tracking-widest p-4">DEBIT_CARD</SelectItem>
+                    <SelectItem value="bank_transfer" className="font-black uppercase tracking-widest p-4">BANK_TRANSFER</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            <div className="space-y-3">
-              <Label htmlFor="method" className="text-xs font-black uppercase tracking-widest text-black">Transfer Channel</Label>
-              <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                <SelectTrigger className="h-14 bg-black/5 border-4 border-black rounded-none font-black uppercase tracking-widest focus:ring-0">
-                  <SelectValue placeholder="SELECT_CHANNEL" />
-                </SelectTrigger>
-                <SelectContent className="bg-white border-4 border-black rounded-none p-0">
-                  <SelectItem value="credit_card" className="font-black uppercase tracking-widest p-4 focus:bg-black focus:text-white rounded-none">CREDIT_CARD</SelectItem>
-                  <SelectItem value="debit_card" className="font-black uppercase tracking-widest p-4 focus:bg-black focus:text-white rounded-none">DEBIT_CARD</SelectItem>
-                  <SelectItem value="paypal" className="font-black uppercase tracking-widest p-4 focus:bg-black focus:text-white rounded-none">PAYPAL</SelectItem>
-                  <SelectItem value="bank_transfer" className="font-black uppercase tracking-widest p-4 focus:bg-black focus:text-white rounded-none">BANK_TRANSFER</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            {(paymentMethod === 'credit_card' || paymentMethod === 'debit_card') && (
+              <div className="grid md:grid-cols-2 gap-6 pt-4 border-t-4 border-black border-dashed">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase">Card Number</Label>
+                  <Input 
+                    value={cardNumber} 
+                    onChange={handleCardNumberChange}
+                    placeholder="0000 0000 0000 0000"
+                    className="h-10 border-2 border-black rounded-none font-mono"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase">Cardholder Name</Label>
+                  <Input 
+                    value={cardName} 
+                    onChange={(e) => setCardName(e.target.value.toUpperCase())}
+                    placeholder="IDENT_NAME"
+                    className="h-10 border-2 border-black rounded-none font-black uppercase text-[10px]"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase">Expiry Date (MM/YY)</Label>
+                  <Input 
+                    value={expiry} 
+                    onChange={handleExpiryChange}
+                    placeholder="MM/YY"
+                    className="h-10 border-2 border-black rounded-none font-mono"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase">CVC</Label>
+                  <Input 
+                    value={cvc} 
+                    onChange={(e) => setCvc(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                    onFocus={() => setIsFlipped(true)}
+                    onBlur={() => setIsFlipped(false)}
+                    placeholder="•••"
+                    className="h-10 border-2 border-black rounded-none font-mono"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-2">
             <button
               onClick={() => setShowPaymentDialog(false)}
-              className="p-6 bg-black/10 text-black font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all disabled:opacity-50"
-              disabled={isProcessing}
+              className="p-6 bg-black/5 text-black font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all"
             >
               ABORT
             </button>
             <button
               onClick={handleMakePayment}
-              className="p-6 bg-[#ce0031] text-white font-black uppercase tracking-widest hover:bg-black transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               disabled={isProcessing}
+              className="p-6 bg-[var(--expressive-secondary)] text-white font-black uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2"
             >
-              {isProcessing ? (
-                <>
-                  <Clock className="w-5 h-5 animate-spin" />
-                  PROCESSING
-                </>
-              ) : (
-                <>
-                  <CheckCircle2 className="w-5 h-5" />
-                  AUTHORIZE
-                </>
-              )}
+              {isProcessing ? <Clock className="animate-spin h-5 w-5" /> : <ShieldCheck className="h-5 w-5" />}
+              AUTHORIZE_TRANSFER
             </button>
           </div>
         </DialogContent>
       </Dialog>
+      
+      <style>{`
+        .perspective-1000 { perspective: 1000px; }
+        .preserve-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+      `}</style>
     </div>
   )
 }
-
-

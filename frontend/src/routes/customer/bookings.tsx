@@ -4,7 +4,7 @@ import { getBookings, cancelBooking } from '#/services/bookings.service'
 import { toast } from 'sonner'
 import {
   Calendar,
-  Clock,
+  ShieldAlert,
   Users,
   CheckCircle2,
   XCircle,
@@ -20,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '#/components/ui/dialog'
-
+import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 export const Route = createFileRoute('/customer/bookings')({
   loader: async () => {
     const initialBookings = await getBookings()
@@ -143,7 +143,7 @@ function MyBookingsPage() {
               onClick={() => handleCancelClick(booking.id)}
               className="h-8 px-4 border-2 border-red-500 shadow-[2px_2px_0_0_#ef4444] hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_#ef4444] transition-all bg-white text-red-600 font-black text-[10px] uppercase tracking-widest"
             >
-              Void Entry
+              Cancel Booking
             </Button>
           )}
         </div>
