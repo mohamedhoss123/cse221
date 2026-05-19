@@ -22,6 +22,7 @@ function AdminInvoicesPage() {
   }, [])
 
   const loadInvoices = async () => {
+    setIsLoading(true)
     try {
       const data = await getInvoices()
       setInvoices(data)
@@ -32,33 +33,42 @@ function AdminInvoicesPage() {
     }
   }
 
-  if (isLoading) {
-    return <div className="p-8">Loading...</div>
-  }
-
-  const getInvoiceStatusColor = (status: string) => {
+  const getInvoiceStatusBadge = (status: string) => {
     switch (status) {
       case 'paid':
-        return 'bg-green-500 text-white'
+        return (
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-green-50 text-green-600 border-2 border-green-200 shadow-[2px_2px_0_0_#bbf7d0]">
+            <CheckCircle className="h-3 w-3 mr-1.5" />
+            {status}
+          </span>
+        )
       case 'partial':
-        return 'bg-blue-500 text-white'
+        return (
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-blue-50 text-blue-600 border-2 border-blue-200 shadow-[2px_2px_0_0_#bfdbfe]">
+            <Clock className="h-3 w-3 mr-1.5" />
+            {status}
+          </span>
+        )
       case 'pending':
-        return 'bg-amber-500 text-white'
+        return (
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-amber-50 text-amber-600 border-2 border-amber-200 shadow-[2px_2px_0_0_#fcd34d]">
+            <DollarSign className="h-3 w-3 mr-1.5" />
+            {status}
+          </span>
+        )
+      case 'overdue':
+        return (
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-red-50 text-red-600 border-2 border-red-200 shadow-[2px_2px_0_0_#fecaca]">
+            <AlertCircle className="h-3 w-3 mr-1.5" />
+            {status}
+          </span>
+        )
       default:
-        return 'bg-slate-500 text-white'
-    }
-  }
-
-  const getInvoiceStatusIcon = (status: string) => {
-    switch (status) {
-      case 'paid':
-        return CheckCircle
-      case 'partial':
-        return Clock
-      case 'pending':
-        return DollarSign
-      default:
-        return FileText
+        return (
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-gray-50 text-gray-600 border-2 border-gray-200 shadow-[2px_2px_0_0_#e5e7eb]">
+            {status}
+          </span>
+        )
     }
   }
 
@@ -73,150 +83,178 @@ function AdminInvoicesPage() {
   const overdueCount = invoices.filter((inv) => inv.status === 'overdue').length
 
   return (
-    <div className="page-wrap px-4 py-8">
-      <div className="mb-8">
-        <h1 className="display-title mb-2 text-3xl font-bold text-[var(--expressive-primary)]">
-          Invoice Management
+    <div className="p-8 max-w-7xl mx-auto">
+      <div className="mb-10">
+        <h1 className="text-4xl font-light text-[var(--expressive-primary)] mb-2">
+          Financial <span className="font-semibold text-[var(--expressive-primary)]">Ledger</span>
         </h1>
-        <p className="text-[var(--expressive-text)]">
-          View and manage all invoices
+        <p className="text-[var(--expressive-text-muted)] text-lg">
+          Comprehensive audit of all property transactions and settlement statuses.
         </p>
       </div>
 
       {/* Key Metrics */}
-      <div className="mb-8 grid gap-4 sm:grid-cols-4">
-        <Card className="island-shell">
+      <div className="mb-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <Card className="bg-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-2xl overflow-hidden group hover:-translate-y-1 transition-transform">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-[var(--expressive-text-muted)]">Total Billed</p>
-                <p className="text-2xl font-bold text-[var(--expressive-text)]">
+                <p className="text-[10px] font-black text-[var(--expressive-text-muted)] uppercase tracking-widest mb-1">Gross Billing</p>
+                <p className="text-3xl font-black text-[var(--expressive-text)] tracking-tighter">
                   ${totalBilled.toLocaleString()}
                 </p>
               </div>
-              <FileText className="h-8 w-8 text-[var(--expressive-primary)]" />
+              <div className="h-12 w-12 rounded-xl bg-blue-50 border-2 border-[var(--expressive-secondary)] flex items-center justify-center text-blue-600">
+                <FileText className="h-6 w-6" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="island-shell">
+        <Card className="bg-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-2xl overflow-hidden group hover:-translate-y-1 transition-transform">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-[var(--expressive-text-muted)]">Amount Paid</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-[10px] font-black text-[var(--expressive-text-muted)] uppercase tracking-widest mb-1">Settled Assets</p>
+                <p className="text-3xl font-black text-green-600 tracking-tighter">
                   ${totalPaid.toLocaleString()}
                 </p>
               </div>
-              <CheckCircle className="h-8 w-8 text-green-600" />
+              <div className="h-12 w-12 rounded-xl bg-green-50 border-2 border-[var(--expressive-secondary)] flex items-center justify-center text-green-600">
+                <CheckCircle className="h-6 w-6" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="island-shell">
+        <Card className="bg-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-2xl overflow-hidden group hover:-translate-y-1 transition-transform">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-[var(--expressive-text-muted)]">Amount Pending</p>
-                <p className="text-2xl font-bold text-amber-600">
+                <p className="text-[10px] font-black text-[var(--expressive-text-muted)] uppercase tracking-widest mb-1">Active Receivables</p>
+                <p className="text-3xl font-black text-amber-600 tracking-tighter">
                   ${totalPending.toLocaleString()}
                 </p>
               </div>
-              <Clock className="h-8 w-8 text-amber-600" />
+              <div className="h-12 w-12 rounded-xl bg-amber-50 border-2 border-[var(--expressive-secondary)] flex items-center justify-center text-amber-600">
+                <Clock className="h-6 w-6" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="island-shell">
+        <Card className="bg-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] rounded-2xl overflow-hidden group hover:-translate-y-1 transition-transform">
           <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-[var(--expressive-text-muted)]">Overdue</p>
-                <p className="text-2xl font-bold text-red-600">
-                  {overdueCount}
+                <p className="text-[10px] font-black text-[var(--expressive-text-muted)] uppercase tracking-widest mb-1">Default Risk</p>
+                <p className="text-3xl font-black text-red-600 tracking-tighter">
+                  {overdueCount} <span className="text-xs font-bold uppercase">Files</span>
                 </p>
               </div>
-              <AlertCircle className="h-8 w-8 text-red-600" />
+              <div className="h-12 w-12 rounded-xl bg-red-50 border-2 border-[var(--expressive-secondary)] flex items-center justify-center text-red-600">
+                <AlertCircle className="h-6 w-6" />
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Filters */}
-      <div className="mb-6 flex items-center gap-4">
-        <label className="text-sm font-medium text-[var(--expressive-text)]">Filter by status:</label>
-        <div className="flex gap-2">
-          {(['all', 'pending', 'partial', 'paid'] as const).map((status) => (
-            <Button
-              key={status}
-              variant={statusFilter === status ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setStatusFilter(status)}
-              className={statusFilter === status ? 'bg-[var(--expressive-primary)] text-black' : ''}
-            >
-              {status.charAt(0).toUpperCase() + status.slice(1)}
-            </Button>
-          ))}
+      {/* Control Bar */}
+      <div className="mb-8 flex flex-col md:flex-row items-center justify-between gap-6 p-6 bg-[var(--expressive-surface)] border-2 border-[var(--expressive-secondary)] rounded-2xl shadow-[4px_4px_0_0_var(--expressive-secondary)]">
+        <div className="flex items-center gap-4">
+          <span className="text-xs font-black uppercase tracking-widest text-[var(--expressive-text-muted)]">Audit Filter:</span>
+          <div className="flex flex-wrap gap-2">
+            {(['all', 'pending', 'partial', 'paid', 'overdue'] as const).map((status) => (
+              <Button
+                key={status}
+                variant={statusFilter === status ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setStatusFilter(status)}
+                className={`h-9 px-4 font-black text-[10px] uppercase tracking-widest border-2 transition-all ${statusFilter === status
+                    ? 'bg-[var(--expressive-secondary)] text-white border-[var(--expressive-secondary)]'
+                    : 'bg-white border-[var(--expressive-secondary)]/10 hover:border-[var(--expressive-secondary)] hover:translate-y-[-1px]'
+                  }`}
+              >
+                {status}
+              </Button>
+            ))}
+          </div>
         </div>
+        <Button className="bg-[var(--expressive-primary)] hover:bg-[var(--expressive-primary-hover)] text-white border-2 border-[var(--expressive-secondary)] shadow-[2px_2px_0_0_var(--expressive-secondary)] transition-all font-black uppercase tracking-widest text-[10px] h-10 px-6">
+          Export Ledger
+        </Button>
       </div>
 
-      <Card className="island-shell">
+      <Card className="bg-[var(--expressive-surface)] rounded-2xl border-2 border-[var(--expressive-secondary)] shadow-[4px_4px_0_0_var(--expressive-secondary)] overflow-hidden">
         <CardContent className="p-0">
-          {filteredInvoices.length === 0 ? (
-            <div className="py-12 text-center">
-              <FileText className="mx-auto mb-4 h-12 w-12 text-[var(--expressive-text-muted)]" />
-              <p className="text-lg text-[var(--expressive-text-muted)]">
-                {statusFilter === 'all' ? 'No invoices found' : `No ${statusFilter} invoices found`}
+          {isLoading ? (
+            <div className="py-32 text-center">
+              <div className="inline-flex items-center justify-center p-4 rounded-full bg-[var(--expressive-background)] border-2 border-[var(--expressive-secondary)] mb-4">
+                <Clock className="h-10 w-10 text-[var(--expressive-primary)] animate-pulse" />
+              </div>
+              <p className="text-[var(--expressive-text-muted)] font-black uppercase tracking-widest">Reconstructing Ledger...</p>
+            </div>
+          ) : filteredInvoices.length === 0 ? (
+            <div className="py-32 text-center">
+              <div className="inline-flex items-center justify-center p-6 rounded-full bg-[var(--expressive-background)] border-2 border-[var(--expressive-secondary)] mb-6">
+                <FileText className="h-16 w-16 text-[var(--expressive-text-muted)] opacity-30" />
+              </div>
+              <p className="text-2xl font-black text-[var(--expressive-primary)] mb-2 uppercase tracking-tighter">
+                No Transactional Records
+              </p>
+              <p className="text-[var(--expressive-text-muted)] font-bold">
+                No logs match your current filter criteria.
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Invoice ID</TableHead>
-                    <TableHead>Customer</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Paid</TableHead>
-                    <TableHead>Remaining</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                <TableHeader className="bg-[var(--expressive-background)] border-b-2 border-[var(--expressive-secondary)]">
+                  <TableRow className="border-none hover:bg-transparent">
+                    <TableHead className="text-[var(--expressive-primary)] font-black uppercase tracking-wider text-[10px] py-5 px-6">Log ID</TableHead>
+                    <TableHead className="text-[var(--expressive-primary)] font-black uppercase tracking-wider text-[10px] py-5 px-6">Beneficiary</TableHead>
+                    <TableHead className="text-[var(--expressive-primary)] font-black uppercase tracking-wider text-[10px] py-5 px-6">Gross</TableHead>
+                    <TableHead className="text-[var(--expressive-primary)] font-black uppercase tracking-wider text-[10px] py-5 px-6">Settled</TableHead>
+                    <TableHead className="text-[var(--expressive-primary)] font-black uppercase tracking-wider text-[10px] py-5 px-6">Outstanding</TableHead>
+                    <TableHead className="text-[var(--expressive-primary)] font-black uppercase tracking-wider text-[10px] py-5 px-6">Condition</TableHead>
+                    <TableHead className="text-[var(--expressive-primary)] font-black uppercase tracking-wider text-[10px] py-5 px-6 text-right">Operation</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredInvoices.map((invoice) => {
-                    const StatusIcon = getInvoiceStatusIcon(invoice.status)
                     return (
-                      <TableRow key={invoice.id}>
-                        <TableCell className="font-medium">{invoice.id}</TableCell>
-                        <TableCell>{invoice.customerName || invoice.customerId}</TableCell>
-                        <TableCell className="font-semibold">
-                          ${invoice.totalAmount ? invoice.totalAmount.toFixed(2) : '0.00'}
+                      <TableRow key={invoice.id} className="border-b border-[var(--expressive-secondary)]/5 hover:bg-[var(--expressive-background)]/60 transition-colors">
+                        <TableCell className="py-6 px-6 font-black text-[var(--expressive-primary)] text-xs">
+                          #{invoice.id.substring(0, 8)}
                         </TableCell>
-                        <TableCell className="text-green-600">
-                          ${invoice.paidAmount ? invoice.paidAmount.toFixed(2) : '0.00'}
+                        <TableCell className="px-6 font-bold text-[var(--expressive-text)]">
+                          {invoice.customerName || invoice.customerId}
                         </TableCell>
-                        <TableCell className={invoice.remainingAmount > 0 ? 'text-red-600' : ''}>
-                          ${(invoice.remainingAmount || 0).toFixed(2)}
+                        <TableCell className="px-6 font-black text-[var(--expressive-text)] text-lg tracking-tighter">
+                          ${invoice.totalAmount?.toLocaleString()}
                         </TableCell>
-                        <TableCell>
-                          <Badge
-                            className={getInvoiceStatusColor(invoice.status)}
-                            variant="secondary"
-                          >
-                            <StatusIcon className="mr-1 h-3 w-3" />
-                            {invoice.status}
-                          </Badge>
+                        <TableCell className="px-6">
+                          <span className="font-bold text-green-600 text-sm">
+                            ${invoice.paidAmount?.toLocaleString()}
+                          </span>
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="px-6">
+                          <span className={`font-bold text-sm ${invoice.remainingAmount > 0 ? 'text-red-500' : 'text-slate-400'}`}>
+                            ${(invoice.remainingAmount || 0).toLocaleString()}
+                          </span>
+                        </TableCell>
+                        <TableCell className="px-6">
+                          {getInvoiceStatusBadge(invoice.status)}
+                        </TableCell>
+                        <TableCell className="px-6 text-right">
                           <Link to={`/admin/invoices/${invoice.id}`}>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="border-[var(--expressive-primary)] text-[var(--expressive-primary)] hover:bg-[var(--expressive-primary)] hover:text-black"
+                              className="h-9 px-4 border-2 border-[var(--expressive-secondary)] shadow-[2px_2px_0_0_var(--expressive-secondary)] hover:-translate-y-1 hover:shadow-[4px_4px_0_0_var(--expressive-secondary)] transition-all bg-white text-[var(--expressive-text)] hover:text-[var(--expressive-primary)] font-black text-[10px] uppercase tracking-widest"
                             >
-                              <FileText className="mr-1 h-4 w-4" />
-                              View
+                              Open File
                             </Button>
                           </Link>
                         </TableCell>
@@ -232,3 +270,4 @@ function AdminInvoicesPage() {
     </div>
   )
 }
+
